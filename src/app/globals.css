@@ -1,26 +1,75 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  --font-display: 'Poppins', "sans-serif";
+  --breakpoint-3xl: 1920px;
+  --color-blue-light: #1447e6;
+  --color-blue-dark:  #51a2ff;
+  --color-red-light: #e7000b;
+  --color-red-dark:  #fb2c36;
+  --color-yellow-light: #d08700;
+  --color-yellow-dark:  #efb100;
+  --color-green-light: #00a63e;
+  --color-green-dark:  #00c951;
+  --color-primary-light: #f5f5f4;
+  --color-secondary-light: #e7e5e4;
+  --color-tertiary-light: #d6d3d1;
+  --color-primary-dark: #0c0a09;
+  --color-secondary-dark: #1c1917;
+  --color-tertiary-dark: #292524;
+  --color-quaternary: #79716b;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    font-family: var(--font-display);
+  }
+  body {
+    background-color: #FCFBFC;
+    overflow-x: hidden;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.btn-primary {
+  @apply w-full text-sm font-medium text-primary-light dark:text-primary-dark bg-blue-light dark:bg-blue-dark shadow-lg;
+}
+
+.card {
+  @apply my-5 p-6 rounded-2xl bg-secondary-light dark:bg-secondary-dark border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/20;
+}
+
+.card-btn {
+  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg font-medium text-[12px] text-primary-dark dark:text-primary-light bg-tertiary-light hover:bg-primary-light dark:bg-tertiary-dark dark:hover:bg-primary-dark border border-quaternary cursor-pointer duration-300;
+}
+.card-btn-fill {
+  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg font-semibold text-[12px] text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent cursor-pointer duration-300;
+}
+.card-btn-red {
+  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg font-semibold text-[12px] text-primary-dark dark:text-primary-light hover:text-primary-light hover:dark:text-primary-dark hover:bg-red-light dark:hover:bg-red-dark cursor-pointer duration-300;
+}
+
+.form-card {
+  @apply p-6 rounded-lg bg-secondary-light dark:bg-secondary-dark border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/15;
+}
+
+.form-input {
+  @apply w-full px-2.5 py-3 outline-none rounded-md mt-2 font-medium text-sm text-primary-dark dark:text-primary-light bg-secondary-light dark:bg-secondary-dark focus-within:bg-primary-light dark:focus-within:bg-primary-dark border border-tertiary-light dark:border-tertiary-dark placeholder:text-quaternary/50 duration-300;
+}
+
+.add-btn {
+  @apply flex items-center justify-center gap-1.5 w-full px-4 py-3 rounded whitespace-nowrap font-medium text-sm md:text-base text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent border border-primary-dark dark:border-primary-light cursor-pointer duration-300;
+}
+
+.download-btn {
+  @apply items-center justify-center gap-0.5 xl:gap-1 px-3 py-2 rounded-full whitespace-nowrap font-medium text-xs xl:text-sm text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent border border-primary-dark dark:border-primary-light cursor-pointer duration-300;
+}
+
+.user-card {
+  @apply p-4 rounded-xl bg-secondary-light dark:bg-secondary-dark border hover:bg-primary-light dark:hover:bg-primary-dark border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/15 duration-300;
 }
