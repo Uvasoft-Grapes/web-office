@@ -32,7 +32,7 @@ export default function AttachmentInput({ attachments, setAttachments }:{ attach
       </ul>
       <div className="flex items-center gap-5 mt-4">
         <div className="flex items-center gap-2 w-full px-3 py-3 rounded-md font-medium text-sm text-primary-dark dark:text-primary-light bg-secondary-light dark:bg-secondary-dark focus-within:bg-primary-light dark:focus-within:bg-primary-dark border border-tertiary-light dark:border-tertiary-dark duration-300 group">
-          <IoLink className="text-xl text-quaternary/50 group-focus-within:text-primary-dark duration-300"/>
+          <IoLink className="text-xl text-quaternary/50"/>
           <input
             type="text"
             placeholder="Introducir enlace"

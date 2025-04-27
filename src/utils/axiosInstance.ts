@@ -1,9 +1,9 @@
 import axios from "axios";
-import { BASE_URL } from "./apiPaths";
+import { BASE_URL } from "@utils/apiPaths";
 
 const axiosInstance = axios.create({
   baseURL:BASE_URL,
-  timeout:2000,
+  timeout:10000,
   headers:{
     "Content-Type":"application/json",
     Accept:"application/json",
@@ -15,6 +15,8 @@ axiosInstance.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem("token");
     if(accessToken) config.headers.Authorization = `Bearer ${accessToken}`;
+    const deskId = sessionStorage.getItem("desk");
+    if(deskId) config.headers.desk = deskId;
     return config;
   },
   (error) => { return Promise.reject(error) },

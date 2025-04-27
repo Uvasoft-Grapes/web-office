@@ -1,4 +1,4 @@
-import { getAvatars } from "@/src/utils/avatars";
+import { getAvatars } from "@utils/avatars";
 import Image, { StaticImageData } from "next/image";
 import { useState } from "react";
 import { TbPhotoEdit } from "react-icons/tb";

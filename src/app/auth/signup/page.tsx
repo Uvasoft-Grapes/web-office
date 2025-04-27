@@ -1,15 +1,14 @@
 "use client"
 
-import InputEmail from "@/src/components/inputs/Email";
-import InputPassword from "@/src/components/inputs/Password";
-import ProfilePhotoSelector from "@/src/components/inputs/ProfilePhotoSelector";
-import InputText from "@/src/components/inputs/Text";
-import { userContext } from "@/src/context/UserContext";
-import { API_PATHS } from "@/src/utils/apiPaths";
-import { getAvatars } from "@/src/utils/avatars";
-import axiosInstance from "@/src/utils/axiosInstance";
-import { validateEmail } from "@/src/utils/helper";
-// import { uploadImage } from "@/src/utils/uploadImage";
+import InputEmail from "@components/inputs/Email";
+import InputPassword from "@components/inputs/Password";
+import ProfilePhotoSelector from "@components/inputs/ProfilePhotoSelector";
+import InputText from "@components/inputs/Text";
+import { userContext } from "@context/UserContext";
+import { API_PATHS } from "@utils/apiPaths";
+import { getAvatars } from "@utils/avatars";
+import axiosInstance from "@utils/axiosInstance";
+import { validateEmail } from "@utils/helper";
 import AuthLayout from "@components/layouts/AuthLayout";
 import { isAxiosError } from "axios";
 import Link from "next/link";
@@ -44,16 +43,11 @@ export default function SignUpPage() {
       return;
     };
     if(!adminInviteToken) {
-      setError("Por favor introduzca un token de invitación.");
+      setError("Por favor introduzca un token.");
       return;
     };
 
     try {
-      // if(profilePic) {
-      //   const imgUploadRes = await uploadImage(profilePic);
-      //   profileImageUrl = imgUploadRes.imageUrl || "";
-      // };
-
       const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
         profileImageUrl:profilePic,
         name:fullName,
@@ -62,25 +56,23 @@ export default function SignUpPage() {
         adminInviteToken,
       });
 
-      const { token, role } = res.data;
+      const { token } = res.data;
 
       if(token) {
         localStorage.setItem("token", token);
         updateUser(res.data);
-        if(role === "admin") router.push("/admin/dashboard");
-        if(role === "user") router.push("/user/dashboard");
+        router.push("/dashboard");
       };
 
     } catch (error) {
-      console.log(error);
-      if(!isAxiosError(error)) return console.log(error);
+      if(!isAxiosError(error)) return console.error("Error register user", error);
       if(error.response && error.response.data.message) {
         setError(error.response.data.message);
       } else {
         setError("Something went wrong. Please try again.");
       };
     };
-  }; 
+  };
 
   return(
     <AuthLayout>
@@ -93,7 +85,7 @@ export default function SignUpPage() {
             <InputText value={fullName} onChange={(value:string) => setFullName(value)} label="Nombre completo" placeholder="Nombre Apellido" autoComplete="name" />
             <InputEmail value={email} onChange={(value:string) => setEmail(value)} label="Correo Electrónico" placeholder="Nombre@Ejemplo.com"/>
             <InputPassword value={password} onChange={(value:string) => setPassword(value)} label="Contraseña" placeholder="Mínimo 8 caracteres" autoComplete="new-password" />
-            <InputText value={adminInviteToken} onChange={(value:string) => setAdminInviteToken(value)} label="Token de invitación" placeholder="Código de 6 cifras"/>
+            <InputText value={adminInviteToken} onChange={(value:string) => setAdminInviteToken(value)} label="Token" placeholder="Token de invitación"/>
           </div>
         {error && 
           <p className="text-red-500 text-xs pb-2.5">{error}</p>

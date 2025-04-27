@@ -1,5 +1,5 @@
-import { connectDB } from "@/src/config/db";
-import { protectRoute } from "@/src/middlewares/authMiddleware";
+import { connectDB } from "@config/db";
+import { protectRoute } from "@middlewares/authMiddleware";
 import UserModel from "@models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";

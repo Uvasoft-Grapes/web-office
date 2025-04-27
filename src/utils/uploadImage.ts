@@ -1,5 +1,5 @@
-import { API_PATHS } from "./apiPaths";
-import axiosInstance from "./axiosInstance";
+import { API_PATHS } from "@utils/apiPaths";
+import axiosInstance from "@utils/axiosInstance";
 
 export const uploadImage = async (imageFile:File) => {
   const formData = new FormData();

@@ -13,19 +13,19 @@ export const SIDE_MENU_DATA:TypeMenuData[] = [
     id:"01",
     label:"Dashboard",
     icon:LuLayoutDashboard,
-    path:"/admin/dashboard",
+    path:"/dashboard",
   },
   {
     id:"02",
     label:"Tareas",
     icon:LuClipboardCheck,
-    path:"/admin/tasks",
+    path:"/tasks",
   },
   {
     id:"03",
     label:"Usuarios",
     icon:LuUsers,
-    path:"/admin/users",
+    path:"/users",
   },
 ];
 
@@ -34,13 +34,13 @@ export const SIDE_MENU_USER_DATA = [
     id:"01",
     label:"Dashboard",
     icon:LuLayoutDashboard,
-    path:"/user/dashboard",
+    path:"/dashboard",
   },
   {
     id:"02",
     label:"Mis Tareas",
     icon:LuClipboardCheck,
-    path:"/user/tasks",
+    path:"/tasks",
   },
 ];
 

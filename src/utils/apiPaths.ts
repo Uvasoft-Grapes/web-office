@@ -11,9 +11,10 @@ export const API_PATHS = {
   USERS:{
     GET_ALL_USERS:"/api/users", // Admin Token required
     GET_USER_BY_ID:(userId:string) => `/api/users/${userId}`, // Auth Token required
-    CREATE_USER:"/api/users", // Admin Token required
     UPDATE_USER:(userId:string) => `/api/users/${userId}`, // Auth Token required
     DELETE_USER:(userId:string) => `/api/users/${userId}`, // Admin Token required
+    GET_TOKEN:(type:string)=>`/api/auth/invite-token/${type}`, // Admin Token required
+    UPDATE_ROLE:(userId:string)=>`/api/users/${userId}/role`, // Admin Token required
   },
 
   AVATARS:[
@@ -32,19 +33,24 @@ export const API_PATHS = {
     "/public/profile-img/13.webp",
   ],
 
+  DESKS:{
+    CREATE_DESK:"/api/desks", // Admin Token required
+    GET_ALL_DESKS:"/api/desks", // Auth Token required
+    GET_DESK:(deskId:string) => `/api/desks/${deskId}`, // Auth Token required
+    UPDATE_DESK:(deskId:string) => `/api/desks/${deskId}`, // Admin Token required
+    DELETE_DESK:(deskId:string) => `/api/desks/${deskId}`, // Admin Token required
+  },
+
+  DASHBOARD:{
+    GET_TASKS_DATA:"/api/dashboard/tasks", // Admin Token required
+  },
+
   TASKS:{
-    GET_DASHBOARD_DATA:"/api/tasks/dashboard-data", // Admin Token required
-    GET_USER_DASHBOARD_DATA:"/api/tasks/user-dashboard-data", // Auth Token required
     GET_ALL_TASKS:"/api/tasks", // Auth Token required. Filter Admin (all) and User (assigned)
     GET_TASK_BY_ID:(taskId:string) => `/api/tasks/${taskId}`, // Auth Token required
     CREATE_TASK:"/api/tasks", // Admin Token required
     UPDATE_TASK:(taskId:string) => `/api/tasks/${taskId}`, // Auth Token required
     UPDATE_TODO_CHECKLIST:(taskId:string) => `/api/tasks/${taskId}/todo`, // Auth Token required
     DELETE_TASK:(taskId:string) => `/api/tasks/${taskId}`, // Admin Token required
-  },
-
-  REPORTS:{
-    EXPORT_TASKS:"api/reports/tasks", // Download all tasks report as an Excel file
-    EXPORT_TASKS_USERS:"api/reports/tasks/users" // Download users tasks report as an Excel file
   },
 };

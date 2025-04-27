@@ -7,7 +7,7 @@ import { validateEmail } from "@utils/helper";
 import AuthLayout from "@components/layouts/AuthLayout";
 import Link from "next/link";
 import { FormEvent, useContext, useState } from "react";
-import { API_PATHS } from "@/src/utils/apiPaths";
+import { API_PATHS } from "@utils/apiPaths";
 import { useRouter } from "next/navigation";
 import { isAxiosError } from "axios";
 import { userContext } from "@context/UserContext";
@@ -39,18 +39,16 @@ export default function LoginPage() {
         password
       });
 
-      const { token, role } = res.data;
+      const { token } = res.data;
 
       if(token) {
         localStorage.setItem("token", token);
         updateUser(res.data);
-        if(role === "admin") router.push("/admin/dashboard");
-        if(role === "user") router.push("/user/dashboard");
+        router.push("/auth/desk");
       };
 
     } catch (error) {
-      console.log(error);
-      if(!isAxiosError(error)) return console.log(error);
+      if(!isAxiosError(error)) return console.error(error);
       if(error.response && error.response.data.message) {
         setError(error.response.data.message);
       } else {

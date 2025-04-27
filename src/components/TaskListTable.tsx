@@ -1,30 +1,30 @@
 import { format } from "date-fns";
-import { TypeTask } from "../utils/types";
+import { TypeTask } from "@utils/types";
 
 export default function TaskListTable({ tableData }:{ tableData:TypeTask[]}) {
   const getStatusBadgeColor = (status?:string) => {
     switch (status) {
       case "Pendiente":
-        return "bg-red-100 text-red-light dark:text-red-dark border-red-light dark:border-red-dark";
+        return "text-red-light dark:text-red-dark border-red-light dark:border-red-dark";
       case "En curso":
-        return "bg-yellow-100 text-yellow-light dark:text-yellow-dark border-yellow-light dark:border-yellow-dark";
+        return "text-yellow-light dark:text-yellow-dark border-yellow-light dark:border-yellow-dark";
       case "Finalizada":
-        return "bg-green-100 text-green-light dark:text-green-dark border-green-light dark:border-green-dark";
+        return "text-green-light dark:text-green-dark border-green-light dark:border-green-dark";
       default:
-        return "bg-gray-100 text-quaternary border-quaternary";
+        return "text-quaternary border-quaternary";
     };
   };
 
   const getPriorityBadgeColor = (priority:string) => {
     switch (priority) {
       case "Alta":
-        return "bg-red-100 text-red-light dark:text-red-dark border-red-light dark:border-red-dark";
+        return "text-red-light dark:text-red-dark border-red-light dark:border-red-dark";
       case "Media":
-        return "bg-yellow-100 text-yellow-light dark:text-yellow-dark border-yellow-light dark:border-yellow-dark";
+        return "text-yellow-light dark:text-yellow-dark border-yellow-light dark:border-yellow-dark";
       case "Baja":
-        return "bg-green-100 text-green-light dark:text-green-dark border-green-light dark:border-green-dark";
+        return "text-green-light dark:text-green-dark border-green-light dark:border-green-dark";
       default:
-        return "bg-gray-100 text-quaternary border-quaternary";
+        return "text-quaternary border-quaternary";
     };
   };
 
@@ -42,20 +42,22 @@ export default function TaskListTable({ tableData }:{ tableData:TypeTask[]}) {
         <tbody>
           {tableData.map((task:TypeTask) => (
             <tr key={task._id} className="border-t-2 border-tertiary-light dark:border-tertiary-dark">
-              <td className="my-3 mx-4 line-clamp-1 overflow-hidden font-semibold text-[13px] text-primary-dark dark:text-primary-light">
+              <td className="flex items-center p-4 overflow-hidden font-semibold text-[13px] text-primary-dark dark:text-primary-light">
                 {task.title}
               </td>
               <td className={`p-4`}>
-                <span className={`px-2 py-1 font-semibold text-xs rounded inline-block ${getStatusBadgeColor(task.status)}`}>
+                <span className={`p-1 min-w-20 font-semibold text-center text-xs rounded inline-block border-2 ${getStatusBadgeColor(task.status)}`}>
                   {task.status}
                 </span>
               </td>
               <td className={`p-4`}>
-                <span className={`px-2 py-1 font-semibold text-xs rounded inline-block ${getPriorityBadgeColor(task.priority)}`}>
+                <span className={`p-1 min-w-16 font-semibold text-center text-xs rounded inline-block border-2 ${getPriorityBadgeColor(task.priority)}`}>
                   {task.priority}
                 </span>
               </td>
-              <td className="hidden md:table-cell p-4 text-nowrap font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{task.createdAt ? format(task.createdAt, "dd/MM/yyyy") : "N/D"}</td>
+              <td className="hidden md:table-cell p-4 text-nowrap font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">
+                {task.createdAt ? format(task.createdAt, "dd/MM/yyyy") : "N/D"}
+              </td>
             </tr>
           ))}
         </tbody>

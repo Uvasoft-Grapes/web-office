@@ -1,4 +1,4 @@
-import { TypeTodo } from "@/src/utils/types";
+import { TypeTodo } from "@utils/types";
 import { useState } from "react";
 import { HiOutlineTrash, HiMiniPlus } from "react-icons/hi2";
 
@@ -16,7 +16,7 @@ export default function TodoListInput({ todoList, setTodoList }:{ todoList:TypeT
   };
 
   return(
-    <div>
+    <div className="mt-2">
       <ul className="flex flex-col gap-1">
       {todoList.map((todo, index) => (
         <li key={index} className="flex justify-between px-3 py-2 rounded-md bg-primary-light dark:bg-primary-dark hover:bg-tertiary-light dark:hover:bg-tertiary-dark border border-tertiary-light dark:border-tertiary-dark duration-300">

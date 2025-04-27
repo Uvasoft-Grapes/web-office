@@ -1,8 +1,8 @@
 "use client"
 
-import { userContext } from "@/src/context/UserContext";
+import { userContext } from "@context/UserContext";
 import { ReactNode, useContext } from "react";
-import Navbar from "./Navbar";
+import Navbar from "@components/layouts/Navbar";
 
 export default function AppLayout({ children, activeMenu }:{ children:ReactNode, activeMenu:string }) {
   const { user } = useContext(userContext);

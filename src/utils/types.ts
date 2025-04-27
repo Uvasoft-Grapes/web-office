@@ -13,6 +13,12 @@ export interface TypeUser {
   token?:string;
 };
 
+export interface TypeDesk {
+  _id:string;
+  title:string;
+  members:TypeUser[];
+};
+
 export interface TypeTodo {
   text:string;
   completed?:boolean;

@@ -21,12 +21,14 @@ export async function POST(req:Request) {
     await connectDB();
     const { email, password } = await req.json();
 
+    const formattedEmail = email.toLowerCase().trim();
+
 //! Validations
     if(!email) return NextResponse.json({ message:"Missing email" }, { status:500 });
     if(!password) return NextResponse.json({ message:"Missing password" }, { status:500 });
 
 //! Find user
-    const user = await UserModel.findOne({ email }).select("+password");
+    const user = await UserModel.findOne({ email:formattedEmail }).select("+password");
     if(!user) return NextResponse.json({ message:"Invalid email or password" }, { status:401 });
 
 //! Compare password

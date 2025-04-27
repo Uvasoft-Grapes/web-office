@@ -1,12 +1,12 @@
-import { API_PATHS } from "@/src/utils/apiPaths";
-import axiosInstance from "@/src/utils/axiosInstance";
-import { TypeAssigned, TypeUser } from "@/src/utils/types";
+import { API_PATHS } from "@utils/apiPaths";
+import axiosInstance from "@utils/axiosInstance";
+import { TypeAssigned, TypeUser } from "@utils/types";
 import { useEffect, useState } from "react";
 import { LuUsers } from "react-icons/lu";
-import Modal from "../Modal";
+import Modal from "@components/Modal";
 import Image from "next/image";
-import { getAvatars } from "@/src/utils/avatars";
-import AvatarGroup from "../AvatarGroup";
+import { getAvatars } from "@utils/avatars";
+import AvatarGroup from "@components/AvatarGroup";
 
 export default function SelectUsers({ selectedUsers, setSelectedUsers }:{ selectedUsers:TypeAssigned[], setSelectedUsers:(users:TypeAssigned[])=>void }) {
   const [allUsers, setAllUsers] = useState<TypeUser[]>([]);
@@ -83,8 +83,8 @@ export default function SelectUsers({ selectedUsers, setSelectedUsers }:{ select
         ))}
         </ul>
         <div className="flex justify-end gap-4 pt-4">
-          <button onClick={() => setIsModalOpen(false)} className="card-btn-red">Cancelar</button>
-          <button onClick={handleAssign} className="card-btn-fill">Confirmar</button>
+          <button type="button" onClick={() => setIsModalOpen(false)} className="card-btn-red">Cancelar</button>
+          <button type="button" onClick={handleAssign} className="card-btn-fill">Confirmar</button>
         </div>
       </Modal>
     </div>

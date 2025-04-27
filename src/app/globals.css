@@ -41,21 +41,21 @@
 }
 
 .card {
-  @apply my-5 p-6 rounded-2xl bg-secondary-light dark:bg-secondary-dark border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/20;
+  @apply p-6 rounded-2xl border-2 border-secondary-light dark:border-secondary-dark shadow-md shadow-quaternary/15 dark:shadow-secondary-dark/75 overflow-hidden;
 }
 
 .card-btn {
-  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg font-medium text-[12px] text-primary-dark dark:text-primary-light bg-tertiary-light hover:bg-primary-light dark:bg-tertiary-dark dark:hover:bg-primary-dark border border-quaternary cursor-pointer duration-300;
+  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg text-nowrap font-medium text-[12px] text-primary-dark dark:text-primary-light bg-tertiary-light hover:bg-primary-light dark:bg-tertiary-dark dark:hover:bg-primary-dark border border-quaternary cursor-pointer duration-300;
 }
 .card-btn-fill {
-  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg font-semibold text-[12px] text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent cursor-pointer duration-300;
+  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg text-nowrap font-semibold text-[12px] text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent cursor-pointer duration-300;
 }
 .card-btn-red {
-  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg font-semibold text-[12px] text-primary-dark dark:text-primary-light hover:text-primary-light hover:dark:text-primary-dark hover:bg-red-light dark:hover:bg-red-dark cursor-pointer duration-300;
+  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg font-semibold text-[12px] text-primary-light dark:text-primary-dark hover:text-red-light hover:dark:text-red-dark bg-red-light dark:bg-red-dark hover:bg-transparent cursor-pointer duration-300;
 }
 
 .form-card {
-  @apply p-6 rounded-lg bg-secondary-light dark:bg-secondary-dark border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/15;
+  @apply p-6 rounded-lg border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/15 dark:shadow-secondary-dark/75;
 }
 
 .form-input {
@@ -71,5 +71,5 @@
 }
 
 .user-card {
-  @apply p-4 rounded-xl bg-secondary-light dark:bg-secondary-dark border hover:bg-primary-light dark:hover:bg-primary-dark border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/15 duration-300;
+  @apply p-4 rounded-xl border hover:bg-secondary-light dark:hover:bg-secondary-dark border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/15 dark:shadow-secondary-dark/75 duration-300;
 }

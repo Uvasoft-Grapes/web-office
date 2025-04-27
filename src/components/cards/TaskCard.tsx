@@ -1,14 +1,12 @@
-import { TypeTask } from "@/src/utils/types";
-import Progress from "../Progress";
+import { TypeTask } from "@utils/types";
+import Progress from "@components/Progress";
 import { format } from "date-fns";
-import AvatarGroup from "../AvatarGroup";
+import AvatarGroup from "@components/AvatarGroup";
 import { IoLink } from "react-icons/io5";
 import Link from "next/link";
-import { getAvatars } from "@/src/utils/avatars";
-import { usePathname } from "next/navigation";
+import { getAvatars } from "@utils/avatars";
 
 export default function TaskCard({ task }:{ task:TypeTask }) {
-  const admin = usePathname().includes("admin");
   const { _id, title, description, priority, status, progress, createdAt, dueDate, assignedTo, attachments, completedTodoCount, todoChecklist  } = task;
   const selectedUsersAvatars = assignedTo.map((assigned) => ({ name:assigned.name||"", img:assigned.profileImageUrl||getAvatars()[0].src }));
 
@@ -41,7 +39,7 @@ export default function TaskCard({ task }:{ task:TypeTask }) {
 
 
   return(
-    <Link href={`/${admin ? "admin" : "user"}/tasks/${_id}`}>
+    <Link href={`/tasks/${_id}`}>
       <li className="bg-secondary-light dark:bg-secondary-dark opacity-80 hover:opacity-100 rounded-xl py-4 border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary dark:shadow-secondary-dark cursor-pointer duration-300">
         <div className="flex items-end gap-3 px-4">
           <p className={`px-4 py-0.5 rounded font-semibold text-[11px] ${getStatusTagColor()}`}>{status}</p>
@@ -54,7 +52,7 @@ export default function TaskCard({ task }:{ task:TypeTask }) {
             Pendientes:{" "}
             <span className="rounded px-2 py-0.5 bg-tertiary-light dark:bg-tertiary-dark">{completedTodoCount} / {todoChecklist?.length || 0}</span>
           </p>
-          <Progress progress={progress <= 2 ? "2%" : `${progress}%`} color={progress < 25 ? "red" : progress < 75 ? "orange" : progress < 100 ? "yellow" : "green"}/>
+          <Progress progress={progress <= 2 ? "2%" : `${progress}%`} color={progress < 26 ? "red" : progress < 51 ? "orange" : progress < 100 ? "yellow" : "green"}/>
         </div>
         <div className="px-4">
           <div className="flex items-center justify-between my-1">

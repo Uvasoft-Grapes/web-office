@@ -1,7 +1,7 @@
-import { connectDB } from "@/src/config/db";
-import { protectRoute } from "@/src/middlewares/authMiddleware";
-import TaskModel from "@/src/models/Task";
-import { TypeTodo } from "@/src/utils/types";
+import { connectDB } from "@config/db";
+import { protectRoute } from "@middlewares/authMiddleware";
+import TaskModel from "@models/Task";
+import { TypeTodo } from "@utils/types";
 import { ObjectId } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 

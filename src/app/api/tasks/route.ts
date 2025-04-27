@@ -1,6 +1,6 @@
-import { connectDB } from "@/src/config/db";
-import { adminOnly, protectRoute } from "@/src/middlewares/authMiddleware";
-import { TypeTodo } from "@/src/utils/types";
+import { connectDB } from "@config/db";
+import { adminOnly, protectRoute } from "@middlewares/authMiddleware";
+import { TypeTodo } from "@utils/types";
 import TaskModel from "@models/Task";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -29,10 +29,14 @@ export async function GET(req:NextRequest) {
     const userToken = await protectRoute(token);
     if(!userToken) return NextResponse.json({ message:"Token failed" }, { status:404 });
 
+//! Get desk id
+    const deskId = Object.fromEntries(req.headers.entries()).desk;
+    if(!deskId) return NextResponse.json({ message:"Desk id not provided" }, { status:404 });
+
 //! All tasks
     let tasks = [];
-    if(userToken.role === "admin") tasks = await TaskModel.find().populate("assignedTo", "name email profileImageUrl");
-    if(userToken.role !== "admin") tasks = await TaskModel.find({ assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl");
+    if(userToken.role === "admin") tasks = await TaskModel.find({ desk:deskId }).populate("assignedTo", "name email profileImageUrl");
+    if(userToken.role === "user") tasks = await TaskModel.find({ desk:deskId, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl");
 
 //! Filter tasks
     if(filter.status) tasks = tasks.filter(task => task.status === filter.status);
@@ -44,10 +48,10 @@ export async function GET(req:NextRequest) {
     }));
 
 //! Status summary counts
-    const  allTasks = await TaskModel.countDocuments(userToken.role === "admin" ? {} : { assignedTo:userToken._id });
-    const pendingTasks = await TaskModel.countDocuments({ status:"Pendiente", ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
-    const inProgressTasks = await TaskModel.countDocuments({ status:"En curso", ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
-    const completedTasks = await TaskModel.countDocuments({ status:"Finalizada", ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
+    const  allTasks = await TaskModel.countDocuments(userToken.role === "admin" ? { desk:deskId } : { desk:deskId, assignedTo:userToken._id });
+    const pendingTasks = await TaskModel.countDocuments({ status:"Pendiente", desk:deskId, ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
+    const inProgressTasks = await TaskModel.countDocuments({ status:"En curso", desk:deskId, ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
+    const completedTasks = await TaskModel.countDocuments({ status:"Finalizada", desk:deskId, ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
     const statusSummary:TypeStatusSummary = { allTasks, pendingTasks, inProgressTasks, completedTasks };
 
     return NextResponse.json({ tasks, statusSummary }, { status:200 });
@@ -65,15 +69,20 @@ export async function POST(req:NextRequest) {
   try {
     await connectDB();
 
+    const { title, description, priority, dueDate, assignedTo, attachments, todoChecklist } = await req.json();
+    if(!Array.isArray(assignedTo)) return NextResponse.json({ message:"AssignedTo must be an array of users IDs" }, { status:400 });
+
 //! Validate token
     const token = Object.fromEntries(req.headers.entries()).authorization;
     const userToken = await adminOnly(token);
     if(!userToken) return NextResponse.json({ message:"Access denied, admin only" }, { status:404 });
 
-    const { title, description, priority, dueDate, assignedTo, attachments, todoChecklist } = await req.json();
-    if(!Array.isArray(assignedTo)) return NextResponse.json({ message:"AssignedTo must be an array of users IDs" }, { status:400 });
+//! Get desk id
+    const deskId = Object.fromEntries(req.headers.entries()).desk;
+    if(!deskId) return NextResponse.json({ message:"Desk id not provided" }, { status:404 });
 
-    const task = await TaskModel.create({ 
+    const task = await TaskModel.create({
+      desk:deskId,
       title,
       description,
       priority,

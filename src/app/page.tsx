@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import { userContext } from "@context/UserContext";
 import { useRouter } from "next/navigation";
-import Loader from "../components/Loader";
+import Loader from "@components/Loader";
 
 export default function HomePage() {
   const router = useRouter();
@@ -13,5 +13,5 @@ export default function HomePage() {
 
   if(!user) return router.push("/auth/login");
 
-  return user.role === "admin" ? router.push("/admin/dashboard") : router.push("/user/dashboard");
+  return router.push("/dashboard");
 }

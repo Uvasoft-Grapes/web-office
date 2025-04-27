@@ -1,7 +1,7 @@
-import { connectDB } from "@/src/config/db";
-import { adminOnly } from "@/src/middlewares/authMiddleware";
-import TaskModel from "@/src/models/Task";
-import UserModel from "@/src/models/User";
+import { connectDB } from "@config/db";
+import { adminOnly } from "@middlewares/authMiddleware";
+import TaskModel from "@models/Task";
+import UserModel from "@models/User";
 import { NextRequest, NextResponse } from "next/server";
 
 // @desc Get all users
