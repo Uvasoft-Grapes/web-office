@@ -1,17 +1,23 @@
+import { ROLES_DATA } from "@/src/utils/data";
 import { connectDB } from "@config/db";
-import { protectRoute } from "@middlewares/authMiddleware";
+import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import TaskModel from "@models/Task";
-import { TypeUser } from "@utils/types";
-import Mongoose from "mongoose";
+import { TypeDesk, TypeUser } from "@utils/types";
+import { parse } from "cookie";
+import { ObjectId } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
+
+interface TypeDeskObjectId extends Omit<TypeDesk, "_id"> {
+  _id:ObjectId;
+};
 
 interface TaskAggregationResult {
   _id: string; // Represents the status or priority of the task
   count: number; // Number of tasks with this status or priority
 };
 
-const getDashboardData = async (user:TypeUser, deskIdString:string) => {
-  const deskId = new Mongoose.Types.ObjectId(deskIdString);
+const getDashboardData = async (user:TypeUser, deskId:ObjectId) => {
+  // const deskId = new Mongoose.Types.ObjectId(deskIdString);
 
   let totalTasks = 0;
   let pendingTasks = 0;
@@ -26,8 +32,8 @@ const getDashboardData = async (user:TypeUser, deskIdString:string) => {
 
   let recentTasks;
 
-  if(user.role === "admin") {
-//! Fetch admin statistics
+  if(user.role === "owner") {
+//! Fetch Admin statistics
     totalTasks = await TaskModel.countDocuments({ desk:deskId });
     pendingTasks = await TaskModel.countDocuments({ desk:deskId, status:"Pendiente" });
     inProgressTasks = await TaskModel.countDocuments({ desk:deskId, status:"En curso" });
@@ -66,7 +72,7 @@ const getDashboardData = async (user:TypeUser, deskIdString:string) => {
 //! Fetch recent 10 tasks
     recentTasks = await TaskModel.find({ desk:deskId }).sort({ createdAt:-1 }).limit(10).select("title status priority dueDate createdAt");
 
-  } else if(user.role === "user") {
+  } else if(ROLES_DATA.find((role) => role.value === user.role)) {
 //! Fetch statistics for user-specific tasks
     totalTasks = await TaskModel.countDocuments({ desk:deskId, assignedTo:user._id });
     pendingTasks = await TaskModel.countDocuments({ desk:deskId, assignedTo:user._id, status:"Pendiente" });
@@ -145,20 +151,22 @@ const getDashboardData = async (user:TypeUser, deskIdString:string) => {
 export async function GET(req:NextRequest) {
   try {
     await connectDB();
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
+    const deskToken = cookies.deskToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await protectRoute(token);
-    if(!userToken) return NextResponse.json({ message:"Access denied, token failed" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
-//! Get desk id
-    const deskId = Object.fromEntries(req.headers.entries()).desk;
-    if(!deskId) return NextResponse.json({ message:"Desk id not provided" }, { status:404 });
+//! Validate desk token
+    const desk:TypeDeskObjectId|undefined = await verifyDeskToken(deskToken, userToken._id);
+    if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
-    const response = await getDashboardData(userToken, deskId);
+    const res = await getDashboardData(userToken, desk._id);
 
-    return NextResponse.json(response, { status:200 });
-
+    return NextResponse.json(res, { status:200 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

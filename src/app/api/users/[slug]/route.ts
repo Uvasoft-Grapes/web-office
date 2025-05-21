@@ -1,16 +1,13 @@
-import { connectDB } from "@config/db";
-import { adminOnly, protectRoute } from "@middlewares/authMiddleware";
-import UserModel from "@models/User";
-import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-
-const { JWT_SECRET } =  process.env;
-
-const generateToken = (userId:string) => {
-  if(!JWT_SECRET) return;
-  return jwt.sign({ id:userId }, JWT_SECRET, { expiresIn:"7d" })
-};
+import bcrypt from "bcryptjs";
+import { parse } from "cookie";
+import { connectDB } from "@config/db";
+import { TypeDesk, TypeUser } from "@utils/types";
+import { verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
+import DeskModel from "@models/Desk";
+import TaskModel from "@models/Task";
+import UserModel from "@models/User";
+import AccountModel from "@/src/models/Account";
 
 const hashedPassword = async (newPassword:string) => {
   const salt = await bcrypt.genSalt(10);
@@ -26,18 +23,27 @@ export async function GET(req:NextRequest) {
   try {
     await connectDB();
     const userId = req.url.split("/")[5].split("?")[0];
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
+    const deskToken = cookies.deskToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await protectRoute(token);
-    if(!userToken) return NextResponse.json({ message:"Token failed" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
-    const users = await UserModel.findById(userId);
+//! Validate desk token
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
+    if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
-    return NextResponse.json(users, { status:200 });
+//! Find user
+    const user = await UserModel.findById(userId);
+    if(userToken._id.toString() !== userId) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
+
+    return NextResponse.json(user, { status:200 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
-  }
+  };
 };
 
 // @desc Update user
@@ -47,10 +53,15 @@ export async function GET(req:NextRequest) {
 export async function PUT(req:Request) {
   try {
     await connectDB();
-
     const { name, email, newPassword, password, profileImageUrl } = await req.json();
-
     const formattedEmail = email.toLowerCase().trim();
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
+
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
 //! Validations
     if(!name) return NextResponse.json({ message:"Missing name" }, { status:500 });
@@ -58,14 +69,10 @@ export async function PUT(req:Request) {
     if(!profileImageUrl) return NextResponse.json({ message:"Missing profile image" }, { status:500 });
     if(!password) return NextResponse.json({ message:"Unauthorized" }, { status:500 });
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await protectRoute(token);
-    if(!userToken) return NextResponse.json({ message:"Access denied, invalid token" }, { status:404 });
-
 //! Find user
     const user = await UserModel.findOne({ email:userToken.email }).select("+password");
     if(!user) return NextResponse.json({ message:"Token error" }, { status:401 });
+    if(userToken._id.toString() !== user._id.toString()) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! Check if email already exists
     const emailExists = await UserModel.findOne({ email:formattedEmail });
@@ -86,16 +93,17 @@ export async function PUT(req:Request) {
       profileImageUrl,
     }, { new:true });
 
-//! Return user data with JWT
-    return NextResponse.json({ 
-      _id:updatedUser._id,
-      name:updatedUser.name,
-      email:updatedUser.email,
-      profileImageUrl:updatedUser.profileImageUrl,
-      role:updatedUser.role,
-      token:generateToken(updatedUser._id),
+//! Return new user data
+    return NextResponse.json({
+      message:"Usuario actualizado",
+      user:{ 
+        _id:updatedUser._id,
+        name:updatedUser.name,
+        email:updatedUser.email,
+        profileImageUrl:updatedUser.profileImageUrl,
+        role:updatedUser.role,
+      }
     }, { status:201 });
-
   } catch (error) {
     return NextResponse.json({ message:"Unauthorized token", error }, { status:500 });
   };
@@ -103,22 +111,32 @@ export async function PUT(req:Request) {
 
 // @desc Delete user
 // @route DELETE /api/users/:id
-// @access Private (Admin only)
+// @access Owner
 
 export async function DELETE(req:NextRequest) {
   try {
     await connectDB();
     const userId = req.url.split("/")[5].split("?")[0];
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await adminOnly(token);
-    if(!userToken) return NextResponse.json({ message:"Access denied, admin only" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyOwnerToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
     const deletedUser = await UserModel.findByIdAndDelete(userId);
     if(!deletedUser) return NextResponse.json({ message:"User not found" }, { status:404 });
 
-    return NextResponse.json(deletedUser, { status:200 });
+//! Remove user from information
+  //? Desks
+    await DeskModel.updateMany({ members:userId }, { $pull:{ members:userId } });
+  //? Task
+    await TaskModel.updateMany({ assignedTo:userId }, { $pull:{ assignedTo:userId } });
+  //? Accounts
+    await AccountModel.updateMany({ assignedTo:userId }, { $pull:{ assignedTo:userId } });
+
+    return NextResponse.json({ message:"Usuario eliminado" }, { status:200 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

@@ -1,8 +1,21 @@
-export default function DeleteAlert({ content, onDelete }:{ content:string, onDelete:()=>void }) {
+import { LuTrash2 } from "react-icons/lu";
+
+export default function DeleteAlert({ content, description, error, onDelete }:{ content:string, description?:string, error?:string, onDelete:()=>void }) {
   return(
-    <div className="flex justify-between mt-6">
-      <p className="font-medium text-primary-dark dark:text-primary-light">{content}</p>
-      <button type="button" onClick={onDelete} className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-md whitespace-nowrap font-semibold text-xs md:text-sm text-primary-light dark:text-primary-dark hover:text-red-light dark:hover:text-red-dark bg-red-light dark:bg-red-dark hover:bg-transparent border border-red-light dark:border-red-dark cursor-pointer duration-300">Eliminar</button>
+    <div className="flex-1 flex flex-col max-h-full">
+      <div className="flex-1 flex flex-col items-center justify-center gap-2 overflow-y-auto">
+        <p className="font-semibold text-center text-sm sm:text-base text-basic">{content}</p>
+        <p className="font-semibold text-center text-base sm:text-lg text-red-light dark:text-red-dark">{description}</p>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <p className="flex-1 flex items-center min-h-5 font-medium text-xs text-red-light dark:text-red-dark overflow-hidden">{error}</p>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={onDelete} className="flex-1 sm:flex-auto card-btn-red w-fit sm:min-w-52">
+            <LuTrash2 className="text-xl"/>
+            Eliminar
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

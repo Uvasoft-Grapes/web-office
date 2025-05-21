@@ -1,23 +1,41 @@
-import { useState } from "react";
-import InputText from "../inputs/Text";
-import Modal from "../Modal";
+import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
-import axiosInstance from "@/src/utils/axiosInstance";
-import { API_PATHS } from "@/src/utils/apiPaths";
-import { TypeDesk } from "@/src/utils/types";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@context/AuthContext";
+import axiosInstance from "@utils/axiosInstance";
+import { API_PATHS } from "@utils/apiPaths";
+import { TypeDesk, TypeUser } from "@utils/types";
+import Modal from "@components/Modal";
+import UsersSelect from "@components/desk/Users";
+import DeleteAlert from "@components/DeleteAlert";
+import TextInput from "@components/inputs/Text";
+import toast from "react-hot-toast";
+import { LuCheck, LuTrash2 } from "react-icons/lu";
 
-export default function DeskForm({ value, isOpen, onClose, action }:{ value?:TypeDesk, isOpen:boolean, onClose:()=>void, action:(desk:TypeDesk)=>void }) {
+export default function DeskForm({ value, closeForm }:{ value?:TypeDesk, closeForm:()=>void, }) {
+  const { user, changeDesk, removeDesk } = useAuth();
+  const router = useRouter();
+
+  const [selectedUsers, setSelectedUsers] = useState<TypeUser[]>(value ? value?.members : user ? [user] : []);
   const [error, setError] = useState("");
-  const [title, setTitle] = useState(value?.title || "");
+  const [openAlert, setOpenAlert] = useState(false);
 
-  const handleSubmitCreate = async () => {
-    setError("");
-    if(!title) return setError("* El título es requerido");
+  const getIds = () => {
+    const ids:string[] = [];
+    selectedUsers.forEach((user) => {
+      ids.push(user._id);
+    });
+    return ids;
+  };
+
+  const createDesk = async (title:string) => {
     try {
-      const res = await axiosInstance.post(API_PATHS.DESKS.CREATE_DESK, { title });
-      action(res.data);
-      setTitle("");
-      onClose()
+      const res = await axiosInstance.post(API_PATHS.DESKS.CREATE_DESK, { title, members:getIds() });
+      if(res.status === 201) {
+        toast.success(res.data.message);
+        changeDesk(res.data.desk._id);
+        router.push("/dashboard");
+      };
     } catch (error) {
       if(!isAxiosError(error)) return console.error(error);
       if(error.response && error.response.data.message) {
@@ -28,17 +46,50 @@ export default function DeskForm({ value, isOpen, onClose, action }:{ value?:Typ
     };
   };
 
-  const handleSubmitUpdate = async () => {
+  const updateDesk = async (title:string) => {
     if(!value) return;
-    setError("");
-    if(!title) return setError("* El título es requerido");
     try {
-      const res = await axiosInstance.put(API_PATHS.DESKS.UPDATE_DESK(value._id), { title });
-      action(res.data);
-      setTitle("");
-      onClose()
+      const res = await axiosInstance.put(API_PATHS.DESKS.UPDATE_DESK(value._id), { title, members:getIds() });
+      if(res.status === 201) {
+        toast.success(res.data.message);
+        changeDesk(res.data.desk._id);
+        closeForm();
+      };
     } catch (error) {
       if(!isAxiosError(error)) return console.error(error);
+      if(error.response && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError("Something went wrong. Please try again.");
+      };
+    };
+  };
+
+  const handleSubmit = async (e:FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+
+    const formData = new FormData(e.currentTarget);
+    const title = formData.get("desk-title")?.toString() || "";
+
+//! Validate form data
+    if(!title?.trim()) return setError("Título obligatorio.");
+    if(selectedUsers.length < 1) return setError("Asigna al menos un miembro");
+
+    if(!value) createDesk(title);
+    if(value) updateDesk(title);
+  };
+
+  const handleDelete = async () => {
+    if(!value) return;
+    try {
+      const res = await axiosInstance.delete(API_PATHS.DESKS.DELETE_DESK(value._id)); 
+      if(res.status === 200) {
+        toast.success(res.data.message);
+        removeDesk();
+      };
+    } catch (error) {
+      if(!isAxiosError(error)) return console.error("Error deleting desk:", error);
       if(error.response && error.response.data.message) {
         setError(error.response.data.message);
       } else {
@@ -48,12 +99,29 @@ export default function DeskForm({ value, isOpen, onClose, action }:{ value?:Typ
   };
 
   return(
-    <Modal title={`${!value ? "Crear" : "Editar"} Escritorio`} isOpen={isOpen} onClose={onClose}>
-      <InputText onChange={(value)=>setTitle(value)} label="Título" placeholder="Título del escritorio" value={title}/>
-      <p className="min-h-5 min-w-full text-xs text-red-light dark:text-red-dark">{error}</p>
-      <div className="flex justify-end">
-        <button onClick={!value ? handleSubmitCreate : handleSubmitUpdate} className="card-btn-fill">Confirmar</button>
+    <form onSubmit={handleSubmit} className="flex-1 flex flex-col max-h-full">
+      <div className="flex-1 flex flex-col gap-6 overflow-y-auto">
+        <TextInput name="desk-title" label="Título" placeholder="Título del escritorio" defaultValue={value && value.title}/>
+        <UsersSelect label="Seleccionar miembros" selectedUsers={selectedUsers} setSelectedUsers={(users:TypeUser[])=>setSelectedUsers(users)}/>
       </div>
-    </Modal>
+      <div className="flex flex-col sm:flex-row gap-2 min-h-fit">
+        <p className="flex-1 flex items-center min-h-5 font-medium text-xs text-red-light dark:text-red-dark overflow-hidden">{error}</p>
+        <div className="flex flex-wrap-reverse justify-end gap-2">
+        {user?.role === "owner" && value &&
+          <button type="button" onClick={()=>setOpenAlert(true)} className="flex-1 sm:flex-auto card-btn-red w-fit sm:min-w-52">
+            <LuTrash2 className="text-xl"/>
+            Eliminar
+          </button>
+        }
+          <button type="submit" className="flex-1 sm:flex-auto card-btn-fill w-fit sm:min-w-52">
+            <LuCheck className="text-xl"/>
+            Confirmar
+          </button>
+        </div>
+      </div>
+      <Modal title="Eliminar Escritorio" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
+        {openAlert && <DeleteAlert content="¿Estás seguro de que quieres borrar el escritorio?" description="También se eliminara todo el contenido del escritorio" error={error} onDelete={handleDelete}/>}
+      </Modal>
+    </form>
   );
-}
+};

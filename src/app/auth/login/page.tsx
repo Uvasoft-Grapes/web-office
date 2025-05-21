@@ -1,70 +1,41 @@
 "use client"
 
+import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { useAuth } from "@context/AuthContext";
+import { validateEmail } from "@utils/helper";
 import InputEmail from "@components/inputs/Email";
 import InputPassword from "@components/inputs/Password";
-import axiosInstance from "@utils/axiosInstance";
-import { validateEmail } from "@utils/helper";
 import AuthLayout from "@components/layouts/AuthLayout";
-import Link from "next/link";
-import { FormEvent, useContext, useState } from "react";
-import { API_PATHS } from "@utils/apiPaths";
-import { useRouter } from "next/navigation";
-import { isAxiosError } from "axios";
-import { userContext } from "@context/UserContext";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { updateUser } = useContext(userContext);
+  const { login } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState<string|undefined>();
 
-  const handleSubmit = async (e:FormEvent) => {
+  const handleSubmit = (e:FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(undefined);
+    setError("");
 
-    if(!validateEmail(email)) {
-      setError("Por favor introduzca una dirección de correo electrónico válida.");
-      return;
-    }
-    if(!password) {
-      setError("Por favor introduzca una contraseña válida.");
-      return;
-    };
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("user-email")?.toString() || "";
+    const password = formData.get("user-password")?.toString() || "";
 
-    try {
-      const res = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
-        email,
-        password
-      });
+//! Validate form data
+    if(!validateEmail(email)) return setError("Por favor introduzca una dirección de correo electrónico válida.");
+    if(password.trim().length < 8) return setError("La contraseña debe tener mínimo 8 caracteres.");
 
-      const { token } = res.data;
-
-      if(token) {
-        localStorage.setItem("token", token);
-        updateUser(res.data);
-        router.push("/auth/desk");
-      };
-
-    } catch (error) {
-      if(!isAxiosError(error)) return console.error(error);
-      if(error.response && error.response.data.message) {
-        setError(error.response.data.message);
-      } else {
-        setError("Something went wrong. Please try again.");
-      };
-    };
-  }; 
+    login(email, password);
+  };
 
   return(
     <AuthLayout>
       <div className="flex flex-col justify-center lg:w-[70%] md:h-full">
-        <h3 className="text-xl font-semibold text-primary-dark dark:text-primary-light">Bienvenido</h3>
+        <h3 className="text-xl font-semibold text-basic">Bienvenido</h3>
         <p className="text-xs font-medium text-quaternary mt-[5px] mb-6">Por favor introduzca sus datos para iniciar sesión</p>
-        <form onSubmit={handleSubmit}>
-          <InputEmail value={email} onChange={(value:string) => setEmail(value)} label="Correo Electrónico" placeholder="Nombre@Ejemplo.com"/>
-          <InputPassword value={password} onChange={(value:string) => setPassword(value)} label="Contraseña" placeholder="Mínimo 8 caracteres" autoComplete="current-password" />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          <InputEmail name="user-email" label="Correo Electrónico" placeholder="Nombre@Ejemplo.com"/>
+          <InputPassword name="user-password" label="Contraseña" placeholder="Mínimo 8 caracteres" autoComplete="current-password" />
         {error && 
           <p className="text-red-500 text-xs pb-2.5">{error}</p>
         }

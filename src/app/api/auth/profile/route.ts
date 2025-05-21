@@ -1,38 +1,36 @@
-import { connectDB } from "@config/db";
-import { protectRoute } from "@middlewares/authMiddleware";
-import UserModel from "@models/User";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
-
-const { JWT_SECRET } =  process.env;
-
-// Generate JWT Token
-const generateToken = (userId:string) => {
-  if(!JWT_SECRET) return;
-  return jwt.sign({ id:userId }, JWT_SECRET, { expiresIn:"7d" })
-};
+import bcrypt from "bcryptjs";
+import { parse } from 'cookie';
+import { connectDB } from "@config/db";
+import { TypeDesk, TypeUser } from "@utils/types";
+import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
+import UserModel from "@models/User";
 
 // @desc Get user profile
 // @route GET /api/auth/profile
 // @access Private (Requires JWT)
 
-export async function GET(req:NextRequest) {
+export async function GET(req:Request) {
   try {
     await connectDB();
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
+    const deskToken = cookies.deskToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await protectRoute(token);
-    if(!userToken) return NextResponse.json({ message:"Token failed" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
+
+//! Validate desk token
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
 
 //! Find user
     const user = await UserModel.findById(userToken._id);
     if(!user) return NextResponse.json({ message:"User not found" }, { status:404 });
 
-//! Return user data
-    return NextResponse.json(user, { status:200 });
-
+//! Return active user and desk data
+    return NextResponse.json({ message:"Sesión activa", user, desk }, { status:200 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   }
@@ -46,11 +44,13 @@ export async function PUT(req:NextRequest) {
   try {
     await connectDB();
     const { name, email, password } = await req.json();
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await protectRoute(token);
-    if(!userToken) return NextResponse.json({ message:"Token failed" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
     const user = await UserModel.findById(userToken._id);
     if(!user) return NextResponse.json({ message:"User not found" }, { status:404 });
@@ -72,7 +72,6 @@ export async function PUT(req:NextRequest) {
       email:updatedUser.email,
       profileImageUrl:updatedUser.profileImageUrl,
       role:updatedUser.role,
-      token:generateToken(updatedUser._id),
     }, { status:201 });
 
   } catch (error) {

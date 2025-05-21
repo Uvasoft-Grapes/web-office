@@ -1,25 +1,30 @@
-import { connectDB } from "@config/db";
-import { adminOnly, protectRoute } from "@middlewares/authMiddleware";
-import DeskModel from "@models/Desk";
 import { NextRequest, NextResponse } from "next/server";
+import { parse } from 'cookie';
+import { connectDB } from "@config/db";
+import { TypeUser } from "@utils/types";
+import { verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
+import DeskModel from "@models/Desk";
+import { ROLES_DATA } from "@/src/utils/data";
 
-// @desc Get all desks (Admin: all, User: only assigned desks)
+// @desc Get all desks
 // @route GET /api/desks
-// @access Private
+// @access Owner:all, Admin|User|Client:only assigned desks
 
-export async function GET(req:NextRequest) {
+export async function GET(req:Request) {
   try {
     await connectDB();
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await protectRoute(token);
-    if(!userToken) return NextResponse.json({ message:"Token failed" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
 //! All desks
     let userDesks = [];
-    if(userToken.role === "admin") userDesks = await DeskModel.find().populate("members", "name email profileImageUrl");
-    if(userToken.role === "user") userDesks = await DeskModel.find({ members:userToken._id }).populate("members", "name email profileImageUrl");
+    if(userToken.role === "owner") userDesks = await DeskModel.find().populate("members", "name email profileImageUrl role");
+    if(ROLES_DATA.find((role) => role.value === userToken.role)) userDesks = await DeskModel.find({ members:userToken._id }).populate("members", "name email profileImageUrl role");
 
     return NextResponse.json(userDesks, { status:200 });
 
@@ -30,26 +35,31 @@ export async function GET(req:NextRequest) {
 
 // @desc Create desk
 // @route POST /api/desks
-// @access Private (Admin only)
+// @access Owner
 
 export async function POST(req:NextRequest) {
   try {
     await connectDB();
-    const { title } = await req.json();
+    const { title, members } = await req.json();
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
+
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyOwnerToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
 //! Validations
     if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
     if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await adminOnly(token);
-    if(!userToken) return NextResponse.json({ message:"Token failed" }, { status:404 });
-
-    const newDesk = await DeskModel.create({ title, members:[userToken._id] });
+    if(!members.includes(userToken._id.toString())) members.push(userToken._id);
+    const newDesk = await DeskModel.create({ title, members });
     if(!newDesk) return NextResponse.json({ message:"Error creating desk" }, { status:500 });
 
-    return NextResponse.json(newDesk, { status:200 });
+    const findDesk = await DeskModel.findById(newDesk._id).populate("members", "name email profileImageUrl role");
+
+    return NextResponse.json({ message:"Escritorio creado", desk:findDesk }, { status:201 });
 
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });

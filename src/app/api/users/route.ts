@@ -1,23 +1,37 @@
+import { NextResponse } from "next/server";
+import { parse } from 'cookie';
 import { connectDB } from "@config/db";
-import { adminOnly } from "@middlewares/authMiddleware";
+import { TypeUser } from "@utils/types";
+import { verifyOwnerToken } from "@middlewares/authMiddleware";
 import TaskModel from "@models/Task";
 import UserModel from "@models/User";
-import { NextRequest, NextResponse } from "next/server";
+
+const rolManagement: Record<string, number> = {
+  "owner":1,
+  "admin":2,
+  "user":3,
+  "client":4
+};
 
 // @desc Get all users
 // @route GET /api/users
-// @access Private (Admin only)
+// @access Owner
 
-export async function GET(req:NextRequest) {
+export async function GET(req:Request) {
   try {
     await connectDB();
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await adminOnly(token);
-    if(!userToken) return NextResponse.json({ message:"Access denied, admin only" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyOwnerToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
-    const users = await UserModel.find().select("-password");
+    let users = await UserModel.find().select("-password");
+
+//! Sort users by rol
+    users = users.sort((a, b) => rolManagement[a.rol] - rolManagement[b.rol]);
 
     const usersWithTaskCounts = await Promise.all(users.map( async (user) => {
       const pendingTasks = await TaskModel.countDocuments({ assignedTo:user._id, status:"Pendiente" });

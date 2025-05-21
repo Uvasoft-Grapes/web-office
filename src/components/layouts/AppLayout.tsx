@@ -1,19 +1,19 @@
 "use client"
 
-import { userContext } from "@context/UserContext";
-import { ReactNode, useContext } from "react";
+import { useAuth } from "@context/AuthContext";
+import { ReactNode } from "react";
 import Navbar from "@components/layouts/Navbar";
 
 export default function AppLayout({ children, activeMenu }:{ children:ReactNode, activeMenu:string }) {
-  const { user } = useContext(userContext);
+  const { user } = useAuth();
   return(
-    <>
+    <div className="flex flex-col items-center min-h-screen min-w-screen">
       <Navbar activeMenu={activeMenu} />
     {user &&
-      <main className="m-5">
+      <main className="flex-1 flex flex-col p-5 pr-8 w-full max-w-[1750px]">
         {children}
       </main>
     }
-    </>
+    </div>
   );
 };

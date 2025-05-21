@@ -5,8 +5,10 @@ const UserSchema = new Schema({
   email:{ type:String, required:[true, 'DB: Email required.'], trim:true, unique:true },
   password:{ type:String, required:[true, 'DB: Password required.'], minLength:[6, 'DB: Password must be at least 6 characters.'], select:false },
   profileImageUrl: { type:String, default:null },
-  role:{ type:String, enum:["admin", "user"], default:"user" },
+  role:{ type:String, enum:["owner", "admin", "user", "client"], default:"user" },
 }, { timestamps:true });
+
 delete models.User;
+
 const UserModel = models.User || model('User', UserSchema);
 export default UserModel;

@@ -36,22 +36,26 @@
   }
 }
 
+.text-basic {
+  @apply text-primary-dark dark:text-primary-light;
+}
+
 .btn-primary {
-  @apply w-full text-sm font-medium text-primary-light dark:text-primary-dark bg-blue-light dark:bg-blue-dark shadow-lg;
+  @apply w-full text-sm font-medium text-primary-dark dark:text-primary-light bg-blue-light dark:bg-blue-dark shadow-lg;
 }
 
 .card {
-  @apply p-6 rounded-2xl border-2 border-secondary-light dark:border-secondary-dark shadow-md shadow-quaternary/15 dark:shadow-secondary-dark/75 overflow-hidden;
+  @apply py-2 sm:py-4 px-4 sm:px-6 rounded-xl border-2 border-secondary-light dark:border-secondary-dark shadow shadow-quaternary/15 dark:shadow-secondary-dark/75 overflow-hidden;
 }
 
 .card-btn {
-  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg text-nowrap font-medium text-[12px] text-primary-dark dark:text-primary-light bg-tertiary-light hover:bg-primary-light dark:bg-tertiary-dark dark:hover:bg-primary-dark border border-quaternary cursor-pointer duration-300;
+  @apply flex items-center justify-center gap-1.5 px-5 py-3 rounded-lg text-nowrap font-medium text-xs sm:text-sm text-primary-dark dark:text-primary-light bg-secondary-light hover:bg-primary-light dark:bg-secondary-dark dark:hover:bg-primary-dark border border-quaternary cursor-pointer disabled:cursor-not-allowed duration-300;
 }
 .card-btn-fill {
-  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg text-nowrap font-semibold text-[12px] text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent cursor-pointer duration-300;
+  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent cursor-pointer duration-300;
 }
 .card-btn-red {
-  @apply flex items-center gap-1.5 px-4 py-3 rounded-lg font-semibold text-[12px] text-primary-light dark:text-primary-dark hover:text-red-light hover:dark:text-red-dark bg-red-light dark:bg-red-dark hover:bg-transparent cursor-pointer duration-300;
+  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-red-light hover:dark:text-red-dark bg-red-light dark:bg-red-dark hover:bg-transparent cursor-pointer duration-300;
 }
 
 .form-card {
@@ -63,13 +67,29 @@
 }
 
 .add-btn {
-  @apply flex items-center justify-center gap-1.5 w-full px-4 py-3 rounded whitespace-nowrap font-medium text-sm md:text-base text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent border border-primary-dark dark:border-primary-light cursor-pointer duration-300;
+  @apply flex items-center justify-center gap-1.5 w-full px-4 py-3 rounded whitespace-nowrap font-medium text-sm md:text-base text-primary-dark dark:text-primary-light hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent border border-primary-dark dark:border-primary-light cursor-pointer duration-300;
 }
 
-.download-btn {
-  @apply items-center justify-center gap-0.5 xl:gap-1 px-3 py-2 rounded-full whitespace-nowrap font-medium text-xs xl:text-sm text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent border border-primary-dark dark:border-primary-light cursor-pointer duration-300;
+.tool-btn {
+  @apply flex items-center justify-center gap-1 xl:gap-1 px-6 h-10 rounded-full whitespace-nowrap font-semibold text-xs xl:text-sm text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-primary-light dark:hover:bg-primary-dark border-2 border-primary-dark dark:border-primary-light cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 duration-300;
+}
+
+.tool-btn-red {
+  @apply flex items-center justify-center gap-1 xl:gap-1 px-6 h-10 rounded-full whitespace-nowrap font-semibold text-xs xl:text-sm text-primary-light dark:text-primary-dark hover:text-red-light dark:hover:text-red-dark bg-red-light dark:bg-red-dark hover:bg-primary-light dark:hover:bg-primary-dark border-2 border-red-light dark:border-red-dark cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 duration-300;
 }
 
 .user-card {
-  @apply p-4 rounded-xl border hover:bg-secondary-light dark:hover:bg-secondary-dark border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/15 dark:shadow-secondary-dark/75 duration-300;
+  @apply rounded-xl border bg-secondary-light dark:bg-secondary-dark hover:bg-primary-light dark:hover:bg-primary-dark border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary/15 dark:shadow-secondary-dark/75 duration-300;
+}
+
+.info-box {
+  @apply flex-1 flex flex-col gap-2;
+}
+
+.info-box-label {
+  @apply text-nowrap font-semibold text-xs text-quaternary;
+}
+
+.info-box-value {
+  @apply font-medium text-sm text-tertiary-dark dark:text-tertiary-light;
 }

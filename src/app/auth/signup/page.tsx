@@ -1,91 +1,80 @@
 "use client"
 
-import InputEmail from "@components/inputs/Email";
-import InputPassword from "@components/inputs/Password";
-import ProfilePhotoSelector from "@components/inputs/ProfilePhotoSelector";
-import InputText from "@components/inputs/Text";
-import { userContext } from "@context/UserContext";
+import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { isAxiosError } from "axios";
+import { useAuth } from "@context/AuthContext";
 import { API_PATHS } from "@utils/apiPaths";
-import { getAvatars } from "@utils/avatars";
 import axiosInstance from "@utils/axiosInstance";
+import { getAvatars } from "@utils/avatars";
 import { validateEmail } from "@utils/helper";
 import AuthLayout from "@components/layouts/AuthLayout";
-import { isAxiosError } from "axios";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { FormEvent, useContext, useState } from "react";
+import EmailInput from "@components/inputs/Email";
+import PasswordInput from "@components/inputs/Password";
+import TextInput from "@components/inputs/Text";
+import ProfilePhotoSelector from "@components/inputs/ProfilePhoto";
+import toast from "react-hot-toast";
 
 export default function SignUpPage() {
   const router = useRouter();
-  const { updateUser } = useContext(userContext);
+  const { updateUser } = useAuth();
 
   const [profilePic, setProfilePic] = useState<string>(getAvatars()[0].src);
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [adminInviteToken, setAdminInviteToken] = useState("");
   const [error, setError] = useState<string|undefined>();
 
-  const handleSubmit = async (e:FormEvent) => {
-    e.preventDefault();
-    setError(undefined);
-
-    if(!fullName) {
-      setError("Por favor introduzca un nombre.");
-      return;
-    };
-    if(!validateEmail(email)) {
-      setError("Por favor introduzca una dirección de correo electrónico válida.");
-      return;
-    };
-    if(!password) {
-      setError("Por favor introduzca una contraseña válida.");
-      return;
-    };
-    if(!adminInviteToken) {
-      setError("Por favor introduzca un token.");
-      return;
-    };
-
+  const signup = async (data:{ name:string, email:string, password:string, token:string }) => {
     try {
-      const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
-        profileImageUrl:profilePic,
-        name:fullName,
-        email,
-        password,
-        adminInviteToken,
-      });
-
-      const { token } = res.data;
-
-      if(token) {
-        localStorage.setItem("token", token);
-        updateUser(res.data);
-        router.push("/dashboard");
+      const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, { profilePic, ...data });
+      if(res.status === 201) {
+        toast.success(res.data.message);
+        updateUser(res.data.user);
+        router.push("/");
       };
-
     } catch (error) {
       if(!isAxiosError(error)) return console.error("Error register user", error);
       if(error.response && error.response.data.message) {
-        setError(error.response.data.message);
+        toast.error(error.response.data.message);
       } else {
-        setError("Something went wrong. Please try again.");
+        toast.error("Something went wrong. Please try again.");
       };
     };
+  };
+
+  const handleSubmit = (e:FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError("");
+
+//! Get form data
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('user-name')?.toString() || "";
+    const email = formData.get("user-email")?.toString() || "";
+    const password = formData.get("user-password")?.toString() || "";
+    const token = formData.get("user-token")?.toString() || "";
+
+//! Validate form data
+    if(!profilePic) return setError("Selecciona una imagen de perfil.");
+    if(!name?.trim()) return setError("Nombre obligatorio.");
+    if(!validateEmail(email)) return setError("Por favor introduzca una dirección de correo electrónico válida.");
+    if(password.trim().length < 8) return setError("La contraseña debe tener mínimo 8 caracteres.");
+    if(!token.trim()) return setError("Por favor solicita un token de registro.");
+
+//! Signup
+    signup({ name, email, password, token });
   };
 
   return(
     <AuthLayout>
       <div className="flex flex-col justify-center md:h-full">
-        <h3 className="text-xl font-semibold text-primary-dark dark:text-primary-light">Crear Cuenta</h3>
-        <p className="text-xs font-medium text-quaternary mt-[5px] mb-6">Únete a nosotros hoy mismo introduciendo tus datos a continuación</p>
-        <form onSubmit={handleSubmit} className="">
+        <h3 className="text-xl font-semibold text-basic">Crear Cuenta</h3>
+        <p className="text-xs font-medium text-quaternary mt-[5px] mb-6">Introduce tus datos a continuación para registrarte</p>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <ProfilePhotoSelector imageUrl={profilePic} setImageUrl={(file:string)=>setProfilePic(file)}/>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-            <InputText value={fullName} onChange={(value:string) => setFullName(value)} label="Nombre completo" placeholder="Nombre Apellido" autoComplete="name" />
-            <InputEmail value={email} onChange={(value:string) => setEmail(value)} label="Correo Electrónico" placeholder="Nombre@Ejemplo.com"/>
-            <InputPassword value={password} onChange={(value:string) => setPassword(value)} label="Contraseña" placeholder="Mínimo 8 caracteres" autoComplete="new-password" />
-            <InputText value={adminInviteToken} onChange={(value:string) => setAdminInviteToken(value)} label="Token" placeholder="Token de invitación"/>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <TextInput name="user-name" label="Nombre completo" placeholder="Nombre Apellido" autoComplete="nickname"/>
+            <EmailInput name="user-email" label="Correo Electrónico" placeholder="Nombre@Ejemplo.com"/>
+            <PasswordInput name="user-password" label="Contraseña" placeholder="Mínimo 8 caracteres" autoComplete="new-password" />
+            <TextInput name="user-token" label="Token" placeholder="Token de registro" autoComplete="none"/>
           </div>
         {error && 
           <p className="text-red-500 text-xs pb-2.5">{error}</p>

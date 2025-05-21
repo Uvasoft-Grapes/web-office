@@ -1,27 +1,37 @@
-import { connectDB } from "@config/db";
-import { adminOnly, protectRoute } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
 import { NextRequest, NextResponse } from "next/server";
+import { parse } from "cookie";
+import { connectDB } from "@config/db";
+import { TypeDesk, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
+import TaskModel from "@models/Task";
 
 // @desc Get task by ID
 // @route GET /api/tasks/:id
-// @access Private
+// @access Owner, Assigned
 
 export async function GET(req:NextRequest) {
   try {
     await connectDB();
     const taskId = req.url.split("/")[5].split("?")[0];
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
+    const deskToken = cookies.deskToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await protectRoute(token);
-    if(!userToken) return NextResponse.json({ message:"Token failed" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
-    const task = await TaskModel.findById(taskId).populate("assignedTo", "name email profileImageUrl");
+//! Validate desk token
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
+    if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
+
+//! Find task
+    const task = await TaskModel.findById(taskId).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
     if(!task) return NextResponse.json({ message:"Task not found" }, { status:404 });
+    if(userToken.role !== "owner" && userToken.role !== "admin" && !task.assignedTo.find((user:TypeUser) => user._id.toString() === userToken._id.toString())) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
     return NextResponse.json(task, { status:200 });
-
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };
@@ -29,62 +39,85 @@ export async function GET(req:NextRequest) {
 
 // @desc Update task details
 // @route PUT /api/tasks/:id
-// @access Private
+// @access Owner, Admin
 
 export async function PUT(req:NextRequest) {
   try {
     await connectDB();
     const taskId = req.url.split("/")[5].split("?")[0];
-    const { title, description, priority, dueDate, assignedTo, attachments, todoChecklist } = await req.json();
+    const { folder, title, description, priority, dueDate, assignedTo, attachments, todoChecklist } = await req.json();
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
+    const deskToken = cookies.deskToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await protectRoute(token);
-    if(!userToken) return NextResponse.json({ message:"Token failed" }, { status:404 });
+//! Validations
+    if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
+    if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
+    if(description.trim().length > 600) return NextResponse.json({ message:"La descripción puede tener un máximo de 600 caracteres." }, { status:400 });
 
-    const task = await TaskModel.findById(taskId).populate("assignedTo", "name email profileImageUrl");
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyAdminToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
+
+//! Validate desk token
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
+    if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
+
+//! Update Task
+    const task = await TaskModel.findById(taskId);
     if(!task) return NextResponse.json({ message:"Task not found" }, { status:404 });
 
+    task.folder = folder || task.folder;
     task.title = title || task.title;
     task.description = description || task.description;
     task.priority = priority || task.priority;
     task.dueDate = dueDate || task.dueDate;
     task.todoChecklist = todoChecklist || task.todoChecklist;
     task.attachments = attachments || task.attachments;
-
     if(assignedTo) {
       if(!Array.isArray(assignedTo)) return NextResponse.json({ message:"AssignedTo must be an array of user IDs" }, { status:400 });
       task.assignedTo = assignedTo;
     };
 
-    const updatedTask = await task.save();
+    await task.save();
 
-    return NextResponse.json({ message:"Task updated successfully", updatedTask }, { status:201 });
+//! Populate task
+    const findTask = await TaskModel.findById(taskId).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
+    if(!findTask) return NextResponse.json({ message:"Task not found" }, { status:404 });
 
+    return NextResponse.json({ message:"Tarea actualizada", task:findTask }, { status:201 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };
 };
 
-// @desc Delete task (Admin only)
+// @desc Delete task
 // @route DELETE /api/tasks/:id
-// @access Private (Admin)
+// @access Owner
 
 export async function DELETE(req:NextRequest) {
   try {
     await connectDB();
     const taskId = req.url.split("/")[5].split("?")[0];
+    const cookieHeader = req.headers.get("cookie");
+    const cookies = cookieHeader ? parse(cookieHeader) : {};
+    const authToken = cookies.authToken;
+    const deskToken = cookies.deskToken;
 
-//! Validate token
-    const token = Object.fromEntries(req.headers.entries()).authorization;
-    const userToken = await adminOnly(token);
-    if(!userToken) return NextResponse.json({ message:"Access denied, admin only" }, { status:404 });
+//! Validate user token
+    const userToken:TypeUser|NextResponse = await verifyOwnerToken(authToken);
+    if(userToken instanceof NextResponse) return userToken;
 
-    const task = await TaskModel.findByIdAndDelete(taskId).populate("assignedTo", "name email profileImageUrl");
+//! Validate desk token
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
+    if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
+
+//! Delete Task
+    const task = await TaskModel.findByIdAndDelete(taskId).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
     if(!task) return NextResponse.json({ message:"Task not found" }, { status:404 });
 
     return NextResponse.json({ message:"Task deleted successfully" }, { status:200 });
-
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

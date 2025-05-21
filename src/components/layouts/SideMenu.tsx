@@ -1,38 +1,30 @@
 "use client"
 
-import { getAvatars } from "@utils/avatars";
-import { SIDE_MENU_DATA, SIDE_MENU_USER_DATA, TypeMenuData } from "@utils/data";
-import { TypeUser } from "@utils/types";
-import Image from "next/image";
+import { useAuth } from "@context/AuthContext";
+import { ROLES_DATA, SIDE_MENU_DATA, TypeMenuData } from "@utils/data";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { PiDesktopDuotone } from "react-icons/pi";
 
-export default function SideMenu({ user, activeMenu }:{ user?:TypeUser, activeMenu:string }) {
+export default function SideMenu({ activeMenu }:{ activeMenu:string }) {
+  const { user, desk } = useAuth();
+
   const [sideMenuData, setSideMenuData] = useState<TypeMenuData[]>([]);
 
   useEffect(() => {
-    if(user) setSideMenuData(user.role === "admin" ? SIDE_MENU_DATA : SIDE_MENU_USER_DATA);
+    if(!user) return;
+    const level = ROLES_DATA.findIndex((item) => item.value === user.role);
+    setSideMenuData(SIDE_MENU_DATA.filter((item) => item.level >= level));
     return () => {};
   },[user]);
 
   return(
-    <nav className="max-w-64 max-h-[calc(100vh-56px)] min-h-[calc(100vh-56px)] overflow-hidden bg-secondary-light dark:bg-secondary-dark border-r border-secondary-light dark:border-secondary-dark">
-      <Link href={`/auth/profile`} className="flex gap-2 p-5">
-        <div className="flex justify-center items-center border-2 border-quaternary rounded-full max-w-10 max-h-10 overflow-hidden">
-          <Image 
-            src={user?.profileImageUrl || getAvatars()[0]}
-            alt="Imagen de perfil"
-            width={100}
-            height={100}
-            className="max-w-10 max-h-10 rounded-full"
-          />
-        </div>
-        <div className="flex flex-col overflow-hidden max-w-60">
-          <h5 className="font-medium text-ellipsis whitespace-nowrap text-primary-dark dark:text-primary-light leading-6">{user?.name}</h5>
-          <p className="font-medium text-ellipsis whitespace-nowrap text-[10px] text-quaternary">{user?.email}</p>
-        </div>
+    <nav className="min-w-64 max-w-64 max-h-[calc(100vh-56px)] min-h-[calc(100vh-56px)] overflow-hidden bg-secondary-light dark:bg-secondary-dark border-r border-tertiary-light dark:border-tertiary-dark">
+      <Link href={`/auth/profile`} className="flex sm:hidden items-center gap-2 p-5 text-basic hover:text-blue-light dark:hover:text-blue-dark border-b border-tertiary-light dark:border-tertiary-dark duration-300">
+        <PiDesktopDuotone className="text-3xl"/>
+        <p className="font-semibold text-xl">{desk?.title}</p>
       </Link>
-      <div className="max-h-56 min-h-56 overflow-y-auto text-primary-dark dark:text-primary-light">
+      <div className="max-h-56 min-h-56 overflow-y-auto text-basic">
       {sideMenuData.map((item, index) => (
         <Link 
           key={`menu_${index}`}

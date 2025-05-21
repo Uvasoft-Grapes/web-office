@@ -1,16 +1,12 @@
+import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { serialize } from 'cookie';
 import { connectDB } from "@config/db";
 import UserModel from "@models/User";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import { NextResponse } from "next/server";
+import SessionModel from "@models/Session";
+import { generateAuthToken } from "@/src/middlewares/authMiddleware";
 
-const { JWT_SECRET } =  process.env;
-
-// Generate JWT Token
-const generateToken = (userId:string) => {
-  if(!JWT_SECRET) return;
-  return jwt.sign({ id:userId }, JWT_SECRET, { expiresIn:"7d" })
-};
+const { NODE_ENV } =  process.env;
 
 // @desc Login user
 // @route POST /api/auth/login
@@ -21,9 +17,8 @@ export async function POST(req:Request) {
     await connectDB();
     const { email, password } = await req.json();
 
-    const formattedEmail = email.toLowerCase().trim();
-
 //! Validations
+    const formattedEmail = email.toLowerCase().trim();
     if(!email) return NextResponse.json({ message:"Missing email" }, { status:500 });
     if(!password) return NextResponse.json({ message:"Missing password" }, { status:500 });
 
@@ -35,17 +30,36 @@ export async function POST(req:Request) {
     const isMatch = await bcrypt.compare(password, user.password);
     if(!isMatch) return NextResponse.json({ message:"Invalid email or password" }, { status:401 });
 
-//! Return user data with JWT
-    return NextResponse.json({ 
-      _id:user._id,
-      name:user.name,
-      email:user.email,
-      profileImageUrl:user.profileImageUrl,
-      role:user.role,
-      token:generateToken(user._id),
-    }, { status:200 });
+    const token = generateAuthToken(user._id);
+    if(!token) return NextResponse.json({ message:"Error generating token" }, { status:401 });
 
+    const serializedAuthCookie = serialize('authToken', token, {
+      httpOnly:true,
+      secure:NODE_ENV === 'production',
+      path:'/',
+      sameSite:'strict',
+    });
+
+//! Create user session
+    const newSession = await SessionModel.create({ user:user._id, checkIn:new Date() });
+    if(!newSession) return NextResponse.json({ message:"Error creating session" }, { status:500 });
+
+//! Return user data with JWT
+    const res = NextResponse.json({
+      message:"Sesión iniciada",
+      user:{
+        _id:user._id,
+        name:user.name,
+        email:user.email,
+        profileImageUrl:user.profileImageUrl,
+        role:user.role,
+      }
+    }, { status: 200 });
+    res.headers.set('Set-Cookie', serializedAuthCookie);
+
+    //! Return user data with JWT
+    return res;
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
-  }
+  };
 };
