@@ -8,7 +8,7 @@ import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import { TypeDesk, TypeUser } from "@utils/types";
 import Modal from "@components/Modal";
-import UsersSelect from "@components/desk/Users";
+import UsersSelect from "@/src/components/desks/Users";
 import DeleteAlert from "@components/DeleteAlert";
 import TextInput from "@components/inputs/Text";
 

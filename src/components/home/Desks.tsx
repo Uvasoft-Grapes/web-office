@@ -7,7 +7,7 @@ import { useAuth } from "@context/AuthContext";
 import { TypeDesk } from "@utils/types";
 import { API_PATHS } from "@utils/apiPaths";
 import axiosInstance from "@utils/axiosInstance";
-import DeskForm from "../desk/Form";
+import DeskForm from "@components/desks/Form";
 import Modal from "@components/Modal";
 import Skeleton from "@components/Skeleton";
 

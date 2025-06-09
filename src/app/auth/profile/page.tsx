@@ -11,7 +11,7 @@ import { ROLES_DATA } from "@utils/data";
 import ProtectedRoute from "@app/ProtectedRoute";
 import AppLayout from "@components/layouts/AppLayout";
 import Modal from "@components/Modal";
-import DeskForm from "../../../components/desk/Form";
+import DeskForm from "@components/desks/Form";
 import FormProfile from "@components/auth/FormProfile";
 import Folders from "@components/folders/Folders";
 import AvatarGroup from "@components/users/AvatarGroup";
