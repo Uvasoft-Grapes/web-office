@@ -1,10 +1,10 @@
-import { decodedInviteToken, generateAuthToken } from "@middlewares/authMiddleware";
-import { connectDB } from "@config/db";
-import UserModel from "@models/User";
-import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 import { serialize } from "cookie";
-import SessionModel from "@/src/models/Session";
+import { connectDB } from "@config/db";
+import { decodedInviteToken, generateAuthToken } from "@middlewares/authMiddleware";
+import UserModel from "@models/User";
+import SessionModel from "@models/Session";
 
 const { NODE_ENV } =  process.env;
 

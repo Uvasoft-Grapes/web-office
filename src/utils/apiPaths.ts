@@ -24,6 +24,13 @@ export const API_PATHS = {
     DELETE_SESSION:(sessionId:string)=>`/api/sessions/${sessionId}`, // Admin Token required
   },
 
+  REPORTS:{
+    GET_ALL_REPORTS:"/api/reports", // Auth Token required. Filter Admin, owner all and User only created
+    CREATE_REPORT:"/api/reports", // Auth Token required
+    UPDATE_REPORT:(reportId:string)=>`/api/reports/${reportId}`, // Auth Token required
+    DELETE_REPORT:(reportId:string)=>`/api/reports/${reportId}`, // Auth Token required
+  },
+
   DESKS:{
     CREATE_DESK:"/api/desks", // Admin Token required
     GET_ALL_DESKS:"/api/desks", // Auth Token required
@@ -45,6 +52,7 @@ export const API_PATHS = {
   DASHBOARD:{
     GET_TASKS_DATA:"/api/dashboard/tasks", // Auth Token required
     GET_ACCOUNTS_DATA:"/api/dashboard/accounts", // Auth Token required
+    GET_EVENTS_DATA:"/api/dashboard/events", // Auth Token required
   },
 
   TASKS:{
@@ -65,5 +73,44 @@ export const API_PATHS = {
     CREATE_TRANSACTION:`/api/accounts/transactions`, // Admin Token required
     UPDATE_TRANSACTION:(transactionId:string) => `/api/accounts/transactions/${transactionId}`, // Admin Token required
     DELETE_TRANSACTION:(transactionId:string) => `/api/accounts/transactions/${transactionId}`, // Admin Token required
+  },
+
+  PRODUCTS:{
+    GET_ALL_PRODUCTS:"/api/products", // Auth Token required. Filter Owner all, Admin, User, client assigned
+    GET_PRODUCT_BY_ID:(productId:string) => `/api/products/${productId}`, // Auth Token required
+    CREATE_PRODUCT:"/api/products", // Admin Token required
+    UPDATE_PRODUCT:(productId:string) => `/api/products/${productId}`, // Admin Token required
+    DELETE_PRODUCT:(productId:string) => `/api/products/${productId}`, // Owner Token required
+  },
+
+  INVENTORIES:{
+    GET_ALL_INVENTORIES:"/api/inventories", // Auth Token required. Filter Owner all, Admin, User, client assigned
+    GET_INVENTORY_BY_ID:(inventoryId:string) => `/api/inventories/${inventoryId}`, // Auth Token required
+    CREATE_INVENTORY:"/api/inventories", // Admin Token required
+    UPDATE_INVENTORY:(inventoryId:string) => `/api/inventories/${inventoryId}`, // Admin Token required
+    DELETE_INVENTORY:(inventoryId:string) => `/api/inventories/${inventoryId}`, // Owner Token required
+  },
+
+  MOVEMENTS:{
+    CREATE_MOVEMENT:`/api/movements`, // Auth Token required
+    UPDATE_MOVEMENT:(movementId:string) => `/api/movements/${movementId}`, // Admin Token required
+    DELETE_MOVEMENT:(movementId:string) => `/api/movements/${movementId}`, // Owner Token required
+  },
+
+  EVENTS:{
+    GET_ALL_EVENTS:"/api/events", // Auth Token required. Filter Admin (all) and User (assigned)
+    GET_EVENT_BY_ID:(eventId:string) => `/api/events/${eventId}`, // Auth Token required
+    CREATE_EVENT:"/api/events", // Admin Token required
+    UPDATE_EVENT:(eventId:string) => `/api/events/${eventId}`, // Auth Token required
+    DELETE_EVENT:(eventId:string) => `/api/events/${eventId}`, // Admin Token required
+  },
+
+  GOALS:{
+    GET_ALL_GOALS:"/api/goals", // Auth Token required. Filter Admin (all) and User (assigned)
+    GET_GOAL_BY_ID:(goalId:string) => `/api/goals/${goalId}`, // Auth Token required
+    CREATE_GOAL:"/api/goals", // Admin Token required
+    UPDATE_GOAL:(goalId:string) => `/api/goals/${goalId}`, // Auth Token required
+    UPDATE_OBJECTIVES:(goalId:string) => `/api/goals/${goalId}/objectives`, // Auth Token required
+    DELETE_GOAL:(goalId:string) => `/api/goals/${goalId}`, // Admin Token required
   },
 };

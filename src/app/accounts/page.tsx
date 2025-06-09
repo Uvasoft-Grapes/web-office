@@ -59,7 +59,7 @@ export default function AccountsPage() {
             <h2 className="font-semibold text-3xl">Cuentas</h2>
 {/* Filter */}
             <div className="flex-1 sm:flex-none sm:min-w-64">
-              <FolderSelect disabled={!accounts ? true : false} label="" selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
+              <FolderSelect disabled={!accounts ? true : false} selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
             </div>
           </section>
 {/* Loading */}

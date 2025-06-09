@@ -1,7 +1,7 @@
-import { TRANSACTIONS_CATEGORIES_DATA, TypeTransactionCategory } from "@/src/utils/data";
 import { useState } from "react";
 import { LuFilterX, LuSquareDashed } from "react-icons/lu";
-import Modal from "../Modal";
+import { TRANSACTIONS_CATEGORIES_DATA, TypeTransactionCategory } from "@utils/data";
+import Modal from "@components/Modal";
 
 export default function CategorySelect({ disabled, label, currentCategory, setCategory }:{ disabled?:boolean, label?:boolean, currentCategory:string|undefined, setCategory:(category:string|undefined)=>void }) {
   const [preview, setPreview] = useState<TypeTransactionCategory|undefined>(TRANSACTIONS_CATEGORIES_DATA.find((category)=>category.label === currentCategory));
@@ -24,7 +24,7 @@ export default function CategorySelect({ disabled, label, currentCategory, setCa
       {label && <label className="font-medium text-sm text-tertiary-dark dark:text-tertiary-light">Categoría</label>}
     {!preview ?
       <button type="button" disabled={disabled} onClick={()=>setOpenModal(true)} className="card-btn">
-        <LuSquareDashed className="text-xl"/>
+        <LuSquareDashed className="text-lg"/>
         Seleccionar categoría
       </button>
     :

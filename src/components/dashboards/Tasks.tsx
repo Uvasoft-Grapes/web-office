@@ -1,19 +1,19 @@
 "use client"
 
-import { API_PATHS } from "@utils/apiPaths";
-import axiosInstance from "@utils/axiosInstance";
-import { TypeTasksDashboardData } from "@utils/types";
 import { useEffect, useState } from "react";
-import InfoCard from "@components/dashboards/InfoCard";
-import CustomBarChart from "@components/charts/CustomBarChart";
-import CustomPieChart from "@components/charts/CustomPieChart";
-import TaskListTable from "@/src/components/charts/TaskListTable";
-import { addThousandsSeparator } from "@utils/helper";
-import LatestList from "@components/charts/LatestList";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { LuCircleAlert, LuCircleCheck, LuCirclePlus, LuLoaderCircle } from "react-icons/lu";
-import Skeleton from "../Skeleton";
+import { API_PATHS } from "@utils/apiPaths";
+import axiosInstance from "@utils/axiosInstance";
+import { TypeTasksDashboardData } from "@utils/types";
+import { addThousandsSeparator } from "@utils/helper";
+import InfoCard from "@components/dashboards/InfoCard";
+import CustomBarChart from "@components/charts/CustomBarChart";
+import CustomPieChart from "@components/charts/CustomPieChart";
+import TaskListTable from "@components/tables/TaskListTable";
+import LatestList from "@components/tables/LatestList";
+import Skeleton from "@components/Skeleton";
 
 const STATUS_COLORS =[
   { label:"Pendiente", color:"#fb2c36" },
@@ -90,7 +90,7 @@ export default function TasksDashboard() {
           </span>
         :
           <InfoCard
-            icon={<LuCirclePlus className="text-4xl text-blue-light"/>}
+            icon={<LuCirclePlus className="text-4xl text-blue-light dark:text-blue-dark"/>}
             label="Total"
             value={addThousandsSeparator(dashboardData.charts.taskDistribution.All)}
           />
@@ -102,7 +102,7 @@ export default function TasksDashboard() {
         </span>
       :
         <InfoCard
-          icon={<LuCircleAlert className="text-4xl text-red-light"/>}
+          icon={<LuCircleAlert className="text-4xl text-red-light dark:text-red-dark"/>}
           label="Pendientes"
           value={addThousandsSeparator(dashboardData?.charts.taskDistribution.Pendiente || 0)}
         />
@@ -113,7 +113,7 @@ export default function TasksDashboard() {
         </span>
       :
         <InfoCard
-          icon={<LuLoaderCircle className="text-4xl text-yellow-light animate-spin"/>}
+          icon={<LuLoaderCircle className="text-4xl text-yellow-light dark:text-yellow-dark animate-spin"/>}
           label="En curso"
           value={addThousandsSeparator(dashboardData?.charts.taskDistribution.Encurso || 0)}
         />
@@ -124,7 +124,7 @@ export default function TasksDashboard() {
         </span>
       :
         <InfoCard
-          icon={<LuCircleCheck className="text-4xl text-green-light"/>}
+          icon={<LuCircleCheck className="text-4xl text-green-light dark:text-green-dark"/>}
           label="Finalizadas"
           value={addThousandsSeparator(dashboardData?.charts.taskDistribution.Finalizada || 0)}
         />

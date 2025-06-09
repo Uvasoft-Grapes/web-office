@@ -11,7 +11,7 @@ import AvatarGroup from "@components/users/AvatarGroup";
 export default function AssignedSelect({ label, selectedUsers, setSelectedUsers }:{ label?:string, selectedUsers:TypeAssigned[], setSelectedUsers:(users:TypeAssigned[])=>void }) {
   const [allUsers, setAllUsers] = useState<TypeUser[]>([]);
   const [openModal, setOpenModal] = useState(false);
-  const [tempSelectedUsers, setTempSelectedUsers] = useState<TypeAssigned[]>([]);
+  const [tempSelectedUsers, setTempSelectedUsers] = useState<TypeAssigned[]>(selectedUsers);
 
   const getAllUsers = async () => {
     try {

@@ -1,9 +1,9 @@
-import { getAvatars } from "@/src/utils/avatars";
-import { TypeAccount } from "@/src/utils/types";
 import Link from "next/link";
-import AvatarGroup from "../users/AvatarGroup";
-import TabCard from "../tasks/TabCard";
-import { addThousandsSeparator } from "@/src/utils/helper";
+import { getAvatars } from "@utils/avatars";
+import { TypeAccount } from "@utils/types";
+import { addThousandsSeparator } from "@utils/helper";
+import AvatarGroup from "@components/users/AvatarGroup";
+import TabCard from "@components/tasks/TabCard";
 
 export default function AccountCard({ account }:{ account:TypeAccount }) {
   const { _id, folder, title, assignedTo, balance } = account;

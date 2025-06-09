@@ -4,9 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { LuLogOut, LuUser } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
+import { ROLES_DATA } from "@utils/data";
 import Modal from "@components/Modal";
 import FormProfile from "@components/auth/FormProfile";
-import { ROLES_DATA } from "@/src/utils/data";
 
 export default function HomeProfile() {
   const { user, logout } = useAuth();

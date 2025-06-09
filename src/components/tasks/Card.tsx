@@ -39,12 +39,12 @@ export default function TaskCard({ task }:{ task:TypeTask }) {
 
   return(
     <Link href={`/tasks/${_id}`}>
-      <li className="flex flex-col gap-3 h-full bg-secondary-light dark:bg-secondary-dark opacity-80 hover:opacity-100 rounded-xl py-4 border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary dark:shadow-secondary-dark cursor-pointer duration-300">
+      <li className="flex flex-col gap-3 h-full bg-secondary-light dark:bg-secondary-dark hover:bg-transparent rounded-xl py-4 border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary dark:shadow-secondary-dark cursor-pointer duration-300">
         <section className="flex flex-wrap-reverse justify-between gap-x-4 gap-y-2 px-4">
-          <p className="px-2 sm:px-4 py-0.5 rounded text-nowrap font-semibold text-[11px] text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20">{folder.title}</p>
+          <p className="px-2 sm:px-4 py-0.5 rounded text-nowrap font-semibold text-xs text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20">{folder.title}</p>
           <div className="flex flex-wrap items-end gap-1">
-            <p className={`px-2 sm:px-4 py-0.5 rounded font-semibold text-[11px] ${getStatusTagColor()}`}>{status}</p>
-            <p className={`px-2 sm:px-4 py-0.5 rounded font-semibold text-[11px] ${getPriorityTagColor()}`}>{priority}</p>
+            <p className={`px-2 sm:px-4 py-0.5 rounded font-semibold text-xs ${getStatusTagColor()}`}>{status}</p>
+            <p className={`px-2 sm:px-4 py-0.5 rounded font-semibold text-xs ${getPriorityTagColor()}`}>{priority}</p>
           </div>
         </section>
         <section className={`flex flex-col gap-0.5 px-4 border-l-[3px] ${status === "Pendiente" ? "border-red-dark" : status === "En curso" ? "border-yellow-dark" : "border-green-dark"}`}>

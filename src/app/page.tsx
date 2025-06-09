@@ -29,7 +29,7 @@ export default function HomePage() {
           </div>
           <div className="flex-1 flex flex-wrap items-center justify-end gap-2 py-2">
           {MENU_ITEMS.map((item) => (
-            <button key={item.value} onClick={()=>setActive(item.value)} className={`${active === item.value ? "text-primary-light dark:text-primary-dark bg-primary-dark dark:bg-primary-light cursor-not-allowed" : "text-basic bg-tertiary-light/75 dark:bg-tertiary-dark/75 cursor-pointer"} ${item.owner ? user?.role === "owner" ? "flex" : "hidden" : "flex"} flex-1 sm:flex-none items-center justify-center font-semibold text-sm rounded-full w-28 px-3 py-1 border-2 border-transparent hover:border-primary-dark dark:hover:border-primary-light duration-300`}>
+            <button key={item.value} onClick={()=>setActive(item.value)} className={`${active === item.value ? "text-primary-light dark:text-primary-dark bg-primary-dark dark:bg-primary-light cursor-not-allowed" : "text-basic bg-tertiary-light/75 dark:bg-tertiary-dark/75 hover:bg-transparent cursor-pointer"} ${item.owner ? user?.role === "owner" ? "flex" : "hidden" : "flex"} flex-1 sm:flex-none items-center justify-center font-semibold text-sm rounded-full w-28 px-3 py-1 duration-300`}>
               {item.label}
             </button>
           ))}

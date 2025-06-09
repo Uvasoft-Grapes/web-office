@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { serialize } from 'cookie';
 import { connectDB } from "@config/db";
+import { generateAuthToken } from "@middlewares/authMiddleware";
 import UserModel from "@models/User";
 import SessionModel from "@models/Session";
-import { generateAuthToken } from "@/src/middlewares/authMiddleware";
 
 const { NODE_ENV } =  process.env;
 

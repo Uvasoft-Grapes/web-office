@@ -7,6 +7,7 @@ import { PiDesktopBold } from "react-icons/pi";
 import { LuFolder, LuUser } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
 import { getAvatars } from "@utils/avatars";
+import { ROLES_DATA } from "@utils/data";
 import ProtectedRoute from "@app/ProtectedRoute";
 import AppLayout from "@components/layouts/AppLayout";
 import Modal from "@components/Modal";
@@ -14,7 +15,6 @@ import DeskForm from "@components/desk/Form";
 import FormProfile from "@components/auth/FormProfile";
 import Folders from "@components/folders/Folders";
 import AvatarGroup from "@components/users/AvatarGroup";
-import { ROLES_DATA } from "@/src/utils/data";
 
 export default function Profile() {
   const { user, desk } = useAuth();
@@ -25,7 +25,7 @@ export default function Profile() {
 
   return(
     <ProtectedRoute>
-      <AppLayout activeMenu="">
+      <AppLayout activeMenu="desk">
         <div className="flex flex-col gap-10">
 {/* Desk */}
           <section className="flex flex-col gap-3">

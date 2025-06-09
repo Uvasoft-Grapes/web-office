@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import Mongoose from "mongoose";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
 import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
 import TaskModel from "@models/Task";
 import FolderModel from "@models/Folder";
-import AccountModel from "@/src/models/Account";
-import TransactionModel from "@/src/models/Transaction";
+import AccountModel from "@models/Account";
+import TransactionModel from "@models/Transaction";
+import { TypeDesk, TypeUser } from "@utils/types";
 
 // @desc Get folder
 // @route GET /api/folders/:id

@@ -3,13 +3,13 @@ import { isAxiosError } from "axios";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
+import { useAuth } from "@context/AuthContext";
 import { TypeSession } from "@utils/types";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import TimeInput from "@components/inputs/Time";
 import Modal from "@components/Modal";
 import DeleteAlert from "@components/DeleteAlert";
-import { useAuth } from "@/src/context/AuthContext";
 
 export default function SessionForm({ session, update }:{ session:TypeSession, update:()=>void }) {
   const { user } = useAuth();

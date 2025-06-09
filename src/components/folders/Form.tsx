@@ -2,13 +2,13 @@ import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
+import { useAuth } from "@context/AuthContext";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import { TypeFolder } from "@utils/types";
 import Modal from "@components/Modal";
 import InputText from "@components/inputs/Text";
 import DeleteAlert from "@components/DeleteAlert";
-import { useAuth } from "@/src/context/AuthContext";
 
 export default function FolderForm({ value, refresh, closeForm }:{ value?:TypeFolder, refresh:()=>void, closeForm:()=>void, }) {
   const { user } = useAuth();

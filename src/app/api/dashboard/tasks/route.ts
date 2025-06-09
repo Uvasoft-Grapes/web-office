@@ -1,11 +1,11 @@
-import { ROLES_DATA } from "@/src/utils/data";
+import { NextRequest, NextResponse } from "next/server";
+import { ObjectId } from "mongoose";
+import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import TaskModel from "@models/Task";
+import { ROLES_DATA } from "@utils/data";
 import { TypeDesk, TypeUser } from "@utils/types";
-import { parse } from "cookie";
-import { ObjectId } from "mongoose";
-import { NextRequest, NextResponse } from "next/server";
 
 interface TypeDeskObjectId extends Omit<TypeDesk, "_id"> {
   _id:ObjectId;

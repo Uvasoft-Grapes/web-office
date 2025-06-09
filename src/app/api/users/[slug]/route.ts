@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
 import { parse } from "cookie";
+import bcrypt from "bcryptjs";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
 import { verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
 import DeskModel from "@models/Desk";
 import TaskModel from "@models/Task";
 import UserModel from "@models/User";
-import AccountModel from "@/src/models/Account";
+import AccountModel from "@models/Account";
+import { TypeDesk, TypeUser } from "@utils/types";
 
 const hashedPassword = async (newPassword:string) => {
   const salt = await bcrypt.genSalt(10);

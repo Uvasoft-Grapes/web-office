@@ -107,7 +107,7 @@ export default function TasksPage() {
               <SelectDropdown disabled={!allTasks ? true : false} options={[{ label:"Todas", value:"" }, ...PRIORITY_DATA]} defaultValue="" icon={<FaFilter className="text-lg"/>} placeholder="Prioridad" handleValue={handleFilterPriority}/>
             </div>
             <div className="flex-1 min-w-48 ">
-              <FolderSelect disabled={!allTasks ? true : false} label="" selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
+              <FolderSelect disabled={!allTasks ? true : false} selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
             </div>
           </section>
 {/* Loading */}

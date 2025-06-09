@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import Mongoose from "mongoose";
 import { parse, serialize } from "cookie";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
 import { generateAuthToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
 import FolderModel from "@models/Folder";
 import DeskModel from "@models/Desk";
 import TaskModel from "@models/Task";
-import AccountModel from "@/src/models/Account";
-import TransactionModel from "@/src/models/Transaction";
+import AccountModel from "@models/Account";
+import TransactionModel from "@models/Transaction";
+import { TypeDesk, TypeUser } from "@utils/types";
 
 const { NODE_ENV } =  process.env;
 

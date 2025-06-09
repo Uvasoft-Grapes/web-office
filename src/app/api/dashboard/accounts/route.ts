@@ -1,11 +1,11 @@
-import TransactionModel from "@models/Transaction";
-import AccountModel from "@models/Account";
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
-import { connectDB } from "@/src/config/db";
-import { TypeAccount, TypeAccountsDashboardData, TypeDesk, TypeUser } from "@/src/utils/types";
-import { verifyDeskToken, verifyUserToken } from "@/src/middlewares/authMiddleware";
-import { ROLES_DATA } from "@/src/utils/data";
+import { connectDB } from "@config/db";
+import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
+import TransactionModel from "@models/Transaction";
+import AccountModel from "@models/Account";
+import { TypeAccount, TypeAccountsDashboardData, TypeDesk, TypeUser } from "@utils/types";
+import { ROLES_DATA } from "@utils/data";
 
 const CURRENT_YEAR = new Date().getFullYear();
 const EMPTY:TypeAccountsDashboardData = {

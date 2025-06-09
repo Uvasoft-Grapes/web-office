@@ -4,6 +4,8 @@ import { isAxiosError } from "axios";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import toast from "react-hot-toast";
+import { LuCheck, LuTrash2 } from "react-icons/lu";
+import { useAuth } from "@context/AuthContext";
 import { TypeAssigned, TypeFolder, TypeTask, TypeTodo } from "@utils/types";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
@@ -18,8 +20,6 @@ import AttachmentInput from "@components/inputs/Attachment";
 import Modal from "@components/Modal";
 import DeleteAlert from "@components/DeleteAlert";
 import FolderSelect from "@components/folders/Select";
-import { LuCheck, LuTrash2 } from "react-icons/lu";
-import { useAuth } from "@/src/context/AuthContext";
 
 export default function TaskForm({ closeForm, values, setTask, }:{ closeForm:()=>void, values?:TypeTask, setTask?:(updatedTask:TypeTask)=>void }) {
   const { user } = useAuth();
@@ -123,7 +123,7 @@ export default function TaskForm({ closeForm, values, setTask, }:{ closeForm:()=
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <FolderSelect
-            label="Carpeta"
+            label
             selectedFolder={folder}
             setSelectedFolder={(selectedFolder:TypeFolder|undefined)=>setFolder(selectedFolder)}
           />

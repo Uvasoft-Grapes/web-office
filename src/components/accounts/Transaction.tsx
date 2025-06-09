@@ -1,15 +1,15 @@
-import { useAuth } from "@/src/context/AuthContext";
-import { getAvatars } from "@/src/utils/avatars";
-import { TRANSACTIONS_CATEGORIES_DATA } from "@/src/utils/data";
-import { addThousandsSeparator } from "@/src/utils/helper";
-import { TypeTransaction } from "@/src/utils/types";
+import { useState } from "react";
+import Image from "next/image";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import Image from "next/image";
-import { useState } from "react";
 import { IconType } from "react-icons";
-import Modal from "../Modal";
-import TransactionForm from "./TransactionForm";
+import { useAuth } from "@context/AuthContext";
+import { getAvatars } from "@utils/avatars";
+import { TRANSACTIONS_CATEGORIES_DATA } from "@utils/data";
+import { addThousandsSeparator } from "@utils/helper";
+import { TypeTransaction } from "@utils/types";
+import Modal from "@components/Modal";
+import TransactionForm from "@components/accounts/TransactionForm";
 
 export default function Transaction({ transaction, refresh }:{ transaction:TypeTransaction, refresh:()=>void }) {
   const { user } = useAuth();

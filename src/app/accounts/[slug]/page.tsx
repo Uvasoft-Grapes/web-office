@@ -1,27 +1,27 @@
 "use client"
 
-import AppLayout from "@components/layouts/AppLayout";
-import ProtectedRoute from "@app/ProtectedRoute";
-import { LuCircleMinus, LuCirclePlus, LuFilter, LuWallet } from "react-icons/lu";
-import AvatarGroup from "@/src/components/users/AvatarGroup";
 import { useEffect, useState } from "react";
-import { TypeAccount, TypeAssigned } from "@/src/utils/types";
+import { usePathname } from "next/navigation";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
-import axiosInstance from "@/src/utils/axiosInstance";
-import { API_PATHS } from "@/src/utils/apiPaths";
-import { usePathname } from "next/navigation";
-import { getAvatars } from "@/src/utils/avatars";
-import Modal from "@/src/components/Modal";
-import TransactionForm from "@/src/components/accounts/TransactionForm";
-import { addThousandsSeparator } from "@/src/utils/helper";
-import Transaction from "@/src/components/accounts/Transaction";
-import TabCard from "@/src/components/tasks/TabCard";
-import DropdownSelect from "@/src/components/inputs/Dropdown";
-import { TRANSACTIONS_SORT_DATA, TRANSACTIONS_STATUS_DATA } from "@/src/utils/data";
-import CategorySelect from "@/src/components/inputs/CategorySelect";
+import { LuCircleMinus, LuCirclePlus, LuFilter, LuWallet } from "react-icons/lu";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
-import Skeleton from "@/src/components/Skeleton";
+import { TypeAccount, TypeAssigned } from "@utils/types";
+import axiosInstance from "@utils/axiosInstance";
+import { API_PATHS } from "@utils/apiPaths";
+import { getAvatars } from "@utils/avatars";
+import { addThousandsSeparator } from "@utils/helper";
+import { TRANSACTIONS_SORT_DATA, TRANSACTIONS_STATUS_DATA } from "@utils/data";
+import ProtectedRoute from "@app/ProtectedRoute";
+import AppLayout from "@components/layouts/AppLayout";
+import AvatarGroup from "@components/users/AvatarGroup";
+import Modal from "@components/Modal";
+import TransactionForm from "@components/accounts/TransactionForm";
+import Transaction from "@components/accounts/Transaction";
+import TabCard from "@components/tasks/TabCard";
+import DropdownSelect from "@components/inputs/Dropdown";
+import CategorySelect from "@components/inputs/CategorySelect";
+import Skeleton from "@components/Skeleton";
 
 export default function AccountPage() {
   const accountId = usePathname().split("/")[2];

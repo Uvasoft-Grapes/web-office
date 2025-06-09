@@ -1,17 +1,17 @@
-import { API_PATHS } from "@/src/utils/apiPaths";
-import axiosInstance from "@/src/utils/axiosInstance";
-import { isAxiosError } from "axios";
 import { useEffect, useState } from "react";
+import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
-import InfoCard from "./InfoCard";
-import { TypeAccount, TypeAccountsDashboardData } from "@/src/utils/types";
-import { addThousandsSeparator } from "@/src/utils/helper";
-import CustomPieChart from "../charts/CustomPieChart";
-import CustomBarChart from "../charts/CustomBarChart";
-import LatestList from "../charts/LatestList";
-import TransactionsListTable from "../charts/TransactionsListTable";
 import { LuCircleAlert, LuCircleArrowDown, LuCircleArrowUp, LuCircleCheck, LuCircleDollarSign, LuCircleX, LuRefreshCcwDot } from "react-icons/lu";
-import Skeleton from "../Skeleton";
+import { TypeAccount, TypeAccountsDashboardData } from "@utils/types";
+import { API_PATHS } from "@utils/apiPaths";
+import axiosInstance from "@utils/axiosInstance";
+import { addThousandsSeparator } from "@utils/helper";
+import CustomPieChart from "@components/charts/CustomPieChart";
+import CustomBarChart from "@components/charts/CustomBarChart";
+import LatestList from "@components/tables/LatestList";
+import TransactionsListTable from "@components/tables/TransactionsListTable";
+import Skeleton from "@components/Skeleton";
+import InfoCard from "@components/dashboards/InfoCard";
 
 const ACCOUNTS_COLORS = [
   "#00c951",

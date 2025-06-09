@@ -1,19 +1,19 @@
-import { TypeAccount, TypeAssigned, TypeFolder } from "@/src/utils/types";
-import FolderSelect from "../folders/Select";
-import AssignedSelect from "../inputs/Assigned";
-import TextInput from "../inputs/Text";
-import { LuCheck, LuTrash2 } from "react-icons/lu";
-import Modal from "../Modal";
 import { FormEvent, useState } from "react";
-import DeleteAlert from "../DeleteAlert";
-import axiosInstance from "@/src/utils/axiosInstance";
-import { API_PATHS } from "@/src/utils/apiPaths";
+import { useRouter } from "next/navigation";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/context/AuthContext";
+import { LuCheck, LuTrash2 } from "react-icons/lu";
+import { useAuth } from "@context/AuthContext";
+import axiosInstance from "@utils/axiosInstance";
+import { API_PATHS } from "@utils/apiPaths";
+import { TypeAccount, TypeAssigned, TypeFolder } from "@utils/types";
+import FolderSelect from "@components/folders/Select";
+import AssignedSelect from "@components/inputs/Assigned";
+import TextInput from "@components/inputs/Text";
+import Modal from "@components/Modal";
+import DeleteAlert from "@components/DeleteAlert";
 
-export default function AccountForm({ closeForm, values, setAccount, }:{ closeForm:()=>void, values?:TypeAccount, setAccount?:(updatedTask:TypeAccount)=>void }) {
+export default function AccountForm({ closeForm, values, setAccount, }:{ closeForm?:()=>void, values?:TypeAccount, setAccount?:(updatedTask:TypeAccount)=>void }) {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -46,7 +46,7 @@ export default function AccountForm({ closeForm, values, setAccount, }:{ closeFo
   };
 
   const updateAccount = async (title:string) => {
-    if(!values || !setAccount) return;
+    if(!values || !setAccount || !closeForm) return;
     setLoading(true);
     try {
       const res = await axiosInstance.put(API_PATHS.ACCOUNTS.UPDATE_ACCOUNT(values?._id), { title, folder:folder?._id, assignedTo });
@@ -118,7 +118,6 @@ export default function AccountForm({ closeForm, values, setAccount, }:{ closeFo
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <FolderSelect
-            label="Carpeta"
             selectedFolder={folder}
             setSelectedFolder={(selectedFolder:TypeFolder|undefined)=>setFolder(selectedFolder)}
           />

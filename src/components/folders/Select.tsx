@@ -7,7 +7,7 @@ import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import Modal from "@components/Modal";
 
-export default function FolderSelect({ disabled, label, selectedFolder, setSelectedFolder }:{ disabled?:boolean, label?:string, selectedFolder:TypeFolder|undefined, setSelectedFolder:(folder:TypeFolder|undefined)=>void }) {
+export default function FolderSelect({ disabled, label, selectedFolder, setSelectedFolder }:{ disabled?:boolean, label?:boolean, selectedFolder:TypeFolder|undefined, setSelectedFolder:(folder:TypeFolder|undefined)=>void }) {
   const [openModal, setOpenModal] = useState(false);
   const [folders, setFolders] = useState<TypeFolder[]|undefined>();
   const [tempSelectedFolder, setTempSelectedFolder] = useState<TypeFolder|undefined>(selectedFolder);
@@ -41,9 +41,9 @@ export default function FolderSelect({ disabled, label, selectedFolder, setSelec
 
   return(
     <div className={`flex flex-col gap-1 ${disabled && "opacity-50"}`}>
-      {label && <label className="font-medium text-sm text-tertiary-dark dark:text-tertiary-light">{label}</label>}
+      {label && <label className="font-medium text-sm text-tertiary-dark dark:text-tertiary-light">Carpeta</label>}
       <button type="button" onClick={() => setOpenModal(true)} disabled={disabled} className="card-btn">
-        <LuFolder className="text-base"/>
+        <LuFolder className="text-lg"/>
         {!selectedFolder ? "Seleccionar carpeta" : tempSelectedFolder?.title}
       </button>
       <Modal isOpen={openModal} onClose={()=>setOpenModal(false)} title="Seleccionar Carpeta">

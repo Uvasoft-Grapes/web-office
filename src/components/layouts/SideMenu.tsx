@@ -19,17 +19,17 @@ export default function SideMenu({ activeMenu }:{ activeMenu:string }) {
   },[user]);
 
   return(
-    <nav className="min-w-64 max-w-64 max-h-[calc(100vh-56px)] min-h-[calc(100vh-56px)] overflow-hidden bg-secondary-light dark:bg-secondary-dark border-r border-tertiary-light dark:border-tertiary-dark">
-      <Link href={`/auth/profile`} className="flex sm:hidden items-center gap-2 p-5 text-basic hover:text-blue-light dark:hover:text-blue-dark border-b border-tertiary-light dark:border-tertiary-dark duration-300">
-        <PiDesktopDuotone className="text-3xl"/>
-        <p className="font-semibold text-xl">{desk?.title}</p>
-      </Link>
-      <div className="max-h-56 min-h-56 overflow-y-auto text-basic">
+    <nav className="min-w-64 max-w-64 bg-tertiary-light dark:bg-tertiary-dark border-r border-tertiary-light dark:border-tertiary-dark">
+      <div className="flex flex-col gap-1.5 text-basic p-4 max-h-[calc(100vh-56px)] overflow-y-scroll">
+        <Link href={`/auth/profile`} className={`flex sm:hidden items-center gap-2 px-6 w-full rounded-xl font-medium text-xs min-h-14 bg-linear-to-r ${activeMenu === "desk" ? "text-secondary-light dark:text-secondary-dark from-primary-dark dark:from-primary-light to-secondary-dark/70 dark:to-secondary-light/70" : "hover:bg-primary-light "} cursor-pointer duration-300`}>
+          <PiDesktopDuotone className="text-xl"/>
+          <p className="font-semibold text-sm sm:text-base">{desk?.title}</p>
+        </Link>
       {sideMenuData.map((item, index) => (
-        <Link 
+        <Link
           key={`menu_${index}`}
           href={item.path}
-          className={`flex items-center gap-4 w-full text-[15px] px-5 h-14 cursor-pointer bg-linear-to-r from-transparent ${activeMenu === item.label ? "text-blue-light dark:text-blue-dark to-blue-dark/25 dark:to-blue-light/25 border-r-2 border-blue-light dark:border-blue-dark" : "hover:to-quaternary/25 dark:hover:to-quaternary/25"} duration-300`}
+          className={`flex items-center gap-2 px-6 w-full rounded-xl font-medium text-xs sm:text-sm min-h-14 bg-linear-to-r ${activeMenu === item.label ? "text-secondary-light dark:text-secondary-dark from-primary-dark dark:from-primary-light to-secondary-dark/70 dark:to-secondary-light/70" : "hover:bg-primary-light dark:hover:bg-primary-dark"} cursor-pointer duration-300`}
         >
           <item.icon className="text-xl"/>
           {item.label}

@@ -5,16 +5,16 @@ import Image from "next/image";
 import { format } from "date-fns";
 import { es } from 'date-fns/locale';
 import { useAuth } from "@context/AuthContext";
+import { ROLES_DATA } from "@utils/data";
 import ProtectedRoute from "@app/ProtectedRoute";
-import TasksDashboard from "@components/dashboards/Tasks";
 import AppLayout from "@components/layouts/AppLayout";
-import AccountsDashboard from "@/src/components/dashboards/Accounts";
-import { ROLES_DATA } from "@/src/utils/data";
+import TasksDashboard from "@components/dashboards/Tasks";
+import AccountsDashboard from "@components/dashboards/Accounts";
+import CalendarDashboard from "@components/dashboards/Calendar";
 
 const dashboards = [
   "Tareas",
   "Cuentas",
-  "Notas",
   "Calendario",
 ];
 
@@ -36,17 +36,20 @@ export default function DashboardPage() {
               <div className="flex flex-col justify-center">
                 <p className="font-medium text-xl md:text-2xl text-basic">{user?.name}</p>
                 <p className="text-sm md:text-base text-tertiary-dark dark:text-tertiary-light">{user?.email}</p>
-                <p className="text-xs md:text-sm text-quaternary">{format(new Date(), "eeee, dd MMMM yyyy", { locale:es })}</p>
+                <p className="text-xs md:text-sm text-quaternary">{format(new Date(), "eeee, dd 'de' MMMM 'del' yyyy", { locale:es })}</p>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2 max-w-full py-2 overflow-x-auto">
           {dashboards.map((item, index) => (
-            <button key={index} onClick={()=>setDashboard(item)} className={`${dashboard === item ? "text-primary-light dark:text-primary-dark bg-primary-dark dark:bg-primary-light cursor-not-allowed" : "text-basic bg-transparent cursor-pointer"} font-semibold text-sm rounded-full px-5 py-2 hover:bg-tertiary-light dark:hover:bg-tertiary-dark duration-300`}>{item}</button>
+            <button key={index} onClick={()=>setDashboard(item)} className={`${dashboard === item ? "text-primary-light dark:text-primary-dark bg-primary-dark dark:bg-primary-light cursor-not-allowed" : "text-basic bg-tertiary-light/75 dark:bg-tertiary-dark/75 hover:bg-transparent cursor-pointer"} flex flex-1 sm:flex-none items-center justify-center font-semibold text-sm rounded-full min-w-28 px-6 py-2 duration-300`}>
+              {item}
+            </button>
           ))}
           </div>
           {dashboard === "Tareas" && <TasksDashboard />}
           {dashboard === "Cuentas" && <AccountsDashboard />}
+          {dashboard === "Calendario" && <CalendarDashboard />}
         </div>
       </AppLayout>
     </ProtectedRoute>

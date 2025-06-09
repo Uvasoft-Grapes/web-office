@@ -10,7 +10,28 @@ import {
   LuArrowLeftRight,
   LuBuilding2,
   LuStore,
+  LuCalendar,
+  LuClipboardList,
+  LuWarehouse,
+  LuPackage2,
+  LuGoal,
 } from "react-icons/lu";
+
+
+export const COLORS = [
+  "#0085EB",
+  "#E5EA00",
+  "#EB5C00",
+  "#84EB00",
+  "#EB00BB",
+  "#1000EB",
+  "#EBCF00",
+  "#00EBA8",
+  "#6B00EB",
+  "#FF0066",
+  "#01E0EB",
+  "#BA01EB",
+];
 
 export const ROLES_DATA:{ value:"owner"|"admin"|"user"|"client", label:string }[] = [
   { value:"owner", label:"Ownership" }, // level === 0 (index)
@@ -44,16 +65,51 @@ export const SIDE_MENU_DATA:TypeMenuData[] = [
   },
   {
     id:"03",
+    label:"Calendario",
+    icon:LuCalendar,
+    path:"/calendar",
+    level:2,
+  },
+  {
+    id:"04",
     label:"Cuentas",
     icon:LuWalletMinimal,
     path:"/accounts",
     level:2,
   },
   {
-    id:"04",
+    id:"05",
+    label:"Inventarios",
+    icon:LuWarehouse,
+    path:"/inventories",
+    level:1,
+  },
+  {
+    id:"06",
+    label:"Productos",
+    icon:LuPackage2,
+    path:"/products",
+    level:1,
+  },
+  {
+    id:"07",
+    label:"Reportes",
+    icon:LuClipboardList,
+    path:"/reports",
+    level:2,
+  },
+  {
+    id:"08",
     label:"Miembros",
     icon:LuUsers,
     path:"/members",
+    level:1,
+  },
+  {
+    id:"09",
+    label:"Metas",
+    icon:LuGoal,
+    path:"/goals",
     level:1,
   },
 ];
@@ -118,4 +174,33 @@ export const TRANSACTIONS_SORT_DATA = [
   "Fecha",
   "Estado",
   "Título",
+];
+
+export const WEEK_DAYS_DATA = [
+  { value:"lun", label:"Lun"},
+  { value:"mar", label:"Mar"},
+  { value:"mie", label:"Mié"},
+  { value:"jue", label:"Jue"},
+  { value:"vie", label:"Vie"},
+  { value:"sab", label:"Sáb"},
+  { value:"dom", label:"Dom"}
+];
+
+export const EVENTS_FREQUENCY_DATA = [
+  { value:"daily", label:"Diariamente"},
+  { value:"weekly", label:"Semanalmente"},
+  { value:"monthly", label:"Mensualmente"},
+  { value:"yearly", label:"Anualmente"},
+  { value:"none", label:"Sin repetición"},
+];
+
+export const REPORTS_SORT_DATA = [
+  "Fecha",
+  "Título",
+];
+
+export const  PRODUCTS_SORT_DATA = [
+  "Título",
+  "Precio",
+  "Stock"
 ];

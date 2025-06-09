@@ -1,11 +1,11 @@
-import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import { TypeDesk, TypeUser } from "@utils/types";
-import AccountModel from "@models/Account";
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
-import TransactionModel from "@/src/models/Transaction";
-import { ROLES_DATA } from "@/src/utils/data";
+import { connectDB } from "@config/db";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
+import AccountModel from "@models/Account";
+import TransactionModel from "@models/Transaction";
+import { TypeDesk, TypeUser } from "@utils/types";
+import { ROLES_DATA } from "@utils/data";
 
 // const statusManagement: Record<string, number> = {
 //   "Pendiente": 1,

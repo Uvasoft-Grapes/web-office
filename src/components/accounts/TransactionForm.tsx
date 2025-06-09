@@ -3,6 +3,8 @@ import { isAxiosError } from "axios";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import toast from "react-hot-toast";
+import { LuCheck, LuTrash2 } from "react-icons/lu";
+import { useAuth } from "@context/AuthContext";
 import { TypeTransaction } from "@utils/types";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
@@ -13,10 +15,8 @@ import Textarea from "@components/inputs/Textarea";
 import InputDate from "@components/inputs/Date";
 import Modal from "@components/Modal";
 import DeleteAlert from "@components/DeleteAlert";
-import { LuCheck, LuTrash2 } from "react-icons/lu";
-import NumberInput from "../inputs/Number";
-import CategorySelect from "../inputs/CategorySelect";
-import { useAuth } from "@/src/context/AuthContext";
+import NumberInput from "@components/inputs/Number";
+import CategorySelect from "@components/inputs/CategorySelect";
 
 export default function TransactionForm({ account, closeForm, type, values, refresh }:{ account:string, closeForm:()=>void, type:"income"|"expense", values?:TypeTransaction, refresh:()=>void }) {
   const { user } = useAuth();
@@ -141,7 +141,7 @@ export default function TransactionForm({ account, closeForm, type, values, refr
           name="amount"
           label="Monto"
           placeholder="Monto de la transacción"
-          defaultValue={values ? `${values.amount}` : ""}
+          defaultValue={values ? values.amount : 1}
           negative={type === "expense"}
         />
       </div>

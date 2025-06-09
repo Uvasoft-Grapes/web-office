@@ -4,7 +4,7 @@ export default function AvatarGroup({ avatars, maxVisible }:{ avatars:{ name:str
   return(
     <ul className="flex items-center h-full">
     {avatars.slice(0, maxVisible).map((avatar, index)=>(
-      <li key={`avatar-${index}`} className="size-9 rounded-full -ml-3 first:ml-0 group">
+      <li key={`avatar-${index}`} className="size-10 rounded-full -ml-3 first:ml-0 group">
         <Image
           src={avatar.img}
           alt={`Avatar ${index}`}

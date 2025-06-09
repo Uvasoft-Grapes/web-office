@@ -2,9 +2,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { getAvatars } from "@utils/avatars";
 import { TypeUser } from "@utils/types";
+import { ROLES_DATA } from "@utils/data";
 import Modal from "@components/Modal";
 import UserForm from "@components/home/UserForm";
-import { ROLES_DATA } from "@/src/utils/data";
 
 export default function User({ info, updateUsers }:{ info:TypeUser, updateUsers:()=>void }) {
   const [openForm, setOpenForm] = useState(false);
