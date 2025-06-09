@@ -7,15 +7,15 @@ import { useAuth } from "@context/AuthContext";
 import { TypeDesk } from "@utils/types";
 import { API_PATHS } from "@utils/apiPaths";
 import axiosInstance from "@utils/axiosInstance";
-// import DeskForm from "@components/desk/Form";
-// import Modal from "@components/Modal";
+import DeskForm from "@components/desk/Form";
+import Modal from "@components/Modal";
 import Skeleton from "@components/Skeleton";
 
 export default function HomeDesks() {
   const { user, logout, desk, changeDesk, removeDesk } = useAuth();
 
   const [desks, setDesks] = useState<TypeDesk[]>();
-  // const [openForm, setOpenForm] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
 
   useEffect(() => {
     if(desk) removeDesk();
@@ -79,14 +79,14 @@ export default function HomeDesks() {
           <LuLogOut className="text-base sm:text-lg"/>
           Cerrar sesión
         </button>
-        <button type="button" onClick={()=>{}} className={`${user?.role === "owner" ? "card-btn-fill" : "hidden"} flex-1 sm:max-w-52`}>
+        <button type="button" onClick={()=>setOpenForm(true)} className={`${user?.role === "owner" ? "card-btn-fill" : "hidden"} flex-1 sm:max-w-52`}>
           <PiDesktopBold className="text-base sm:text-lg"/>
           Crear escritorio
         </button>
       </section>
-      {/* <Modal title="Crear Escritorio" isOpen={openForm} onClose={()=>setOpenForm(false)}>
+      <Modal title="Crear Escritorio" isOpen={openForm} onClose={()=>setOpenForm(false)}>
         {user?.role === "owner" && openForm && <DeskForm closeForm={()=>setOpenForm(false)}/>}
-      </Modal> */}
+      </Modal>
     </section>
   );
 };

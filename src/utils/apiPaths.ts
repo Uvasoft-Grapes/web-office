@@ -1,4 +1,5 @@
-export const BASE_URL = "http://localhost:3000";
+// export const BASE_URL = "http://localhost:3000";
+export const BASE_URL = "https://web-office-pied.vercel.app";
 
 export const API_PATHS = {
   AUTH:{

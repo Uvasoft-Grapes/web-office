@@ -11,7 +11,7 @@ import { ROLES_DATA } from "@utils/data";
 import ProtectedRoute from "@app/ProtectedRoute";
 import AppLayout from "@components/layouts/AppLayout";
 import Modal from "@components/Modal";
-// import DeskForm from "@components/desk/Form";
+import DeskForm from "@components/desk/Form";
 import FormProfile from "@components/auth/FormProfile";
 import Folders from "@components/folders/Folders";
 import AvatarGroup from "@components/users/AvatarGroup";
@@ -21,7 +21,7 @@ export default function Profile() {
 
   const [openFoldersForm, setOpenFoldersForm] = useState(false);
   const [openUserForm, setOpenUserForm] = useState(false);
-  // const [openDeskForm, setOpenDeskForm] = useState(false);
+  const [openDeskForm, setOpenDeskForm] = useState(false);
 
   return(
     <ProtectedRoute>
@@ -41,7 +41,7 @@ export default function Profile() {
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
               <div className="flex flex-wrap gap-4">
-                <button onClick={()=>{}} className="flex-1 sm:flex-none card-btn-fill">
+                <button onClick={()=>setOpenDeskForm(true)} className="flex-1 sm:flex-none card-btn-fill">
                   <PiDesktopBold className="text-lg"/>
                   Editar
                 </button>
@@ -84,9 +84,9 @@ export default function Profile() {
         <Modal title="Editar Perfil" isOpen={openUserForm} onClose={()=>setOpenUserForm(false)}>
           {openUserForm && <FormProfile closeForm={()=>setOpenUserForm(false)}/>}
         </Modal>
-        {/* <Modal title="Editar Escritorio" isOpen={openDeskForm} onClose={()=>setOpenDeskForm(false)}>
+        <Modal title="Editar Escritorio" isOpen={openDeskForm} onClose={()=>setOpenDeskForm(false)}>
           {desk && openDeskForm && <DeskForm value={desk} closeForm={()=>setOpenDeskForm(false)}/>}
-        </Modal> */}
+        </Modal>
       </AppLayout>
     </ProtectedRoute>
   );
