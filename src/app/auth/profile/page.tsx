@@ -21,7 +21,7 @@ export default function Profile() {
 
   const [openFoldersForm, setOpenFoldersForm] = useState(false);
   const [openUserForm, setOpenUserForm] = useState(false);
-  const [openDeskForm, setOpenDeskForm] = useState(false);
+  // const [openDeskForm, setOpenDeskForm] = useState(false);
 
   return(
     <ProtectedRoute>
@@ -41,7 +41,7 @@ export default function Profile() {
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
               <div className="flex flex-wrap gap-4">
-                <button onClick={()=>setOpenDeskForm(true)} className="flex-1 sm:flex-none card-btn-fill">
+                <button onClick={()=>{}} className="flex-1 sm:flex-none card-btn-fill">
                   <PiDesktopBold className="text-lg"/>
                   Editar
                 </button>
