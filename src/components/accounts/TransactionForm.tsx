@@ -5,7 +5,7 @@ import { es } from "date-fns/locale";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
-import { TypeTransaction } from "@utils/types";
+import { TypeCategory, TypeTransaction } from "@utils/types";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import { TRANSACTIONS_STATUS_DATA } from "@utils/data";
@@ -21,7 +21,7 @@ import CategorySelect from "@components/inputs/CategorySelect";
 export default function TransactionForm({ account, closeForm, type, values, refresh }:{ account:string, closeForm:()=>void, type:"income"|"expense", values?:TypeTransaction, refresh:()=>void }) {
   const { user } = useAuth();
 
-  const [category, setCategory] = useState<string|undefined>(values && values.category);
+  const [category, setCategory] = useState<TypeCategory|undefined>(values && values.category);
   const [status, setStatus] = useState<string>(values ? values.status : "Finalizado");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -30,15 +30,19 @@ export default function TransactionForm({ account, closeForm, type, values, refr
   const createTransaction = async (data:{ title:string, description:string, amount:number, date:Date }) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(API_PATHS.ACCOUNTS.CREATE_TRANSACTION, { accountId:account, ...data, type, category, status });
+      const res = await axiosInstance.post(API_PATHS.ACCOUNTS.CREATE_TRANSACTION, { accountId:account, ...data, type, category:category?._id, status });
       if(res.status === 201) {
         toast.success(res.data.message);
         closeForm();
         refresh();
       };
     } catch (error) {
-      console.error("Error creating transaction:", error)
-      setLoading(false);
+      if(!isAxiosError(error)) return console.error("Error fetching products:", error);
+      if(error.response && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      };
     } finally {
       setLoading(false);
     };
@@ -48,7 +52,7 @@ export default function TransactionForm({ account, closeForm, type, values, refr
     if(!values) return;
     setLoading(true);
     try {
-      const res = await axiosInstance.put(API_PATHS.ACCOUNTS.UPDATE_TRANSACTION(values._id), { ...data, category, status });
+      const res = await axiosInstance.put(API_PATHS.ACCOUNTS.UPDATE_TRANSACTION(values._id), { ...data, category:category?._id, status });
       if(res.status === 201) {
         toast.success(res.data.message);
         closeForm();
@@ -109,7 +113,7 @@ export default function TransactionForm({ account, closeForm, type, values, refr
   return(
     <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-4 max-h-full">
       <div className="flex flex-col gap-4 pr-4 overflow-y-auto">
-        <CategorySelect label currentCategory={category} setCategory={(selectedCategory:string|undefined)=>setCategory(selectedCategory)}/>
+        <CategorySelect label currentCategory={category} type="transaction" setCategory={(selectedCategory:TypeCategory|undefined)=>setCategory(selectedCategory)}/>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <SelectDropdown
             label="Estado"

@@ -63,7 +63,6 @@ export async function GET(req:Request) {
     }));
 
     return NextResponse.json(accounts, { status:200 });
-
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

@@ -15,8 +15,18 @@ import {
   LuWarehouse,
   LuPackage2,
   LuGoal,
+  LuSquareDashed,
 } from "react-icons/lu";
 
+export const ICONS = [
+  LuSquareDashed,
+  LuBanknote,
+  LuBaggageClaim,
+  LuShoppingCart,
+  LuArrowLeftRight,
+  LuBuilding2,
+  LuStore,
+];
 
 export const COLORS = [
   "#0085EB",
@@ -148,20 +158,6 @@ export const MONTHS_DATA = [
   { label:"Octubre", value:"octubre" },
   { label:"Noviembre", value:"noviembre" },
   { label:"Diciembre", value:"diciembre" },
-];
-
-export interface TypeTransactionCategory {
-  label:string;
-  icon:IconType;
-};
-
-export const TRANSACTIONS_CATEGORIES_DATA:TypeTransactionCategory[] = [
-  { label:"Salario", icon:LuBanknote },
-  { label:"Venta", icon:LuShoppingCart },
-  { label:"Compra", icon:LuBaggageClaim },
-  { label:"Devolución", icon:LuArrowLeftRight },
-  { label:"Mobiliario", icon:LuStore },
-  { label:"Renta", icon:LuBuilding2 },
 ];
 
 export const TRANSACTIONS_STATUS_DATA = [

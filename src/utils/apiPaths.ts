@@ -1,5 +1,5 @@
-// export const BASE_URL = "http://localhost:3000";
-export const BASE_URL = "https://web-office-pied.vercel.app";
+export const BASE_URL = "http://localhost:3000";
+// export const BASE_URL = "https://web-office-pied.vercel.app";
 
 export const API_PATHS = {
   AUTH:{
@@ -23,6 +23,13 @@ export const API_PATHS = {
     GET_USER_SESSIONS:"/api/sessions", // Admin Token required
     UPDATE_SESSION:(sessionId:string)=>`/api/sessions/${sessionId}`, // Admin Token required
     DELETE_SESSION:(sessionId:string)=>`/api/sessions/${sessionId}`, // Admin Token required
+  },
+
+  CATEGORIES:{
+    GET_CATEGORIES_BY_TYPE:"/api/categories", // Auth Token required
+    CREATE_CATEGORY:"/api/categories", // Admin Token required
+    UPDATE_CATEGORY:(categoryId:string)=>`/api/categories/${categoryId}`, // Admin Token required
+    DELETE_CATEGORY:(categoryId:string)=>`/api/categories/${categoryId}`, // Owner Token required
   },
 
   REPORTS:{

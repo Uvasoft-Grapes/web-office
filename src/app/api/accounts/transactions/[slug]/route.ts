@@ -68,6 +68,7 @@ export async function PUT(req:NextRequest) {
     transaction.date = date || currentTransaction.date;
     transaction.status = status || currentTransaction.status;
     await transaction.save();
+
     return NextResponse.json({ message:"Transacción actualizada", transaction }, { status:201 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });

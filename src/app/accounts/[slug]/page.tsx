@@ -6,7 +6,7 @@ import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { LuCircleMinus, LuCirclePlus, LuFilter, LuWallet } from "react-icons/lu";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
-import { TypeAccount, TypeAssigned } from "@utils/types";
+import { TypeAccount, TypeAssigned, TypeCategory } from "@utils/types";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import { getAvatars } from "@utils/avatars";
@@ -32,7 +32,7 @@ export default function AccountPage() {
   const [expenseForm, setExpenseForm] = useState(false);
   const [type, setType] = useState<string|undefined>();
   const [status, setStatus] = useState<string|undefined>();
-  const [category, setCategory] = useState<string|undefined>();
+  const [category, setCategory] = useState<TypeCategory|undefined>();
   const [sortForm, setSortForm] = useState(false);
   const [sortLabel, setSortLabel] = useState(TRANSACTIONS_SORT_DATA[0]);
   const [sortType, setSortType] = useState(false);
@@ -43,7 +43,7 @@ export default function AccountPage() {
         params:{
           type:!type ? "" : type,
           status:!status ? "" : status,
-          category:!category ? "" : category,
+          category:!category ? "" : category._id,
           sort:`${sortLabel} ${sortType ? "(asc)" : "(desc)"}`,
         },
       });
@@ -106,7 +106,7 @@ export default function AccountPage() {
                 <DropdownSelect disabled={!account ? true : false} options={[{ label:"Todos", value:"" }, { label:"Ingreso", value:"income" }, { label:"Gasto", value:"expense" },]} defaultValue="" icon={<LuFilter className="text-lg"/>} placeholder="Tipo" handleValue={(value:string)=>setType(value)}/>
               </div>
               <div className="flex-1 min-w-48 ">
-                <CategorySelect disabled={!account ? true : false} currentCategory={category} setCategory={(value:string|undefined)=>setCategory(value)}/>
+                <CategorySelect disabled={!account ? true : false} type="transaction" currentCategory={category} setCategory={(value:TypeCategory|undefined)=>setCategory(value)}/>
               </div>
             </div>
           </section>

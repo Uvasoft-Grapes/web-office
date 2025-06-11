@@ -61,16 +61,16 @@ export async function GET(req:NextRequest) {
     };
 
 //! Find Products
-    const products = await ProductModel.find({ desk:desk._id });
+    const products = await ProductModel.find({ desk:desk._id }).populate("category");
     if(!products) return NextResponse.json({ message:"Products not found" }, { status:404 });
 
 //! Find Movements
-    let movements = await MovementModel.find({ inventory:inventoryId }).populate("createdBy", "name email profileImageUrl").populate("product", "title description category price stock");
+    let movements = await MovementModel.find({ inventory:inventoryId }).populate("createdBy", "name email profileImageUrl").populate("product", "title description category price stock").populate("category");
     if(!movements) return NextResponse.json({ message:"Movements not found" }, { status:404 });
   //? Filter movements
     if(filter.status) movements = movements.filter(movement => movement.status === filter.status);
     if(filter.type) movements = movements.filter(movement => movement.type === filter.type);
-    if(filter.category) movements = movements.filter(movement => movement.category === filter.category);
+    if(filter.category) movements = movements.filter(movement => movement.category._id.toString() === filter.category);
     if(filter.product) movements = movements.filter(movement => movement.product._id.toString() === filter.product);
 
   //? Sort movements

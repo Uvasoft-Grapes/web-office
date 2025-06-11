@@ -2,10 +2,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { IconType } from "react-icons";
 import { useAuth } from "@context/AuthContext";
 import { getAvatars } from "@utils/avatars";
-import { TRANSACTIONS_CATEGORIES_DATA } from "@utils/data";
+import { ICONS } from "@utils/data";
 import { addThousandsSeparator } from "@utils/helper";
 import { TypeMovement } from "@utils/types";
 import Modal from "@components/Modal";
@@ -29,10 +28,9 @@ export default function Movement({ movement, refresh }:{ movement:TypeMovement, 
     };
   };
 
-  const getIcon = (category:string) => {
-    const index = TRANSACTIONS_CATEGORIES_DATA.findIndex((item:{ label:string, icon:IconType }) => item.label === category);
-    const Icon = TRANSACTIONS_CATEGORIES_DATA[index].icon;
-    return <Icon className="text-2xl"/>
+  const getIcon = (index:number) => {
+    const Icon = ICONS[index];
+    return <Icon className="text-xl text-primary-light dark:text-primary-dark"/>
   };
 
   return(
@@ -41,9 +39,9 @@ export default function Movement({ movement, refresh }:{ movement:TypeMovement, 
       <div className="flex flex-col items-center justify-center gap-1">
         <div className="">
           <span className="flex items-center justify-center size-14 rounded-full text-primary-light dark:text-primary-dark bg-primary-dark dark:bg-primary-light">
-            {getIcon(movement.category)}
+            {getIcon(movement.category.icon || 0)}
           </span>
-          <span className="absolute -top-3.5 -left-0.5 px-2 py-0.5 min-w-16 rounded-xl rounded-b-none font-semibold text-[10px] text-quaternary bg-secondary-light dark:bg-secondary-dark group-hover:bg-primary-light dark:group-hover:bg-primary-dark border-2 border-b-0 border-secondary-light dark:border-secondary-dark duration-300">{movement.category}</span>
+          <span className="absolute -top-3.5 -left-0.5 px-2 py-0.5 min-w-16 rounded-xl rounded-b-none font-semibold text-[10px] text-quaternary bg-secondary-light dark:bg-secondary-dark group-hover:bg-primary-light dark:group-hover:bg-primary-dark border-2 border-b-0 border-secondary-light dark:border-secondary-dark duration-300">{movement.category.label || "Sin categoría"}</span>
         </div>
         <span className={`min-w-16 py-1 h-fit rounded text-center font-semibold text-[10px] ${getStatusBadgeColor(movement.status)}`}>
           {movement.status}

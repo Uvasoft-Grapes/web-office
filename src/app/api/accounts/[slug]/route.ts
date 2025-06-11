@@ -35,7 +35,7 @@ export async function GET(req:NextRequest) {
       type:queryType ? decodeURIComponent(queryType).replace("+", " ") : undefined,
       category:queryCategory ? decodeURIComponent(queryCategory).replace("+", " ") : undefined,
     };
-
+console.log(filter)
     const querySort = queries.find(item => item.includes("sort="))?.split("=")[1];
     const sort =  querySort ? decodeURIComponent(querySort).replace(/\+/g, " ") : "Fecha (desc)";
 
@@ -51,13 +51,13 @@ export async function GET(req:NextRequest) {
     if(!account) return NextResponse.json({ message:"Task not found" }, { status:404 });
     if(userToken.role !== "owner" && !account.assignedTo.find((user:TypeUser) => user._id.toString() === userToken._id.toString())) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
-    let transactions = await TransactionModel.find({ account:accountId }).populate("createdBy", "name email profileImageUrl");
+    let transactions = await TransactionModel.find({ account:accountId }).populate("createdBy", "name email profileImageUrl").populate("category");
     if(!transactions) return NextResponse.json({ message:"Task not found" }, { status:404 });
 
 //! Filter transactions
     if(filter.status) transactions = transactions.filter(transaction => transaction.status === filter.status);
     if(filter.type) transactions = transactions.filter(transaction => transaction.type === filter.type);
-    if(filter.category) transactions = transactions.filter(transaction => transaction.category === filter.category);
+    if(filter.category) transactions = transactions.filter(transaction => transaction.category._id.toString() === filter.category);
 
 //! Sort transactions
     if(sort === "Fecha (desc)") transactions = transactions.sort((a, b) => compareDesc(a.date, b.date));

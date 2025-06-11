@@ -5,7 +5,7 @@ import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
 import { API_PATHS } from "@utils/apiPaths";
 import axiosInstance from "@utils/axiosInstance";
-import { TypeProduct } from "@utils/types";
+import { TypeCategory, TypeProduct } from "@utils/types";
 import TextInput from "@components/inputs/Text";
 import Modal from "@components/Modal";
 import DeleteAlert from "@components/DeleteAlert";
@@ -15,7 +15,7 @@ import NumberInput from "@components/inputs/Number";
 export default function ProductForm({ values, refresh, }:{ values?:TypeProduct, refresh:()=>void }) {
   const { user } = useAuth();
 
-  const [category, setCategory] = useState<string|undefined>(values?.category);
+  const [category, setCategory] = useState<TypeCategory|undefined>(values?.category);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
@@ -23,7 +23,7 @@ export default function ProductForm({ values, refresh, }:{ values?:TypeProduct, 
   const createProduct = async (data:{ title:string, description:string, price:string }) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(API_PATHS.PRODUCTS.CREATE_PRODUCT, { ...data, category });
+      const res = await axiosInstance.post(API_PATHS.PRODUCTS.CREATE_PRODUCT, { ...data, category:category?._id });
       if(res.status === 201) {
         toast.success(res.data.message);
         refresh();
@@ -44,7 +44,7 @@ export default function ProductForm({ values, refresh, }:{ values?:TypeProduct, 
     if(!values) return;
     setLoading(true);
     try {
-      const res = await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE_PRODUCT(values?._id), { ...data, category });
+      const res = await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE_PRODUCT(values?._id), { ...data, category:category?._id });
       if(res.status === 201) {
         toast.success(res.data.message);
         refresh();
@@ -129,8 +129,9 @@ export default function ProductForm({ values, refresh, }:{ values?:TypeProduct, 
               <CategorySelect 
                 disabled={loading}
                 label
+                type="product"
                 currentCategory={category}
-                setCategory={(cat:string|undefined)=>setCategory(cat)}
+                setCategory={(cat:TypeCategory|undefined)=>setCategory(cat)}
               />
             </div>
           </div>

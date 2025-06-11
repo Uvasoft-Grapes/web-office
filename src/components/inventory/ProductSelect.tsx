@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { IconType } from "react-icons";
 import { LuFilterX, LuShoppingBag, LuX } from "react-icons/lu";
 import { TypeMovementProduct, TypeProduct } from "@utils/types";
-import { TRANSACTIONS_CATEGORIES_DATA } from "@utils/data";
+import { ICONS } from "@utils/data";
 import Modal from "@components/Modal";
 
 export default function ProductSelect({ products, disabled, label, currentProduct, setProduct }:{ products:TypeProduct[], disabled?:boolean, label?:boolean, currentProduct:TypeMovementProduct|undefined, setProduct:(product:TypeMovementProduct|undefined)=>void }) {
@@ -21,10 +20,9 @@ export default function ProductSelect({ products, disabled, label, currentProduc
     setOpenModal(false);
   };
 
-  const getIcon = (category:string) => {
-    const index = TRANSACTIONS_CATEGORIES_DATA.findIndex((item:{ label:string, icon:IconType }) => item.label === category);
-    const Icon = TRANSACTIONS_CATEGORIES_DATA[index].icon;
-    return <Icon className="text-4xl"/>
+  const getIcon = (index:number) => {
+    const Icon = ICONS[index];
+    return <Icon className="text-xl text-primary-dark dark:text-primary-light"/>
   };
 
   return(
@@ -49,11 +47,11 @@ export default function ProductSelect({ products, disabled, label, currentProduc
             <div className="flex flex-wrap gap-2 min-w-full">
               <span className="flex-1 flex items-center justify-center text-center font-semibold text-xs sm:text-sm px-4 h-8 rounded-full text-primary-dark dark:text-primary-light bg-tertiary-light dark:bg-tertiary-dark">{product.stock}</span>
               <span className="flex-1 flex items-center justify-center text-center font-semibold text-xs sm:text-sm px-4 h-8 rounded-full text-primary-dark dark:text-primary-light bg-tertiary-light dark:bg-tertiary-dark">${product.price}</span>
-              <span className="flex-1 flex items-center justify-center text-center font-semibold text-xs sm:text-sm px-4 h-8 rounded-full text-primary-dark dark:text-primary-light bg-tertiary-light dark:bg-tertiary-dark">{product.category}</span>
+              <span className="flex-1 flex items-center justify-center text-center font-semibold text-xs sm:text-sm px-4 h-8 rounded-full text-primary-dark dark:text-primary-light bg-tertiary-light dark:bg-tertiary-dark">{product.category.label || "Sin categoría"}</span>
             </div>
             <div className="flex-1 flex items-center gap-2">
               <span className="flex items-center justify-center size-16 md:size-20 rounded-xl text-primary-dark dark:text-primary-light bg-tertiary-light dark:bg-tertiary-dark">
-                {getIcon(product.category)}
+                {getIcon(product.category.icon || 0)}
               </span>
               <div className="flex-1 flex flex-col gap-0.5">
                 <p className="font-semibold text-base sm:text-lg text-basic line-clamp-2">{product.title}</p>

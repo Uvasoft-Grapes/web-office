@@ -28,7 +28,7 @@ export async function GET(req:NextRequest) {
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! Find Product
-    const product = await ProductModel.findById(productId).populate("folder", "title");
+    const product = await ProductModel.findById(productId).populate("folder", "title").populate("category");
     if(!product) return NextResponse.json({ message:"Product not found" }, { status:404 });
 
     return NextResponse.json(product, { status:200 });

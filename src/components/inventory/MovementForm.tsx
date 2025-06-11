@@ -5,7 +5,7 @@ import { es } from "date-fns/locale";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
-import { TypeMovement, TypeMovementProduct, TypeProduct } from "@utils/types";
+import { TypeCategory, TypeMovement, TypeMovementProduct, TypeProduct } from "@utils/types";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import { TRANSACTIONS_STATUS_DATA } from "@utils/data";
@@ -22,7 +22,7 @@ import ProductSelect from "@components/inventory/ProductSelect";
 export default function MovementForm({ inventory, products, type, values, refresh }:{ inventory:string, products?:TypeProduct[], type:"inflow"|"outflow", values?:TypeMovement, refresh:()=>void }) {
   const { user } = useAuth();
 
-  const [category, setCategory] = useState<string|undefined>(values && values.category);
+  const [category, setCategory] = useState<TypeCategory|undefined>(values && values.category);
   const [product, setProduct] = useState<TypeMovementProduct|undefined>(values && values.product);
   const [status, setStatus] = useState<string>(values ? values.status : "Finalizado");
   const [error, setError] = useState("");
@@ -32,7 +32,7 @@ export default function MovementForm({ inventory, products, type, values, refres
   const createMovement = async (data:{ title:string, description:string, quantity:number, date:Date }) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(API_PATHS.MOVEMENTS.CREATE_MOVEMENT, { inventory, product:product?._id, type, category, ...data, status });
+      const res = await axiosInstance.post(API_PATHS.MOVEMENTS.CREATE_MOVEMENT, { inventory, product:product?._id, type, category:category?._id, ...data, status });
       if(res.status === 201) {
         toast.success(res.data.message);
         refresh();
@@ -53,7 +53,7 @@ export default function MovementForm({ inventory, products, type, values, refres
     if(!values) return;
     setLoading(true);
     try {
-      const res = await axiosInstance.put(API_PATHS.MOVEMENTS.UPDATE_MOVEMENT(values._id), { product:product?._id, category, ...data, status });
+      const res = await axiosInstance.put(API_PATHS.MOVEMENTS.UPDATE_MOVEMENT(values._id), { product:product?._id, category:category?._id, ...data, status });
       if(res.status === 201) {
         toast.success(res.data.message);
         refresh();
@@ -118,8 +118,9 @@ export default function MovementForm({ inventory, products, type, values, refres
         <div className={`grid grid-cols-1 ${products && "sm:grid-cols-2"} gap-6`}>
           <CategorySelect
             label
+            type="movement"
             currentCategory={category}
-            setCategory={(selectedCategory:string|undefined)=>setCategory(selectedCategory)}
+            setCategory={(selectedCategory:TypeCategory|undefined)=>setCategory(selectedCategory)}
           />
         {products &&
           <ProductSelect

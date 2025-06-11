@@ -7,7 +7,7 @@ import { LuArrowDownWideNarrow, LuArrowUpNarrowWide, LuPlus } from "react-icons/
 import { useAuth } from "@context/AuthContext";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
-import { TypeProduct } from "@utils/types";
+import { TypeCategory, TypeProduct } from "@utils/types";
 import { PRODUCTS_SORT_DATA } from "@utils/data";
 import ProtectedRoute from "@app/ProtectedRoute";
 import AppLayout from "@components/layouts/AppLayout";
@@ -21,7 +21,7 @@ export default function ProductsPage() {
   const { user } = useAuth();
 
   const [products, setProducts] = useState<TypeProduct[]|undefined>();
-  const [category, setCategory] = useState<string|undefined>();
+  const [category, setCategory] = useState<TypeCategory|undefined>();
   const [sortLabel, setSortLabel] = useState(PRODUCTS_SORT_DATA[0]);
   const [sortType, setSortType] = useState(true);
   const [sortForm, setSortForm] = useState(false);
@@ -31,7 +31,7 @@ export default function ProductsPage() {
     try {
       const res = await axiosInstance.get(API_PATHS.PRODUCTS.GET_ALL_PRODUCTS, {
         params:{
-          category:category || "",
+          category:category?._id || "",
           sort:`${sortLabel} ${sortType ? "(asc)" : "(desc)"}`,
         },
       });
@@ -45,7 +45,7 @@ export default function ProductsPage() {
       } else {
         toast.error("Something went wrong. Please try again.");
       };
-    }
+    };
   };
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export default function ProductsPage() {
             <h2 className="font-semibold text-3xl">Productos</h2>
 {/* Filter */}
             <div className="flex-1 sm:flex-none sm:min-w-64">
-              <CategorySelect disabled={!products ? true : false} currentCategory={category} setCategory={(value:string|undefined)=>setCategory(value)}/>
+              <CategorySelect disabled={!products ? true : false} type="product" currentCategory={category} setCategory={(value:TypeCategory|undefined)=>setCategory(value)}/>
             </div>
           </section>
           <section className="flex-1 flex flex-col">

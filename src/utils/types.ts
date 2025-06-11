@@ -39,6 +39,14 @@ export interface TypeAssigned {
   profileImageUrl?:string;
 };
 
+export interface TypeCategory {
+  _id:string;
+  desk:string;
+  type:"transaction"|"movement"|"product";
+  icon:number;
+  label:string;
+};
+
 //! Tasks
 
 export interface TypeTodo {
@@ -110,7 +118,7 @@ export interface TypeTransaction {
   _id:string;
   account:string;
   type:"income"|"expense";
-  category:string;
+  category:TypeCategory;
   title:string;
   description:string,
   amount:number;
@@ -165,7 +173,7 @@ export interface TypeProduct {
   folder:TypeFolder;
   title:string;
   description?:string;
-  category:string;
+  category:TypeCategory;
   price:number;
   stock:number;
   movements?:TypeMovement[];
@@ -175,7 +183,7 @@ export interface TypeMovementProduct {
   _id:string;
   title:string;
   description?:string;
-  category:string;
+  category:TypeCategory;
   price:number;
   stock:number;
 };
@@ -186,7 +194,7 @@ export interface TypeMovement {
   product:TypeMovementProduct;
   createdBy:TypeAssigned;
   type:"inflow"|"outflow";
-  category:string;
+  category:TypeCategory;
   title:string;
   description?:string;
   quantity:number;

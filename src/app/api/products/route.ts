@@ -40,11 +40,11 @@ export async function GET(req:Request) {
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! All products
-    let products = await ProductModel.find({ desk:desk._id });
+    let products = await ProductModel.find({ desk:desk._id }).populate("category");
 
 //! Filter products
     if(filter.title) products = products.filter(product => product.title.toLowercase().includes(filter.title));
-    if(filter.category) products = products.filter(product => product.category === filter.category);
+    if(filter.category) products = products.filter(product => product.category._id.toString() === filter.category);
     if(filter.inventory) products = products.filter(product => product.stocks.includes((stock:{ inventory:TypeInventory, stock:number }) => stock.inventory._id === filter.inventory));
 
 //! Sort Products

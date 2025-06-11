@@ -6,7 +6,7 @@ import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { LuCircleMinus, LuCirclePlus, LuFilter, LuMapPin, LuMoveRight, LuWarehouse } from "react-icons/lu";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
-import { TypeAssigned, TypeInventory } from "@utils/types";
+import { TypeAssigned, TypeCategory, TypeInventory } from "@utils/types";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import { getAvatars } from "@utils/avatars";
@@ -31,7 +31,7 @@ export default function InventoryPage() {
   const [selectedUsersAvatars, setSelectedUsersAvatars] = useState([]);
   const [type, setType] = useState<string|undefined>();
   const [status, setStatus] = useState<string|undefined>();
-  const [category, setCategory] = useState<string|undefined>();
+  const [category, setCategory] = useState<TypeCategory|undefined>();
   const [sortForm, setSortForm] = useState(false);
   const [sortLabel, setSortLabel] = useState(TRANSACTIONS_SORT_DATA[0]);
   const [sortType, setSortType] = useState(false);
@@ -45,7 +45,7 @@ export default function InventoryPage() {
         params:{
           type:!type ? "" : type,
           status:!status ? "" : status,
-          category:!category ? "" : category,
+          category:!category ? "" : category._id,
           sort:`${sortLabel} ${sortType ? "(asc)" : "(desc)"}`,
         },
       });
@@ -129,7 +129,7 @@ export default function InventoryPage() {
                 <DropdownSelect disabled={!inventory ? true : false} options={[{ label:"Todos", value:"" }, { label:"Entrada", value:"inflow" }, { label:"Salida", value:"outflow" },]} defaultValue="" icon={<LuFilter className="text-lg"/>} placeholder="Tipo" handleValue={(value:string)=>setType(value)}/>
               </div>
               <div className="flex-1 min-w-48 ">
-                <CategorySelect disabled={!inventory ? true : false} currentCategory={category} setCategory={(value:string|undefined)=>setCategory(value)}/>
+                <CategorySelect disabled={!inventory ? true : false} type="movement" currentCategory={category} setCategory={(value:TypeCategory|undefined)=>setCategory(value)}/>
               </div>
             </div>
           </section>
