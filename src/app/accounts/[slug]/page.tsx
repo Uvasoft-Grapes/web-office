@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
-import { LuCircleMinus, LuCirclePlus, LuFilter, LuWallet } from "react-icons/lu";
+import { LuCircleMinus, LuCirclePlus, LuFilter, LuSquarePen, LuWallet } from "react-icons/lu";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
 import { TypeAccount, TypeAssigned, TypeCategory } from "@utils/types";
 import axiosInstance from "@utils/axiosInstance";
@@ -17,17 +17,21 @@ import AppLayout from "@components/layouts/AppLayout";
 import AvatarGroup from "@components/users/AvatarGroup";
 import Modal from "@components/Modal";
 import TransactionForm from "@components/accounts/TransactionForm";
-import Transaction from "@components/accounts/Transaction";
 import TabCard from "@components/tasks/TabCard";
 import DropdownSelect from "@components/inputs/Dropdown";
 import CategorySelect from "@components/inputs/CategorySelect";
 import Skeleton from "@components/Skeleton";
+import Transactions from "@/src/components/accounts/Transactions";
+import { useAuth } from "@/src/context/AuthContext";
+import AccountForm from "@/src/components/accounts/Form";
 
 export default function AccountPage() {
+  const { user } = useAuth();
   const accountId = usePathname().split("/")[2];
 
   const [account, setAccount] = useState<TypeAccount|undefined>();
   const [selectedUsersAvatars, setSelectedUsersAvatars] = useState([]);
+  const [openForm, setOpenForm] = useState(false);
   const [incomeForm, setIncomeForm] = useState(false);
   const [expenseForm, setExpenseForm] = useState(false);
   const [type, setType] = useState<string|undefined>();
@@ -71,33 +75,40 @@ export default function AccountPage() {
     setSortForm(false);
   };
 
+  const refresh = () => {
+    fetchAccount();
+    setOpenForm(false);
+  };
+
   return(
     <ProtectedRoute>
       <AppLayout activeMenu="Cuentas">
         <div className="flex-1 flex flex-col gap-4">
-        {!account ?
-          <div className="flex min-h-44">
-            <Skeleton/>
-          </div>
-        :
-          <section className="card flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-basic">
-              <LuWallet className="text-2xl"/>
-              <p className="font-medium text-xl md:text-2xl">{account.title}</p>
-            </div>
-            <div className="flex items-center justify-between min-h-10">
-              <AvatarGroup avatars={selectedUsersAvatars || []} maxVisible={6}/>
-            </div>
-            <section className="flex flex-wrap gap-x-2 gap-y-1">
-              <TabCard label="" count={account?.folder.title} style="min-w-1/2 truncate text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20"/>
-              <TabCard label="" count={`${account.balance < 0 ? "-" : "+"}$${addThousandsSeparator(Math.abs(account.balance))}`} style={account.balance > 0 ? "text-green-light dark:text-green-dark bg-green-light/20 dark:bg-green-dark/20 border-green-light dark:border-green-dark" : "text-red-light dark:text-red-dark bg-red-light/20 dark:bg-red-dark/20 border-red-light dark:border-red-dark"}/>
-            </section>
-          </section>
-        }
-        {/* Sorts: status, date  */}
 {/* Filters */}
-          <section className="flex flex-col lg:flex-row lg:items-center justify-between gap-x-5 gap-y-2 min-w-full">
-            <h2 className="font-semibold text-3xl text-basic">Transacciones</h2>
+          <section className="flex flex-col justify-between gap-x-5 gap-y-2 min-w-full">
+          {!account ?
+            <span className="flex h-24">
+              <Skeleton/>
+            </span>
+          :
+            <>
+            <div className="flex items-center gap-2">
+            {user?.role === "admin" || user?.role === "owner" ?
+              <button type="button" onClick={()=>setOpenForm(true)} className="text-primary-dark dark:text-primary-light hover:text-quaternary cursor-pointer duration-300"><LuSquarePen className="text-2xl"/></button>
+            :
+              <LuWallet className="text-2xl"/>
+            }
+              <h2 className="font-semibold text-3xl text-basic">{account?.title}</h2>
+            </div>
+            <div className="flex flex-col-reverse sm:flex-row sm:flex-wrap-reverse gap-2">
+              <AvatarGroup avatars={selectedUsersAvatars || []} maxVisible={10}/>
+              <div className="flex-1 flex flex-wrap gap-2">
+                <TabCard label="" count={account?.folder.title || ""} style="min-w-1/2 truncate text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20"/>
+                <TabCard label="" count={`${account && account.balance < 0 ? "-" : "+"}$${addThousandsSeparator(Math.abs(account?.balance || 0))}`} style={account && account.balance >= 0 ? "text-green-light dark:text-green-dark bg-green-light/20 dark:bg-green-dark/20 border-green-light dark:border-green-dark" : "text-red-light dark:text-red-dark bg-red-light/20 dark:bg-red-dark/20 border-red-light dark:border-red-dark"}/>
+              </div>
+            </div>
+            </>
+          }
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div className="flex-1 min-w-48">
                 <DropdownSelect disabled={!account ? true : false} options={[{ label:"Todos", value:"" }, ...TRANSACTIONS_STATUS_DATA]} defaultValue="" icon={<LuFilter className="text-lg"/>} placeholder="Estado" handleValue={(value:string)=>setStatus(value)}/>
@@ -110,20 +121,18 @@ export default function AccountPage() {
               </div>
             </div>
           </section>
-          <section className="flex-1 flex flex-col gap-6 min-w-full mt-5 mb-10">
-          {!account &&          
-            [1,2,3].map(item => (
-              <div key={item} className="flex min-h-32">
-                <Skeleton/>
-              </div>
-            ))
+          <section className="flex-1 flex flex-col gap-6 min-w-full mb-10">
+          {!account && 
+            <div className="flex-1 flex min-h-32">
+              <Skeleton/>
+            </div>
           }
           {account?.transactions && account.transactions.length < 1 && 
             <p className="flex-1 flex items-center justify-center font-semibold text-2xl text-quaternary">No hay transacciones</p>
           }
-          {account?.transactions && account.transactions.map((transaction) => (
-            <Transaction key={transaction._id} transaction={transaction} refresh={fetchAccount}/>
-          ))}
+          {account?.transactions && account.transactions.length > 0 &&
+            <Transactions transactions={account.transactions} refresh={fetchAccount}/>
+          }
           </section>
         </div>
         <section>
@@ -152,6 +161,9 @@ export default function AccountPage() {
             </div>
           </div>
         </section>
+        <Modal title="Editar Cuenta" isOpen={openForm} onClose={()=>setOpenForm(false)}>
+          {openForm && <AccountForm values={account} refresh={refresh}/>}
+        </Modal>
         <Modal title="Crear ingreso" isOpen={incomeForm} onClose={()=>setIncomeForm(false)}>
           {account && incomeForm && <TransactionForm account={account._id} type="income" closeForm={()=>setIncomeForm(false)} refresh={fetchAccount}/>}
         </Modal>

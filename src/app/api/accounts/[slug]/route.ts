@@ -124,8 +124,8 @@ export async function PUT(req:NextRequest) {
   };
 };
 
-// @desc Delete task
-// @route DELETE /api/tasks/:id
+// @desc Delete account
+// @route DELETE /api/accounts/:id
 // @access Private Owner
 
 export async function DELETE(req:NextRequest) {
@@ -145,11 +145,15 @@ export async function DELETE(req:NextRequest) {
     const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
-//! Delete Task
+//! Delete Account
     const account = await AccountModel.findByIdAndDelete(accountId);
     if(!account) return NextResponse.json({ message:"Account not found" }, { status:404 });
 
-    return NextResponse.json({ message:"Account deleted successfully" }, { status:200 });
+  //? Delete Transactions
+    const deletedTransactions = await TransactionModel.deleteMany({ account:account._id });
+    if(!deletedTransactions.acknowledged) return NextResponse.json({ message:"Error deleting transactions" }, { status:500 });
+
+    return NextResponse.json({ message:"Cuenta eliminada" }, { status:200 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

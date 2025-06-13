@@ -13,7 +13,7 @@ import TextInput from "@components/inputs/Text";
 import Modal from "@components/Modal";
 import DeleteAlert from "@components/DeleteAlert";
 
-export default function AccountForm({ closeForm, values, setAccount, }:{ closeForm?:()=>void, values?:TypeAccount, setAccount?:(updatedTask:TypeAccount)=>void }) {
+export default function AccountForm({ values, refresh, }:{ values?:TypeAccount, refresh?:()=>void }) {
   const { user } = useAuth();
   const router = useRouter();
 
@@ -29,11 +29,9 @@ export default function AccountForm({ closeForm, values, setAccount, }:{ closeFo
       const res = await axiosInstance.post(API_PATHS.ACCOUNTS.CREATE_ACCOUNT, { title, folder:folder?._id, assignedTo });
       if(res.status === 201) {
         toast.success(res.data.message);
-        setLoading(false);
         router.push(`/accounts/${res.data.account._id}`);
       };
     } catch (error) {
-      setLoading(false);
       if(!isAxiosError(error)) return console.error("Error creating account:", error);
       if(error.response && error.response.data.message) {
         toast.error(error.response.data.message);
@@ -46,17 +44,15 @@ export default function AccountForm({ closeForm, values, setAccount, }:{ closeFo
   };
 
   const updateAccount = async (title:string) => {
-    if(!values || !setAccount || !closeForm) return;
+    if(!values || !refresh) return;
     setLoading(true);
     try {
       const res = await axiosInstance.put(API_PATHS.ACCOUNTS.UPDATE_ACCOUNT(values?._id), { title, folder:folder?._id, assignedTo });
       if(res.status === 201) {
         toast.success(res.data.message);
-        setAccount(res.data.task);
-        closeForm();
+        refresh();
       };
     } catch (error) {
-      setLoading(false);
       if(!isAxiosError(error)) return console.error("Error updating account:", error);
       if(error.response && error.response.data.message) {
         setError(error.response.data.message);
@@ -75,11 +71,9 @@ export default function AccountForm({ closeForm, values, setAccount, }:{ closeFo
       const res = await axiosInstance.delete(API_PATHS.ACCOUNTS.DELETE_ACCOUNT(values._id));
       if(res.status === 200) {
         toast.success(res.data.message);
-        setLoading(false);
-        router.push("/tasks");
+        router.push("/accounts");
       };
     } catch (error) {
-      setLoading(false);
       if(!isAxiosError(error)) return console.error("Error deleting account:", error);
       if(error.response && error.response.data.message) {
         toast.error(error.response.data.message);
@@ -118,6 +112,7 @@ export default function AccountForm({ closeForm, values, setAccount, }:{ closeFo
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <FolderSelect
+            label
             selectedFolder={folder}
             setSelectedFolder={(selectedFolder:TypeFolder|undefined)=>setFolder(selectedFolder)}
           />

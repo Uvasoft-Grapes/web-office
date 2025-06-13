@@ -54,7 +54,7 @@ export default function CategorySelect({ disabled, label, type, currentCategory,
 
   const getIcon = (index:number, size:"sm"|"lg") => {
     const Icon = ICONS[index];
-    return <Icon className={`${size === "sm" ? "text-xl" : "text-4xl"} text-primary-dark dark:text-primary-light`}/>
+    return <Icon className={`${size === "sm" ? "text-lg" : "text-xl"}`}/>
   };
 
   const refresh = () => {
@@ -72,26 +72,30 @@ export default function CategorySelect({ disabled, label, type, currentCategory,
       </button>
     :
       <button type="button" disabled={disabled} onClick={()=>setOpenModal(true)} className="card-btn">
-        {getIcon(preview.icon || 0, "sm")}
-        {preview.label}
+        <span className="text-primary-dark dark:text-primary-light">{getIcon(preview.icon || 0, "sm")}</span>
+        <span className="line-clamp-1">{preview.label}</span>
       </button>
     }
       <Modal title="Categorías" isOpen={openModal} onClose={()=>setOpenModal(false)}>
-        <ul className="flex-1 flex flex-wrap gap-5 max-h-full overflow-y-auto">
+        <ul className="flex-1 flex flex-col gap-2 max-h-full overflow-y-auto">
         {!label &&
-          <li className="relative h-fit rounded border border-transparent hover:border-quaternary group duration-300">
-            <button type="button" onClick={()=>handleCategory(undefined)} className="flex items-center justify-center size-20 cursor-pointer">
-              <LuFilterX className="text-4xl text-primary-dark dark:text-primary-light"/>
+          <li className="flex">
+            <button type="button" onClick={()=>handleCategory(undefined)} className="flex items-center gap-2 py-2 px-4 w-full h-16 rounded-md hover:bg-secondary-light cursor-pointer duration-300">
+              <span className="flex items-center justify-center min-h-10 min-w-10 rounded-full bg-primary-dark">
+                <LuFilterX className="text-xl text-primary-light dark:text-primary-dark"/>
+              </span>
+              <p className="rounded line-clamp-1 text-start text-primary-dark dark:text-primary-light duration-300">Ninguna</p>
             </button>
-            <label className="absolute -bottom-1/2 z-10 min-w-full py-1 px-2 rounded text-center text-primary-light dark:text-primary-dark bg-primary-dark dark:bg-primary-light opacity-0 group-hover:opacity-100 duration-300">Ninguna</label>
           </li>
         }
         {categories?.map((category, index) => (
-          <li key={category.label} className="relative h-fit rounded border border-transparent hover:border-quaternary group duration-300">
-            <button type="button" onClick={()=>handleCategory(index)} className="flex items-center justify-center size-20 cursor-pointer">
-              {getIcon(category.icon, "lg")}
+          <li key={category.label} className="flex">
+            <button type="button" onClick={()=>handleCategory(index)} className="flex items-center gap-2 py-2 px-4 w-full h-16 rounded-md hover:bg-secondary-light cursor-pointer duration-300">
+              <span className="flex items-center justify-center min-h-10 min-w-10 rounded-full text-primary-light dark:text-primary-dark bg-primary-dark">
+                {getIcon(category.icon, "lg")}
+              </span>
+              <p className="rounded line-clamp-1 text-start text-primary-dark dark:text-primary-light duration-300">{category.label}</p>
             </button>
-            <label className="absolute -bottom-1/2 z-10 min-w-full py-1 px-2 rounded text-center text-primary-light dark:text-primary-dark bg-primary-dark dark:bg-primary-light opacity-0 group-hover:opacity-100 duration-300">{category.label}</label>
           </li>
         ))}
         </ul>

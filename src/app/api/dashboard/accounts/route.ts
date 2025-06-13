@@ -6,6 +6,7 @@ import TransactionModel from "@models/Transaction";
 import AccountModel from "@models/Account";
 import { TypeAccount, TypeAccountsDashboardData, TypeDesk, TypeUser } from "@utils/types";
 import { ROLES_DATA } from "@utils/data";
+import CategoryModel from "@/src/models/Category";
 
 const CURRENT_YEAR = new Date().getFullYear();
 const EMPTY:TypeAccountsDashboardData = {
@@ -73,6 +74,11 @@ export async function GET(req:NextRequest) {
       { $group: { _id: "$category", total: { $sum: "$amount" } } },
       { $project: { label: "$_id", count: "$total" } },
     ]);
+    categoryDistribution.forEach(async (dis) => {
+      const cat = await CategoryModel.findById(dis.label);
+      if(!cat) return;
+      dis.label = cat.label;
+    });
 
     // 🔹 Análisis Temporal
     const monthlyTrends = await TransactionModel.aggregate([

@@ -105,6 +105,7 @@ export default function TransactionForm({ account, closeForm, type, values, refr
     if(!title?.trim()) return setError("Título obligatorio.");
     if(!date) return setError("Fecha obligatoria.");
     if(!amount) return setError("Monto obligatorio.");
+    if(!category) return setError("Categoría obligatoria.");
 
     if(!values) createTransaction({ title, description, amount, date });
     if(values) updateTransaction({ title, description, amount, date });
