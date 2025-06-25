@@ -11,7 +11,7 @@ import InputText from "@components/inputs/Text";
 import DeleteAlert from "@components/DeleteAlert";
 import IconSelect from "./IconSelect";
 
-export default function CategoryForm({ type, values, refresh }:{ type:"transaction"|"product"|"movement", values?:TypeCategory, refresh:()=>void }) {
+export default function CategoryForm({ type, values, refresh }:{ type:"transaction"|"product"|"movement"|"item", values?:TypeCategory, refresh:()=>void }) {
   const { user } = useAuth();
 
   const [icon, setIcon] = useState<number|undefined>();

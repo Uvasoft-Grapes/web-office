@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function AvatarGroup({ avatars, maxVisible }:{ avatars:{ name:string, img:string }[], maxVisible:number }) {
   return(
-    <ul className="flex items-center h-full">
+    <ul className="flex items-center">
     {avatars.slice(0, maxVisible).map((avatar, index)=>(
       <li key={`avatar-${index}`} className="size-10 rounded-full -ml-3 first:ml-0 group">
         <Image

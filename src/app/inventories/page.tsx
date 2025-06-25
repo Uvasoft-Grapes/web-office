@@ -51,10 +51,15 @@ export default function InventoriesPage() {
     setFilterFolder(value);
   };
 
+  const refresh = () => {
+    fetchInventories();
+    setOpenForm(false);
+  };
+
   return(
     <ProtectedRoute>
       <AppLayout activeMenu="Inventarios">
-        <article className="flex-1 flex flex-col gap-5 mb-10 text-basic">
+        <article className="flex-1 flex flex-col gap-5 mb-10 text-basic min-w-full">
           <section className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 w-full">
             <h2 className="font-semibold text-3xl">Inventarios</h2>
 {/* Filter */}
@@ -72,18 +77,19 @@ export default function InventoriesPage() {
           ))}
           </section>
         }
-{/* There are tasks */}
+{/* There are inventories */}
         {inventories && inventories?.length > 0 &&
-          <ul className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
+          <ul className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4 min-w-full">
           {inventories.map((inventory) => (
             <InventoryCard
               key={inventory._id}
               inventory={inventory}
+              refresh={fetchInventories}
             />
           ))}
           </ul>
         }
-{/* There are no tasks */}
+{/* There are no inventories */}
         {inventories && inventories.length < 1 &&
           <section className="flex-1 flex items-center justify-center">
             <p className="font-semibold text-2xl text-quaternary">No hay inventarios</p>
@@ -103,7 +109,7 @@ export default function InventoriesPage() {
         </article>
 {/* Modals */}
         <Modal title="Crear Inventario" isOpen={openForm} onClose={()=>setOpenForm(false)}>
-          {openForm && <InventoryForm closeForm={()=>setOpenForm(false)}/>}
+          {openForm && <InventoryForm refresh={refresh}/>}
         </Modal>
       </AppLayout>
     </ProtectedRoute>

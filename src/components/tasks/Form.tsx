@@ -1,5 +1,4 @@
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import { isAxiosError } from "axios";
 import { format, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
@@ -21,9 +20,8 @@ import Modal from "@components/Modal";
 import DeleteAlert from "@components/DeleteAlert";
 import FolderSelect from "@components/folders/Select";
 
-export default function TaskForm({ closeForm, values, setTask, }:{ closeForm:()=>void, values?:TypeTask, setTask?:(updatedTask:TypeTask)=>void }) {
+export default function TaskForm({ values, refresh }:{ values?:TypeTask, refresh:()=>void }) {
   const { user } = useAuth();
-  const router = useRouter();
 
   const [priority, setPriority] = useState<string>(values ? values.priority : "Baja");
   const [assignedTo, setAssignedTo] = useState<TypeAssigned[]>(values ? values.assignedTo : []);
@@ -39,7 +37,7 @@ export default function TaskForm({ closeForm, values, setTask, }:{ closeForm:()=
     try {
       const res = await axiosInstance.post(API_PATHS.TASKS.CREATE_TASK, { ...data, folder:folder?._id, priority, assignedTo, todoChecklist, attachments });
       toast.success(res.data.message);
-      router.push(`/tasks/${res.data.task._id}`);
+      refresh();
     } catch (error) {
       console.error("Error creating task:", error)
       setLoading(false);
@@ -49,14 +47,13 @@ export default function TaskForm({ closeForm, values, setTask, }:{ closeForm:()=
   };
 
   const updateTask = async (data:{ title:string, description:string, dueDate:Date }) => {
-    if(!values || !setTask) return;
+    if(!values) return;
     setLoading(true);
     try {
       const res = await axiosInstance.put(API_PATHS.TASKS.UPDATE_TASK(values?._id), { ...data, folder:folder?._id, priority, assignedTo, todoChecklist, attachments });
       if(res.status === 201) {
         toast.success(res.data.message);
-        setTask(res.data.task);
-        closeForm();
+        refresh();
       };
     } catch (error) {
       if(!isAxiosError(error)) return console.error(error);
@@ -74,7 +71,7 @@ export default function TaskForm({ closeForm, values, setTask, }:{ closeForm:()=
     if(!values) return;
     try {
       await axiosInstance.delete(API_PATHS.TASKS.DELETE_TASK(values._id));
-      router.push("/tasks");
+      refresh();
     } catch (error) {
       if(!isAxiosError(error)) return console.error("Error deleting desk:", error);
       if(error.response && error.response.data.message) {

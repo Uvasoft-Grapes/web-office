@@ -9,7 +9,7 @@ import { API_PATHS } from "@utils/apiPaths";
 import Modal from "@components/Modal";
 import CategoryForm from "../categories/Form";
 
-export default function CategorySelect({ disabled, label, type, currentCategory, setCategory }:{ disabled?:boolean, label?:boolean, type:"transaction"|"product"|"movement", currentCategory:TypeCategory|undefined, setCategory:(category:TypeCategory|undefined)=>void }) {
+export default function CategorySelect({ disabled, label, type, currentCategory, setCategory }:{ disabled?:boolean, label?:boolean, type:"transaction"|"product"|"movement"|"item", currentCategory:TypeCategory|undefined, setCategory:(category:TypeCategory|undefined)=>void }) {
   const [categories, setCategories] = useState<TypeCategory[]|undefined>();
   const [preview, setPreview] = useState<TypeCategory|undefined>();
   const [openModal, setOpenModal] = useState(false);

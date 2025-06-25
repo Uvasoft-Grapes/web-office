@@ -42,7 +42,7 @@ export interface TypeAssigned {
 export interface TypeCategory {
   _id:string;
   desk:string;
-  type:"transaction"|"movement"|"product";
+  type:"transaction"|"product"|"movement"|"item";
   icon:number;
   label:string;
 };
@@ -149,10 +149,14 @@ export type TypeAccountsDashboardData = {
 
 //! Inventory
 
-export interface TypeMovementsStatusSummary {
-  pending:number;
-  completed:number;
-  canceled:number;
+export interface TypeItem {
+  _id:string;
+  inventory:string;
+  title:string;
+  description?:string;
+  category:TypeCategory;
+  stock:number;
+  price:number;
 };
 
 export interface TypeInventory {
@@ -162,44 +166,8 @@ export interface TypeInventory {
   title:string;
   location?:string;
   assignedTo:TypeAssigned[];
-  products?:TypeProduct[];
-  movements?:TypeMovement[],
-  statusSummary?:TypeMovementsStatusSummary,
-};
-
-export interface TypeProduct {
-  _id:string;
-  desk:string;
-  folder:TypeFolder;
-  title:string;
-  description?:string;
-  category:TypeCategory;
-  price:number;
-  stock:number;
-  movements?:TypeMovement[];
-};
-
-export interface TypeMovementProduct {
-  _id:string;
-  title:string;
-  description?:string;
-  category:TypeCategory;
-  price:number;
-  stock:number;
-};
-
-export interface TypeMovement {
-  _id:string;
-  inventory:string;
-  product:TypeMovementProduct;
-  createdBy:TypeAssigned;
-  type:"inflow"|"outflow";
-  category:TypeCategory;
-  title:string;
-  description?:string;
-  quantity:number;
-  date:Date;
-  status:"Pendiente"|"Finalizado"|"Cancelado";
+  items?:TypeItem[],
+  quantity?:number;
 };
 
 //! Calendar

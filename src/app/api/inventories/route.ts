@@ -3,10 +3,9 @@ import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import InventoryModel from "@models/Inventory";
-import MovementModel from "@models/Movement";
-import ProductModel from "@models/Product";
 import { TypeDesk, TypeUser } from "@utils/types";
 import { ROLES_DATA } from "@utils/data";
+import ItemModel from "@/src/models/Item";
 
 // @desc Get all inventories
 // @route GET /api/inventories
@@ -42,19 +41,16 @@ export async function GET(req:Request) {
 //! Filter inventory
     if(filter.folder) inventories = inventories.filter(inventory => inventory.folder._id.toString() === filter.folder);
 
-//! Status summary inventory
+//! Add items and quantity
     inventories = await Promise.all(inventories.map(async (inventory) => {
-      const statusSummary = {
-        pending:await MovementModel.countDocuments({ status:"Pendiente", inventory:inventory._id }),
-        completed:await MovementModel.countDocuments({ status:"Finalizado", inventory:inventory._id }),
-        canceled:await MovementModel.countDocuments({ status:"Cancelado", inventory:inventory._id }),
-      };
-      const products = await ProductModel.find({ desk:desk._id });
-      return { ...inventory._doc, products, statusSummary };
+      const items = await ItemModel.find({ inventory:inventory._id }).populate("category");
+      let quantity = 0;
+      items.forEach((item) => {
+        quantity += item.stock;
+      });
+      return { ...inventory._doc, items:items, quantity };
     }));
-
     return NextResponse.json(inventories, { status:200 });
-
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

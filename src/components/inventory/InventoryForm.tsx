@@ -1,21 +1,19 @@
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
-import { TypeAccount, TypeAssigned, TypeFolder, TypeInventory } from "@utils/types";
+import { TypeAssigned, TypeFolder, TypeInventory } from "@utils/types";
 import FolderSelect from "@components/folders/Select";
 import AssignedSelect from "@components/inputs/Assigned";
 import TextInput from "@components/inputs/Text";
 import Modal from "@components/Modal";
 import DeleteAlert from "@components/DeleteAlert";
 
-export default function InventoryForm({ closeForm, values, setInventory, }:{ closeForm?:()=>void, values?:TypeAccount, setInventory?:(updatedInventory:TypeInventory)=>void }) {
+export default function InventoryForm({ values, refresh }:{ values?:TypeInventory, refresh:()=>void }) {
   const { user } = useAuth();
-  const router = useRouter();
 
   const [assignedTo, setAssignedTo] = useState<TypeAssigned[]>(values ? values.assignedTo : user ? [{ _id:user?._id, name:user.name, email:user.email, profileImageUrl:user.profileImageUrl||"" }] : []);
   const [folder, setFolder] = useState<TypeFolder|undefined>(values?.folder);
@@ -29,7 +27,7 @@ export default function InventoryForm({ closeForm, values, setInventory, }:{ clo
       const res = await axiosInstance.post(API_PATHS.INVENTORIES.CREATE_INVENTORY, { ...data, folder:folder?._id, assignedTo:assignedTo.map(member => member._id) });
       if(res.status === 201) {
         toast.success(res.data.message);
-        router.push(`/inventories/${res.data.inventory._id}`);
+        refresh();
       };
     } catch (error) {
       if(!isAxiosError(error)) return console.error("Error creating inventory:", error);
@@ -44,14 +42,13 @@ export default function InventoryForm({ closeForm, values, setInventory, }:{ clo
   };
 
   const updateInventory = async (data:{ title:string, location:string }) => {
-    if(!values || !setInventory || !closeForm) return;
+    if(!values) return;
     setLoading(true);
     try {
       const res = await axiosInstance.put(API_PATHS.INVENTORIES.UPDATE_INVENTORY(values?._id), { ...data, folder:folder?._id, assignedTo });
       if(res.status === 201) {
         toast.success(res.data.message);
-        setInventory(res.data.inventory);
-        closeForm();
+        refresh();
       };
     } catch (error) {
       if(!isAxiosError(error)) return console.error("Error updating inventory:", error);
@@ -72,7 +69,7 @@ export default function InventoryForm({ closeForm, values, setInventory, }:{ clo
       const res = await axiosInstance.delete(API_PATHS.INVENTORIES.DELETE_INVENTORY(values._id));
       if(res.status === 200) {
         toast.success(res.data.message);
-        router.push("/tasks");
+        refresh();
       };
     } catch (error) {
       if(!isAxiosError(error)) return console.error("Error deleting inventory:", error);
@@ -105,6 +102,18 @@ export default function InventoryForm({ closeForm, values, setInventory, }:{ clo
 
   return(
     <form onSubmit={(e) => handleSubmit(e)} className="flex-1 flex flex-col gap-4 max-h-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <FolderSelect
+          label
+          selectedFolder={folder}
+          setSelectedFolder={(selectedFolder:TypeFolder|undefined)=>setFolder(selectedFolder)}
+        />
+        <AssignedSelect
+          label="Miembros asignados"
+          selectedUsers={assignedTo}
+          setSelectedUsers={(assignedToList:TypeAssigned[])=>setAssignedTo(assignedToList)}
+        />
+      </div>
       <div className="flex-1 flex flex-col gap-4 pr-4 overflow-y-auto">
         <TextInput
           name="title"
@@ -116,20 +125,8 @@ export default function InventoryForm({ closeForm, values, setInventory, }:{ clo
           name="location"
           label="Ubicación"
           placeholder="Ubicación del inventario"
-          defaultValue={values?.title || ""}
+          defaultValue={values?.location || ""}
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <FolderSelect
-            label
-            selectedFolder={folder}
-            setSelectedFolder={(selectedFolder:TypeFolder|undefined)=>setFolder(selectedFolder)}
-          />
-          <AssignedSelect
-            label="Miembros asignados"
-            selectedUsers={assignedTo}
-            setSelectedUsers={(assignedToList:TypeAssigned[])=>setAssignedTo(assignedToList)}
-          />
-        </div>
       </div>
       <div className="flex flex-col sm:flex-row gap-2">
         <p className="flex-1 flex items-center min-h-2 font-medium text-xs text-red-light dark:text-red-dark overflow-hidden">{error}</p>

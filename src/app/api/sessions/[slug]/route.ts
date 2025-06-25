@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyAdminToken, verifyDeskToken } from "@middlewares/authMiddleware";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@middlewares/authMiddleware";
 import SessionModel from "@models/Session";
 
 // @desc Update session
@@ -46,7 +46,7 @@ export async function PUT(req:NextRequest) {
 
 // @desc Delete session
 // @route DELETE /api/sessions/:id
-// @access Owner, Admin
+// @access Owner
 
 export async function DELETE(req:NextRequest) {
   try {
@@ -62,7 +62,7 @@ export async function DELETE(req:NextRequest) {
     if(!sessionId) return NextResponse.json({ message:"Session missing" }, { status:400 });
 
 //! Validate user token
-    const userToken:TypeUser|NextResponse = await verifyAdminToken(authToken);
+    const userToken:TypeUser|NextResponse = await verifyOwnerToken(authToken);
     if(userToken instanceof NextResponse) return userToken;
 
 //! Validate desk token

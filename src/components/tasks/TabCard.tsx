@@ -1,4 +1,4 @@
-export default function TabCard({ label, count, style }:{ label:string, count:string|number, style?:string }) {
+export default function TabCard({ label, count, style }:{ label?:string, count:string|number, style?:string }) {
   const getStatusTagColor = () => {
     switch (label) {
       case "Todas":

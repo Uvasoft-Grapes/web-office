@@ -3,18 +3,20 @@ import { isAxiosError } from "axios";
 import { startOfWeek, format, endOfWeek } from "date-fns";
 import { es } from "date-fns/locale";
 import toast from "react-hot-toast";
-import { LuChevronLeft, LuChevronRight } from "react-icons/lu";
+import { LuChevronLeft, LuChevronRight, LuTrash2 } from "react-icons/lu";
 import axiosInstance from "@utils/axiosInstance";
 import { API_PATHS } from "@utils/apiPaths";
 import { TypeSession } from "@utils/types";
 import Skeleton from "@components/Skeleton";
 import Modal from "@components/Modal";
 import SessionForm from "@components/users/SessionForm";
+import DeleteAlert from "../DeleteAlert";
 
 export default function Sessions({ userId }:{ userId:string }) {
   const [weeks, setWeeks] = useState<{ week:string, sessions:TypeSession[], total:number }[]|undefined>();
   const [currentWeek, setCurrentWeek] = useState(0);
   const [openForm, setOpenForm] = useState<TypeSession|undefined>();
+  const [openAlert, setOpenAlert] = useState(false);
 
   const fetchSessions = async () => {
     setWeeks(undefined);
@@ -41,7 +43,6 @@ export default function Sessions({ userId }:{ userId:string }) {
           if (session.checkOut) weekEntry.total += session.hours;
           return acc;
         }, [] as { week:string; sessions:TypeSession[]; total:number }[]);
-
         setWeeks(grouped);
         setCurrentWeek(grouped.length - 1);
       };
@@ -60,8 +61,31 @@ export default function Sessions({ userId }:{ userId:string }) {
   return () => {};
   },[]);
 
+  const emptyWeek = async () => {
+    try {
+      const res = await axiosInstance.delete(API_PATHS.SESSIONS.EMPTY_WEEK, {
+        params:{
+          member:userId,
+          week:weeks ? weeks[currentWeek].week : "",
+        },
+      });
+      if(res.status === 200) {
+        toast.success(res.data.message);
+        fetchSessions();
+        setOpenAlert(false);
+      };
+    } catch (error) {
+      if(!isAxiosError(error)) return console.error(error);
+      if(error.response && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      };
+    }
+  };
+
   return(
-    <div className="flex-1 flex flex-col gap-4 max-h-full">
+    <div className="flex-1 flex flex-col gap-2 max-h-full">
     {!weeks &&
       <div className="flex flex-col gap-4 min-w-full h-full">
         <span className="flex min-w-full min-h-16">
@@ -131,8 +155,17 @@ export default function Sessions({ userId }:{ userId:string }) {
         </table>
       }
       </section>
+      <section className="flex items-center justify-end">
+        <button type="button" onClick={()=>setOpenAlert(true)} className="flex-1 sm:flex-auto card-btn-red w-fit sm:max-w-52">
+          <LuTrash2 className="text-base"/>
+          Vaciar
+        </button>
+      </section>
       <Modal title="Editar Sesión" isOpen={openForm ? true : false} onClose={()=>setOpenForm(undefined)}>
         {openForm && <SessionForm session={openForm} update={fetchSessions}/>}
+      </Modal>
+      <Modal title="Vaciar semana" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
+        {<DeleteAlert content="¿Estás seguro de que quieres vaciar esta semana?" description="Se eliminaran todos sus registros" onDelete={emptyWeek}/>}
       </Modal>
     </div>
   );

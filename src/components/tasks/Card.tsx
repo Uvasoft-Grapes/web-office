@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { useState } from "react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { IoLink } from "react-icons/io5";
@@ -6,10 +6,14 @@ import { getAvatars } from "@utils/avatars";
 import { TypeTask } from "@utils/types";
 import AvatarGroup from "@components/users/AvatarGroup";
 import Progress from "@components/tasks/Progress";
+import Modal from "../Modal";
+import Task from "./Task";
 
-export default function TaskCard({ task }:{ task:TypeTask }) {
-  const { _id, folder, title, description, priority, status, progress, createdAt, dueDate, assignedTo, attachments, completedTodoCount, todoChecklist  } = task;
+export default function TaskCard({ task, refresh }:{ task:TypeTask, refresh:()=>void }) {
+  const { folder, title, description, priority, status, progress, createdAt, dueDate, assignedTo, attachments, completedTodoCount, todoChecklist  } = task;
   const selectedUsersAvatars = assignedTo.map((assigned) => ({ name:assigned.name||"", img:assigned.profileImageUrl||getAvatars()[0].src }));
+
+  const [openModal, setOpenModal] = useState(false);
 
   const getStatusTagColor = () => {
     switch (status) {
@@ -38,8 +42,8 @@ export default function TaskCard({ task }:{ task:TypeTask }) {
   };
 
   return(
-    <Link href={`/tasks/${_id}`}>
-      <li className="flex flex-col gap-3 h-full bg-secondary-light dark:bg-secondary-dark hover:bg-transparent rounded-xl py-4 border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary dark:shadow-secondary-dark cursor-pointer duration-300">
+    <>
+      <li onClick={()=>setOpenModal(true)} className="flex flex-col gap-3 h-full bg-secondary-light dark:bg-secondary-dark hover:bg-transparent rounded-xl py-4 border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary dark:shadow-secondary-dark cursor-pointer duration-300">
         <section className="flex flex-wrap-reverse justify-between gap-x-4 gap-y-2 px-4">
           <p className="px-2 sm:px-4 py-0.5 rounded text-nowrap font-semibold text-xs text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20">{folder.title}</p>
           <div className="flex flex-wrap items-end gap-1">
@@ -58,8 +62,8 @@ export default function TaskCard({ task }:{ task:TypeTask }) {
           </p>
           <Progress progress={progress <= 2 ? "2%" : `${progress}%`} color={progress < 26 ? "red" : progress < 51 ? "orange" : progress < 100 ? "yellow" : "green"}/>
         </section>
-        <section className="px-4">
-          <div className="flex items-center justify-between my-1">
+        <section className="px-4 flex flex-col gap-2">
+          <div className="flex items-center justify-between">
             <div className="">
               <label className="font-medium text-xs text-quaternary">Inicio</label>
               <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{createdAt && format(createdAt, "dd/MM/yyyy", { locale:es })}</p>
@@ -69,7 +73,7 @@ export default function TaskCard({ task }:{ task:TypeTask }) {
               <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{dueDate && format(dueDate, "dd/MM/yyyy", { locale:es })}</p>
             </div>
           </div>
-          <div className="flex items-center justify-between mt-3">
+          <div className="flex items-center justify-between">
             <AvatarGroup avatars={selectedUsersAvatars || []} maxVisible={3}/>
           {attachments.length > 0 &&
             <div className="flex items-center gap-2 bg-primary-dark dark:bg-primary-light px-2.5 py-1.5 rounded-lg">
@@ -80,6 +84,9 @@ export default function TaskCard({ task }:{ task:TypeTask }) {
           </div>
         </section>
       </li>
-    </Link>
+      <Modal title={title} isOpen={openModal} onClose={()=>setOpenModal(false)}>
+        <Task task={task} refresh={refresh}/>
+      </Modal>
+    </>
   );
 };

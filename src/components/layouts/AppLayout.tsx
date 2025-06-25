@@ -10,7 +10,7 @@ export default function AppLayout({ children, activeMenu }:{ children:ReactNode,
     <div className="flex flex-col items-center min-h-screen min-w-screen">
       <Navbar activeMenu={activeMenu} />
     {user &&
-      <main className="flex-1 flex flex-col p-5 pr-8 w-full max-w-[1750px]">
+      <main className="flex-1 flex flex-col p-5 pr-6 w-full max-w-[1750px]">
         {children}
       </main>
     }

@@ -20,7 +20,7 @@ export default function AccountCard({ account }:{ account:TypeAccount }) {
         </section>
         <section className="flex flex-wrap gap-x-2 gap-y-1">
           <TabCard label="" count={folder.title} style="min-w-1/2 truncate text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20"/>
-          <TabCard label="" count={`${balance > 0 ? "+" : "-"}$${addThousandsSeparator(Math.abs(balance))}`} style={balance > 0 ? "text-green-light dark:text-green-dark bg-green-light/20 dark:bg-green-dark/20 border-green-light dark:border-green-dark" : "text-red-light dark:text-red-dark bg-red-light/20 dark:bg-red-dark/20 border-red-light dark:border-red-dark"}/>
+          <TabCard label="" count={`${balance >= 0 ? "+" : "-"}$${addThousandsSeparator(Math.abs(balance))}`} style={balance >= 0 ? "text-green-light dark:text-green-dark bg-green-light/20 dark:bg-green-dark/20 border-green-light dark:border-green-dark" : "text-red-light dark:text-red-dark bg-red-light/20 dark:bg-red-dark/20 border-red-light dark:border-red-dark"}/>
         </section>
         <section className="flex flex-wrap gap-x-2 gap-y-1">
           <TabCard label="Pendiente" count={account.statusSummary?.pending || 0} style="text-yellow-light dark:text-yellow-dark bg-yellow-light/10 dark:bg-yellow-dark/10"/>

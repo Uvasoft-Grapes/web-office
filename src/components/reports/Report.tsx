@@ -29,9 +29,9 @@ export default function Report({ report, refresh }:{ report:TypeReport, refresh:
       </li>
       <Modal title={report.title} onClose={()=>setOpenReport(false)} isOpen={openReport}>
         <div className="flex-1 flex flex-col gap-4 max-h-full">
-            <div>
-              <AvatarGroup avatars={[ { name:report.createdBy.name || "", img:report.createdBy.profileImageUrl || getAvatars()[0].src } ]} maxVisible={1}/>
-            </div>
+          <div>
+            <AvatarGroup avatars={[ { name:report.createdBy.name || "", img:report.createdBy.profileImageUrl || getAvatars()[0].src } ]} maxVisible={1}/>
+          </div>
           <div className="flex flex-wrap items-center justify-between gap-4">
             <span className="font-semibold text-quaternary">{format(report.date, "dd/MM/yyyy", { locale:es })}</span>
             <span className="px-2 sm:px-4 py-0.5 rounded text-nowrap font-semibold text-xs text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20">{report.folder.title}</span>

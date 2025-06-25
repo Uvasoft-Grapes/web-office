@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import ProductModel from "@models/Product";
-import StockModel from "@models/Stock";
-import { TypeDesk, TypeInventory, TypeUser } from "@utils/types";
+import { TypeDesk, TypeUser } from "@utils/types";
+import ItemModel from "@models/Item";
 
-// @desc Get all Products
-// @route GET /api/inventories/products
+// @desc Get all items
+// @route GET /api/inventories/items
 // @access Owner, Admin, User, Client
 
 export async function GET(req:Request) {
@@ -28,8 +27,7 @@ export async function GET(req:Request) {
       inventory:queryInventory ? decodeURIComponent(queryInventory).replace("+", " ") : undefined,
     };
 
-    const querySort = queries.find(item => item.includes("sort="))?.split("=")[1];
-    const sort =  querySort ? decodeURIComponent(querySort).replace(/\+/g, " ") : "Fecha Final (asc)";
+    if(!filter.inventory) return NextResponse.json({ message:"Missing Inventory" }, { status:400 });
 
 //! Validate user token
     const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
@@ -39,47 +37,28 @@ export async function GET(req:Request) {
     const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
-//! All products
-    let products = await ProductModel.find({ desk:desk._id }).populate("category");
+//! All items
+    let items = await ItemModel.find({ inventory:filter.inventory }).populate("category");
 
 //! Filter products
-    if(filter.title) products = products.filter(product => product.title.toLowercase().includes(filter.title));
-    if(filter.category) products = products.filter(product => product.category._id.toString() === filter.category);
-    if(filter.inventory) products = products.filter(product => product.stocks.includes((stock:{ inventory:TypeInventory, stock:number }) => stock.inventory._id === filter.inventory));
+    if(filter.title) items = items.filter(item => item.title.toLowercase().includes(filter.title));
+    if(filter.category) items = items.filter(item => item.category._id.toString() === filter.category);
 
-//! Sort Products
-    if(sort === "Título (asc)") products = products.sort((a, b) => a.title.localeCompare(b.title));
-    if(sort === "Título (desc)") products = products.sort((a, b) => b.title.localeCompare(a.title));
-    if(sort === "Precio (asc)") products = products.sort((a, b) => a.price - b.price);
-    if(sort === "Precio (desc)") products = products.sort((a, b) => b.price - a.price);
-    if(sort === "Stock (asc)") products = products.sort((a, b) => a.stock - b.stock);
-    if(sort === "Stock (desc)") products = products.sort((a, b) => b.stock - a.stock);
-
-//! Add inventories and stock
-    products = await Promise.all(products.map(async (product) => {
-      const stocks = await StockModel.find({ product:product._id });
-      let quantity = 0;
-      stocks.forEach((stock) => {
-        quantity += stock.quantity;
-      });
-      return { ...product._doc, inventories:stocks.length, quantity };
-    }));
-
-    return NextResponse.json(products, { status:200 });
+    return NextResponse.json(items, { status:200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };
 };
 
-// @desc Create a new product
-// @route POST /api/products
+// @desc Create a new item
+// @route POST /api/inventories/items
 // @access Owner, Admin
 
 export async function POST(req:Request) {
   try {
     await connectDB();
-    const { title, description, category, price } = await req.json();
+    const { inventory, title, description, category, price } = await req.json();
     const cookieHeader = req.headers.get("cookie");
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const authToken = cookies.authToken;
@@ -94,24 +73,25 @@ export async function POST(req:Request) {
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! Validations
+    if(!inventory) return NextResponse.json({ message:"Missing inventory." }, { status:400 });
     if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
     if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
     if(!category) return NextResponse.json({ message:"Categoría obligatoria" }, { status:400 });
     if(Number(price) < 0) return NextResponse.json({ message:"Precio obligatorio" }, { status:400 });
 
-    const newProduct = await ProductModel.create({
-      desk:desk._id,
+    const newItem = await ItemModel.create({
+      inventory,
       title,
       description,
       category,
       price:Number(price),
     });
-    if(!newProduct) return NextResponse.json({ message:"Create product error"}, { status:500 });
+    if(!newItem) return NextResponse.json({ message:"Create item error"}, { status:500 });
 
-    const product = await ProductModel.findById(newProduct._id);
-    if(!product) return NextResponse.json({ message:"Product not found"}, { status:404 });
+    const item = await ItemModel.findById(newItem._id).populate("category");
+    if(!item) return NextResponse.json({ message:"Item not found"}, { status:404 });
 
-    return NextResponse.json({ message:"Producto creado", product }, { status:201 });
+    return NextResponse.json({ message:"Artículo creado" }, { status:201 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

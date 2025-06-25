@@ -49,8 +49,9 @@ export async function PUT(req:NextRequest) {
 
     await task.save();
     const updatedTask = await TaskModel.findById(taskId).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
+    if(!updatedTask) return NextResponse.json({ message:"Task not found" }, { status:404 });
 
-    return NextResponse.json({ message:"Pendiente actualizado", task:updatedTask }, { status:201 });
+    return NextResponse.json({ message:"Pendiente actualizado" }, { status:201 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

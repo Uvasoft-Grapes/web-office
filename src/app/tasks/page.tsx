@@ -32,7 +32,8 @@ export default function TasksPage() {
   const [sortType, setSortType] = useState(true);
   const [sortForm, setSortForm] = useState(false);
 
-  const getAllTasks = async () => {
+  const fetchTasks = async () => {
+    console.log(true);
     try {
       const res = await axiosInstance.get(API_PATHS.TASKS.GET_ALL_TASKS, {
         params:{
@@ -57,7 +58,7 @@ export default function TasksPage() {
   };
 
   useEffect(() => {
-    getAllTasks();
+    fetchTasks();
     return () => {};
   },[filterStatus, filterPriority, filterFolder, sortLabel, sortType]);
 
@@ -127,6 +128,7 @@ export default function TasksPage() {
             <TaskCard
               key={task._id}
               task={task}
+              refresh={fetchTasks}
             />
           ))}
           </ul>
@@ -163,7 +165,7 @@ export default function TasksPage() {
         </article>
 {/* Modals */}
         <Modal title="Crear Tarea" isOpen={taskForm} onClose={()=>setTaskForm(false)}>
-          {taskForm && <FormTask closeForm={()=>setTaskForm(false)}/>}
+          {taskForm && <FormTask refresh={fetchTasks}/>}
         </Modal>
         <Modal title="Ordenar Tareas" isOpen={sortForm} onClose={()=>setSortForm(false)}>
           <ul className="flex-1 flex flex-col gap-1.5 overflow-y-auto">

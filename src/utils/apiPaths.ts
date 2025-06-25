@@ -22,7 +22,8 @@ export const API_PATHS = {
   SESSIONS:{
     GET_USER_SESSIONS:"/api/sessions", // Admin Token required
     UPDATE_SESSION:(sessionId:string)=>`/api/sessions/${sessionId}`, // Admin Token required
-    DELETE_SESSION:(sessionId:string)=>`/api/sessions/${sessionId}`, // Admin Token required
+    DELETE_SESSION:(sessionId:string)=>`/api/sessions/${sessionId}`, // Owner Token required
+    EMPTY_WEEK:`/api/sessions/week`, // Owner Token required 
   },
 
   CATEGORIES:{
@@ -97,7 +98,16 @@ export const API_PATHS = {
     CREATE_INVENTORY:"/api/inventories", // Admin Token required
     UPDATE_INVENTORY:(inventoryId:string) => `/api/inventories/${inventoryId}`, // Admin Token required
     DELETE_INVENTORY:(inventoryId:string) => `/api/inventories/${inventoryId}`, // Owner Token required
+    ITEMS:{
+      GET_ALL_ITEMS:"/api/inventories/items", // Auth Token required
+      GET_ITEM_BY_ID:(itemId:string) => `/api/inventories/items/${itemId}`, // Auth Token required
+      CREATE_ITEM:"/api/inventories/items", // Admin Token required
+      UPDATE_ITEM:(itemId:string) => `/api/inventories/items/${itemId}`, // Admin Token required
+      DELETE_ITEM:(itemId:string) => `/api/inventories/items/${itemId}`, // Owner Token required
+      UPDATE_STOCK:(itemId:string) => `/api/inventories/items/${itemId}/stock`, // Admin Token required
+    },
   },
+
 
   MOVEMENTS:{
     CREATE_MOVEMENT:`/api/movements`, // Auth Token required
