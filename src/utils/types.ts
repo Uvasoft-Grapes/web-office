@@ -170,6 +170,18 @@ export interface TypeInventory {
   quantity?:number;
 };
 
+//! Products
+export interface TypeProduct {
+  _id:string;
+  desk:string;
+  folder:TypeFolder;
+  title:string;
+  description?:string;
+  category:TypeCategory;
+  price:number;
+  stock:number;
+};
+
 //! Calendar
 
 export interface TypeRecurrence {

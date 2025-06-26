@@ -51,6 +51,11 @@ export default function AccountsPage() {
     setFilterFolder(value);
   };
 
+  const onRefresh = () => {
+    fetchAccounts();
+    setOpenForm(false);
+  };
+
   return(
     <ProtectedRoute>
       <AppLayout activeMenu="Cuentas">
@@ -103,7 +108,7 @@ export default function AccountsPage() {
         </article>
 {/* Modals */}
         <Modal title="Crear Cuenta" isOpen={openForm} onClose={()=>setOpenForm(false)}>
-          {openForm && <AccountForm closeForm={()=>setOpenForm(false)}/>}
+          {openForm && <AccountForm refresh={onRefresh}/>}
         </Modal>
       </AppLayout>
     </ProtectedRoute>
