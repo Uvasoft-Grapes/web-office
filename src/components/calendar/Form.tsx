@@ -141,6 +141,7 @@ export default function EventForm({ closeForm, values, refresh }:{ closeForm:()=
             defaultValue={values?.recurrence?.endFrequency ? format(values.recurrence.endFrequency, "yyyy-MM-dd'T'HH:mm", { locale:es }) : undefined}
           />
           <FolderSelect
+            label
             selectedFolder={folder}
             setSelectedFolder={(selectedFolder:TypeFolder|undefined)=>setFolder(selectedFolder)}
           />

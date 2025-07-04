@@ -33,7 +33,6 @@ export default function ReportsPage() {
           sort:`${sortLabel} ${sortType ? "(asc)" : "(desc)"}`,
         }
       });
-      console.log(res)
       if(res.status === 200) {
         setReports(res.data);
       };

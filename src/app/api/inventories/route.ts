@@ -6,6 +6,7 @@ import InventoryModel from "@models/Inventory";
 import { TypeDesk, TypeUser } from "@utils/types";
 import { ROLES_DATA } from "@utils/data";
 import ItemModel from "@/src/models/Item";
+import CategoryModel from "@/src/models/Category";
 
 // @desc Get all inventories
 // @route GET /api/inventories
@@ -42,6 +43,7 @@ export async function GET(req:Request) {
     if(filter.folder) inventories = inventories.filter(inventory => inventory.folder._id.toString() === filter.folder);
 
 //! Add items and quantity
+    await CategoryModel.find();
     inventories = await Promise.all(inventories.map(async (inventory) => {
       const items = await ItemModel.find({ inventory:inventory._id }).populate("category");
       let quantity = 0;
@@ -52,6 +54,7 @@ export async function GET(req:Request) {
     }));
     return NextResponse.json(inventories, { status:200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };
 };

@@ -33,7 +33,6 @@ export default function TasksPage() {
   const [sortForm, setSortForm] = useState(false);
 
   const fetchTasks = async () => {
-    console.log(true);
     try {
       const res = await axiosInstance.get(API_PATHS.TASKS.GET_ALL_TASKS, {
         params:{

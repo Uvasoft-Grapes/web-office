@@ -90,7 +90,6 @@ export async function PUT(req:NextRequest) {
     if(goal.progress === 100) goal.status = "Finalizada";
 
     await goal.save();
-    console.log(objectives);
 
     return NextResponse.json({ message:"Meta actualizada" }, { status:201 });
   } catch (error) {

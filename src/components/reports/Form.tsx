@@ -120,6 +120,7 @@ export default function ReportForm({ values, onClose, refresh }:{ values?:TypeRe
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <FolderSelect
+            label
             selectedFolder={folder}
             setSelectedFolder={(selectedFolder:TypeFolder|undefined)=>setFolder(selectedFolder)}
           />

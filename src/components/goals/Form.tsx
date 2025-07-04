@@ -51,7 +51,6 @@ export default function GoalForm({ values, refresh }:{ values?:TypeGoal, refresh
   };
 
   const updateGoal = async (data:{ title:string, description:string, dueDate:Date }) => {
-    console.log(objectives);
     if(!values) return;
     setLoading(true);
     try {

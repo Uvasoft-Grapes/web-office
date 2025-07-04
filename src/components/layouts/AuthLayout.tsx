@@ -4,6 +4,8 @@ import Link from "next/link";
 import { PiDesktopDuotone } from "react-icons/pi";
 import { useAuth } from "@context/AuthContext";
 import Loader from "@components/Loader";
+import Wallpaper from "@public/wallpaper.png";
+import Image from "next/image";
 
 export default function AuthLayout({ children }:{ children:ReactNode }) {
   const { loading, user } = useAuth();
@@ -24,9 +26,9 @@ export default function AuthLayout({ children }:{ children:ReactNode }) {
         </Link>
         {children}
       </section>
-      <section className="hidden lg:flex items-center justify-center w-[40vw] h-screen bg-stone-950 dark:bg-stone-100 bg-cover bg-no-repeat bg-center overflow-hidden p-8"> {/* bg-[url('/bg-img.png')] */}
-        <p className="text-stone-100 dark:text-stone-950 text-6xl">Imagen</p>
-        {/* <Image src="" alt="" className="w-64 lg:w-[90%]"/> */}
+      <section className="hidden lg:flex items-center justify-center w-[40vw] h-screen bg-stone-950 dark:bg-stone-100 bg-cover bg-no-repeat bg-center overflow-hidden"> {/* bg-[url('/bg-img.png')] */}
+        {/* <p className="text-stone-100 dark:text-stone-950 text-6xl">Imagen</p> */}
+        <Image src={Wallpaper} alt="Wallpaper para formulario" className="w-full"/>
       </section>
     </main>
   );
