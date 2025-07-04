@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from '@context/AuthContext';
 import { fontPoppins } from "@hooks/fonts";
+import { BRAND_NAME } from "@utils/data";
 import "@app/globals.css";
 
 export const metadata: Metadata = {
-  title: "Web Office",
+  title:BRAND_NAME,
   description: "Oficina virtual para la gestión de proyectos",
 };
 

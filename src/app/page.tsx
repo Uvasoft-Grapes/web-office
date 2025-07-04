@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { PiDesktopDuotone } from "react-icons/pi";
 import { useAuth } from "@context/AuthContext";
+import { BRAND_NAME } from "@utils/data";
 import ProtectedRoute from "@app/ProtectedRoute";
 import HomeDesks from "@components/home/Desks";
 import HomeUsers from "@components/home/Users";
@@ -25,7 +26,7 @@ export default function HomePage() {
         <section className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 w-full">
           <div className="flex items-center gap-1 w-fit text-basic">
             <PiDesktopDuotone className="text-2xl"/>
-            <h1 className="text-nowrap text-xl font-medium">Web Office</h1>
+            <h1 className="text-nowrap text-xl font-medium">{BRAND_NAME}</h1>
           </div>
           <div className="flex-1 flex flex-wrap items-center justify-end gap-2 py-2">
           {MENU_ITEMS.map((item) => (

@@ -40,7 +40,7 @@ export async function GET(req:Request) {
     if(userToken instanceof NextResponse) return userToken;
 
 //! Validate desk token
-    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id, userToken.role);
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! All accounts
@@ -85,7 +85,7 @@ export async function POST(req:Request) {
     if(userToken instanceof NextResponse) return userToken;
 
 //! Validate desk token
-    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id, userToken.role);
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! Validations

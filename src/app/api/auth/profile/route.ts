@@ -23,7 +23,7 @@ export async function GET(req:Request) {
     if(userToken instanceof NextResponse) return userToken;
 
 //! Validate desk token
-    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id, userToken.role);
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
 
 //! Find user
     const user = await UserModel.findById(userToken._id);

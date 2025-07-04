@@ -53,7 +53,7 @@ export const decodedInviteToken = async (token:string) => {
 };
 
 // Middleware to verify desk token
-export const verifyDeskToken = async (token:string|undefined, userId:string|undefined, role:string) => {
+export const verifyDeskToken = async (token:string|undefined, userId:string|undefined) => {
   if(!JWT_SECRET) return;
   try {
     if (token && userId) {
@@ -63,7 +63,7 @@ export const verifyDeskToken = async (token:string|undefined, userId:string|unde
       const findDesk = await DeskModel.findById(decoded.id).populate("members", "name email profileImageUrl role");
 //! Verify if the user is a member
       const isMember = findDesk.members.find((member:TypeUser) => member._id.toString() === userId.toString()) || undefined;
-      if(isMember || role === "owner") return findDesk;
+      if(isMember) return findDesk;
       return undefined;
     } else {
       return undefined;

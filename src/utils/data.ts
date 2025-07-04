@@ -1,4 +1,7 @@
 import { IconType } from "react-icons";
+
+export const BRAND_NAME = "Valdoinc"; // Brand name for the application
+
 import {
   LuLayoutDashboard,
   LuUsers,

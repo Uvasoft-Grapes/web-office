@@ -161,7 +161,7 @@ export async function GET(req:NextRequest) {
     if(userToken instanceof NextResponse) return userToken;
 
 //! Validate desk token
-    const desk:TypeDeskObjectId|undefined = await verifyDeskToken(deskToken, userToken._id, userToken.role);
+    const desk:TypeDeskObjectId|undefined = await verifyDeskToken(deskToken, userToken._id);
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
     const res = await getDashboardData(userToken, desk._id);

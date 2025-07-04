@@ -28,7 +28,7 @@ export async function GET(req:NextRequest) {
     if(userToken instanceof NextResponse) return userToken;
 
 //! Validate desk token
-    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id, userToken.role);
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! Get categories
@@ -59,7 +59,7 @@ export async function POST(req:NextRequest) {
     if(userToken instanceof NextResponse) return userToken;
 
 //! Validate desk token
-    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id, userToken.role);
+    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! Validations
