@@ -5,7 +5,6 @@ import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares
 import AccountModel from "@models/Account";
 import TransactionModel from "@models/Transaction";
 import { TypeDesk, TypeUser } from "@utils/types";
-import { ROLES_DATA } from "@utils/data";
 
 // const statusManagement: Record<string, number> = {
 //   "Pendiente": 1,
@@ -47,7 +46,7 @@ export async function GET(req:Request) {
 //! All accounts
     let accounts = [];
     if(userToken.role === "owner") accounts = await AccountModel.find({ desk:desk._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
-    if(ROLES_DATA.find((role) => role.value === userToken.role)) accounts = await AccountModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
+    if(userToken.role === "admin" || userToken.role === "user" || userToken.role === "client") accounts = await AccountModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
 
 //! Filter accounts
     if(filter.folder) accounts = accounts.filter(account => account.folder._id.toString() === filter.folder);

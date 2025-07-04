@@ -5,7 +5,6 @@ import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import EventModel from "@models/Event";
 import { TypeDesk, TypeEvent, TypeUser } from "@utils/types";
-import { ROLES_DATA } from "@utils/data";
 
 // @desc Get all events
 // @route GET /api/events
@@ -38,7 +37,7 @@ export async function GET(req:Request) {
 //! All events
     let events:TypeEvent[] = [];
     if(userToken.role === "owner" || userToken.role === "admin") events = await EventModel.find({ desk:desk._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title").sort({ startDate:-1 });
-    if(ROLES_DATA.find((role) => role.value === userToken.role)) events = await EventModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title").sort({ startDate:1 });;
+    if(userToken.role === "user" || userToken.role === "client") events = await EventModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title").sort({ startDate:1 });;
 
 //! Filter events
     const date = filter.date ? new Date(filter.date) : new Date();

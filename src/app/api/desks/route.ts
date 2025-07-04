@@ -3,7 +3,6 @@ import { parse } from 'cookie';
 import { connectDB } from "@config/db";
 import { verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
 import DeskModel from "@models/Desk";
-import { ROLES_DATA } from "@utils/data";
 import { TypeUser } from "@utils/types";
 
 // @desc Get all desks
@@ -24,7 +23,7 @@ export async function GET(req:Request) {
 //! All desks
     let userDesks = [];
     if(userToken.role === "owner") userDesks = await DeskModel.find().populate("members", "name email profileImageUrl role");
-    if(ROLES_DATA.find((role) => role.value === userToken.role)) userDesks = await DeskModel.find({ members:userToken._id }).populate("members", "name email profileImageUrl role");
+    if(userToken.role === "admin" || userToken.role === "user" || userToken.role === "client") userDesks = await DeskModel.find({ members:userToken._id }).populate("members", "name email profileImageUrl role");
 
     return NextResponse.json(userDesks, { status:200 });
 

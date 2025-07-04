@@ -5,7 +5,6 @@ import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import GoalModel from "@models/Goal";
 import { TypeDesk, TypeGoalStatusSummary, TypeObjective, TypeUser } from "@utils/types";
-import { ROLES_DATA } from "@utils/data";
 
 const statusManagement: Record<string, number> = {
   "Pendiente":1,
@@ -55,7 +54,7 @@ export async function GET(req:Request) {
 //! All Goals
     let goals = [];
     if(userToken.role === "owner") goals = await GoalModel.find({ desk:desk._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
-    if(ROLES_DATA.find((role) => role.value === userToken.role)) goals = await GoalModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
+    if(userToken.role === "admin" || userToken.role === "user" || userToken.role === "client") goals = await GoalModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
 
 //! Filter tasks
     if(filter.status) goals = goals.filter(goal => goal.status === filter.status);

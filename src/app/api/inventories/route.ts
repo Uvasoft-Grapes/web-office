@@ -4,7 +4,6 @@ import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import InventoryModel from "@models/Inventory";
 import { TypeDesk, TypeUser } from "@utils/types";
-import { ROLES_DATA } from "@utils/data";
 import ItemModel from "@/src/models/Item";
 import CategoryModel from "@/src/models/Category";
 
@@ -37,7 +36,7 @@ export async function GET(req:Request) {
 //! All inventories
     let inventories = [];
     if(userToken.role === "owner") inventories = await InventoryModel.find({ desk:desk._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
-    if(ROLES_DATA.find((role) => role.value === userToken.role)) inventories = await InventoryModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
+    if(userToken.role === "admin" || userToken.role === "user" || userToken.role === "client") inventories = await InventoryModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
 
 //! Filter inventory
     if(filter.folder) inventories = inventories.filter(inventory => inventory.folder._id.toString() === filter.folder);

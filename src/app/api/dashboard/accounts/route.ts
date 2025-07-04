@@ -5,7 +5,6 @@ import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import TransactionModel from "@models/Transaction";
 import AccountModel from "@models/Account";
 import { TypeAccount, TypeAccountsDashboardData, TypeDesk, TypeUser } from "@utils/types";
-import { ROLES_DATA } from "@utils/data";
 import CategoryModel from "@/src/models/Category";
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -47,7 +46,7 @@ export async function GET(req:NextRequest) {
     // 🔹 Filtrar cuentas que pertenecen a ese desk
     let accounts:TypeAccount[] = [];
     if(userToken.role === "owner") accounts = await AccountModel.find({ desk:desk._id });
-    if(ROLES_DATA.find((role) => role.value === userToken.role)) accounts = await AccountModel.find({ desk:desk._id, assignedTo:userToken._id });
+    if(userToken.role === "admin" || userToken.role === "user" || userToken.role === "client") accounts = await AccountModel.find({ desk:desk._id, assignedTo:userToken._id });
     if(!accounts.length) return NextResponse.json({ accounts, dashboard:EMPTY }, { status:200 });
 
     const accountIds = accounts.map((account) => account._id);

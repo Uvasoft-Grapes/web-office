@@ -40,7 +40,7 @@ export const generateAuthToken = (id:string) => {
 // Generate invite Token
 export const generateInviteToken = (role:"owner"|"admin"|"user"|"client") => {
   if(!JWT_SECRET) return;
-  return jwt.sign({ role }, JWT_SECRET, { expiresIn:"2d" });
+  return jwt.sign({ role }, JWT_SECRET, { expiresIn:"10d" });
 };
 
 // Middleware for invite token

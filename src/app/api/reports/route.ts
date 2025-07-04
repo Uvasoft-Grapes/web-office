@@ -4,7 +4,6 @@ import { compareAsc, compareDesc } from "date-fns";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import ReportModel from "@models/Report";
-import { ROLES_DATA } from "@utils/data";
 import { TypeDesk, TypeUser } from "@utils/types";
 
 // @desc Get all reports
@@ -41,7 +40,7 @@ export async function GET(req:Request) {
 //! All reports
     let reports = [];
     if(userToken.role === "owner" || userToken.role === "admin") reports = await ReportModel.find({ desk:desk._id }).populate("createdBy", "name email profileImageUrl").populate("folder", "title");
-    if(ROLES_DATA.find((role) => role.value === userToken.role)) reports = await ReportModel.find({ desk:desk._id, createdBy:userToken._id }).populate("createdBy", "name email profileImageUrl").populate("folder", "title");
+    if(userToken.role === "user" || userToken.role === "client") reports = await ReportModel.find({ desk:desk._id, createdBy:userToken._id }).populate("createdBy", "name email profileImageUrl").populate("folder", "title");
 
 //! Filter reports
     if(filter.user) reports = reports.filter(report => report.createdBy._id.toString() === filter.user);
