@@ -24,8 +24,8 @@ export default function InventoryCard({ inventory, refresh }:{ inventory:TypeInv
     <>
       <li className="flex flex-col gap-2 bg-secondary-light dark:bg-secondary-dark hover:bg-transparent rounded-xl p-6 border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary dark:shadow-secondary-dark duration-300">
         <section className="flex-1 flex gap-2">
-          <div className="flex-1 flex flex-col gap-0.5">
-            <span className="truncate font-semibold text-xs text-blue-light dark:text-blue-dark">{folder.title}</span>
+          <div className="flex-1 flex flex-col gap-1">
+            <p className="px-2 sm:px-4 py-0.5 w-fit rounded text-nowrap font-semibold text-xs text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20">{folder.title}</p>
             <p className="line-clamp-1 font-semibold text-xl text-basic">{title}</p>
             <span className="flex items-center gap-0.5 text-quaternary">
               <LuMapPin className="text-xs min-w-fit"/>
@@ -41,7 +41,7 @@ export default function InventoryCard({ inventory, refresh }:{ inventory:TypeInv
         </section>
         <section className="flex flex-wrap justify-between gap-2 py-2">
           <div className="flex-1 flex flex-col justify-center">
-            <p className="text-xs text-quaternary">Productos</p>
+            <p className="text-xs text-quaternary">Artículos</p>
             <p className="font-semibold text-xl">{addThousandsSeparator(items?.length || 0)}</p>
           </div>
           <div className="flex-1 flex flex-col justify-center">

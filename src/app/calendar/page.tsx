@@ -29,7 +29,12 @@ export default function CalendarPage() {
 
   const fetchEvents = async () => {
     try {
-      const res = await axiosInstance.get(`${API_PATHS.EVENTS.GET_ALL_EVENTS}?date=${date}`);
+      const res = await axiosInstance.get(API_PATHS.EVENTS.GET_ALL_EVENTS, {
+        params:{
+          date:date,
+          folder:filterFolder ? filterFolder._id : ""
+        }
+      });
       if(res.status === 200) {
         setEvents(res.data.length > 0 ? res.data : []);
       };

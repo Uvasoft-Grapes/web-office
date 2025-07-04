@@ -139,7 +139,6 @@ export default function TaskForm({ values, refresh }:{ values?:TypeTask, refresh
           <InputDate
             name="due-date"
             label="Fecha final"
-            placeholder="Fecha de entrega"
             defaultValue={values?.dueDate ? format(values.dueDate, "yyyy-MM-dd", { locale:es }) : undefined}
           />
         </div>

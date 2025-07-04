@@ -35,7 +35,6 @@ export async function GET(req:NextRequest) {
       type:queryType ? decodeURIComponent(queryType).replace("+", " ") : undefined,
       category:queryCategory ? decodeURIComponent(queryCategory).replace("+", " ") : undefined,
     };
-console.log(filter)
     const querySort = queries.find(item => item.includes("sort="))?.split("=")[1];
     const sort =  querySort ? decodeURIComponent(querySort).replace(/\+/g, " ") : "Fecha (desc)";
 
@@ -57,7 +56,7 @@ console.log(filter)
 //! Filter transactions
     if(filter.status) transactions = transactions.filter(transaction => transaction.status === filter.status);
     if(filter.type) transactions = transactions.filter(transaction => transaction.type === filter.type);
-    if(filter.category) transactions = transactions.filter(transaction => transaction.category._id.toString() === filter.category);
+    if(filter.category) transactions = transactions.filter(transaction => filter.category !== "null" ? transaction.category?._id.toString() === filter.category : transaction.category === undefined);
 
 //! Sort transactions
     if(sort === "Fecha (desc)") transactions = transactions.sort((a, b) => compareDesc(a.date, b.date));
@@ -69,6 +68,7 @@ console.log(filter)
 
     return NextResponse.json({ ...account._doc, transactions }, { status:200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };
 };

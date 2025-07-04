@@ -33,7 +33,7 @@ export async function PUT(req:NextRequest) {
     if(!task) return NextResponse.json({ message:"Task not found" }, { status:404 });
 
     const isAssigned = task.assignedTo.some((userId:ObjectId) => userId.toString() === userToken._id.toString());
-    if(!isAssigned) return NextResponse.json({ message:"Not authorized to update checklist" }, { status:403 });
+    if(userToken.role !== "owner" && userToken.role !== "admin" && !isAssigned) return NextResponse.json({ message:"Not authorized to update checklist" }, { status:403 });
 
     task.todoChecklist = todoChecklist || task.todoChecklist;
 

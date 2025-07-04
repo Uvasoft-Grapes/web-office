@@ -11,6 +11,7 @@ import Modal from "@components/Modal";
 import DeleteAlert from "@components/DeleteAlert";
 import CategorySelect from "@components/inputs/CategorySelect";
 import NumberInput from "@components/inputs/Number";
+import Textarea from "../inputs/Textarea";
 
 export default function ProductForm({ values, refresh, }:{ values?:TypeProduct, refresh:()=>void }) {
   const { user } = useAuth();
@@ -101,58 +102,53 @@ export default function ProductForm({ values, refresh, }:{ values?:TypeProduct, 
 
   return(
     <form onSubmit={(e) => handleSubmit(e)} className="flex-1 flex flex-col gap-4 max-h-full">
-          <div className="flex-1 flex flex-col gap-4 pr-4 overflow-y-auto">
-            <TextInput
-              name="title"
-              label="Título"
-              placeholder="Nombre del producto"
-              defaultValue={values?.title || ""}
-            />
-            <TextInput
-              name="description"
-              label="Descripción"
-              placeholder="Descripción del producto"
-              defaultValue={values?.title || ""}
-            />
-            <NumberInput
-              name="price"
-              label="Precio"
-              placeholder="Precio del producto"
-              defaultValue={values?.price}
-            />
-            <div className="grid grid-cols-1 gap-4">
-              {/* <InventoriesSelect
-                label
-                stocks={stocks}
-                setValue={(value:{ inventory:string, stock:number }[])=>setStocks(value)}
-              /> */}
-              <CategorySelect 
-                disabled={loading}
-                label
-                type="product"
-                currentCategory={category}
-                setCategory={(cat:TypeCategory|undefined)=>setCategory(cat)}
-              />
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row gap-2">
-            <p className="flex-1 flex items-center min-h-2 font-medium text-xs text-red-light dark:text-red-dark overflow-hidden">{error}</p>
-            <div className="flex flex-wrap-reverse gap-2">
-            {user?.role === "owner" && values &&
-              <button type="button" disabled={loading} onClick={()=>setOpenAlert(true)} className="flex-1 sm:flex-auto card-btn-red w-fit sm:min-w-52">
-                <LuTrash2 className="text-xl"/>
-                Eliminar
-              </button>
-            }
-              <button type="submit" disabled={loading} className="flex-1 sm:flex-auto card-btn-fill w-fit sm:min-w-52">
-                <LuCheck className="text-xl"/>
-                Confirmar
-              </button>
-            </div>
-          </div>
-          <Modal title="Eliminar Producto" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
-            {<DeleteAlert content="¿Estás seguro de que quieres eliminar este producto?" description="Se eliminaran todos sus movimientos y stocks" onDelete={deleteProduct}/>}
-          </Modal>
-        </form>
+      <div className="flex-1 flex flex-col gap-4 pr-4 overflow-y-auto">
+        <TextInput
+          name="title"
+          label="Título"
+          placeholder="Nombre del producto"
+          defaultValue={values?.title || ""}
+        />
+        <Textarea
+          name="description"
+          label="Descripción"
+          placeholder="Descripción del producto"
+          defaultValue={values?.description || ""}
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <NumberInput
+            name="price"
+            label="Precio"
+            placeholder="Precio del producto"
+            defaultValue={values?.price}
+          />
+          <CategorySelect 
+            disabled={loading}
+            label
+            type="product"
+            currentCategory={category}
+            setCategory={(cat:TypeCategory|undefined)=>setCategory(cat)}
+          />
+        </div>
+      </div>
+      <div className="flex flex-col sm:flex-row gap-2">
+        <p className="flex-1 flex items-center min-h-2 font-medium text-xs text-red-light dark:text-red-dark overflow-hidden">{error}</p>
+        <div className="flex flex-wrap-reverse gap-2">
+        {user?.role === "owner" && values &&
+          <button type="button" disabled={loading} onClick={()=>setOpenAlert(true)} className="flex-1 sm:flex-auto card-btn-red w-fit sm:min-w-52">
+            <LuTrash2 className="text-xl"/>
+            Eliminar
+          </button>
+        }
+          <button type="submit" disabled={loading} className="flex-1 sm:flex-auto card-btn-fill w-fit sm:min-w-52">
+            <LuCheck className="text-xl"/>
+            Confirmar
+          </button>
+        </div>
+      </div>
+      <Modal title="Eliminar Producto" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
+        {<DeleteAlert content="¿Estás seguro de que quieres eliminar este producto?" description="Se eliminaran todos sus movimientos y stocks" onDelete={deleteProduct}/>}
+      </Modal>
+    </form>
   );
 };

@@ -4,7 +4,6 @@ import { compareAsc, compareDesc } from "date-fns";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import TaskModel from "@models/Task";
-import { ROLES_DATA } from "@utils/data";
 import { TypeDesk, TypeTaskStatusSummary, TypeTodo, TypeUser } from "@utils/types";
 
 const statusManagement: Record<string, number> = {
@@ -55,7 +54,7 @@ export async function GET(req:Request) {
 //! All tasks
     let tasks = [];
     if(userToken.role === "owner" || userToken.role === "admin") tasks = await TaskModel.find({ desk:desk._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
-    if(ROLES_DATA.find((role) => role.value === userToken.role)) tasks = await TaskModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
+    if(userToken.role === "user" || userToken.role === "client") tasks = await TaskModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
 
 //! Filter tasks
     if(filter.status) tasks = tasks.filter(task => task.status === filter.status);
@@ -83,14 +82,13 @@ export async function GET(req:Request) {
     }));
 
 //! Status summary counts
-    const  allTasks = await TaskModel.countDocuments(userToken.role === "admin" ? { desk:desk._id } : { desk:desk._id, assignedTo:userToken._id });
-    const pendingTasks = await TaskModel.countDocuments({ status:"Pendiente", desk:desk._id, ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
-    const inProgressTasks = await TaskModel.countDocuments({ status:"En curso", desk:desk._id, ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
-    const completedTasks = await TaskModel.countDocuments({ status:"Finalizada", desk:desk._id, ...(userToken.role !== "admin" && { assignedTo: userToken._id }) });
+    const  allTasks = await TaskModel.countDocuments(userToken.role === "owner" || userToken.role === "admin" ? { desk:desk._id } : { desk:desk._id, assignedTo:userToken._id });
+    const pendingTasks = await TaskModel.countDocuments({ status:"Pendiente", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
+    const inProgressTasks = await TaskModel.countDocuments({ status:"En curso", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
+    const completedTasks = await TaskModel.countDocuments({ status:"Finalizada", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
     const statusSummary:TypeTaskStatusSummary = { allTasks, pendingTasks, inProgressTasks, completedTasks };
 
     return NextResponse.json({ tasks, statusSummary }, { status:200 });
-
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

@@ -5,7 +5,7 @@ import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares
 import CategoryModel from "@models/Category";
 import { TypeDesk, TypeUser } from "@utils/types";
 
-// @desc Get categories by type
+// @desc Get all categories or by type
 // @route GET /api/categories
 // @access Owner, Admin, User, Client
 
@@ -32,7 +32,8 @@ export async function GET(req:NextRequest) {
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! Get categories
-    const categories = await CategoryModel.find({ desk:desk._id, type:filter.type });
+    let categories = await CategoryModel.find({ desk:desk._id });
+    if(filter.type !== "all") categories = categories.filter(category => category.type === filter.type);
 
     return NextResponse.json(categories, { status:200 });
   } catch (error) {

@@ -13,7 +13,7 @@ const STATUSES = [
 ];
 
 // @desc Update transaction details
-// @route PUT /api/accounts/:id/transactions/:id
+// @route PUT /api/accounts/transactions/:id
 // @access Owner, Admin
 
 export async function PUT(req:NextRequest) {
@@ -76,7 +76,7 @@ export async function PUT(req:NextRequest) {
 };
 
 // @desc Delete transaction
-// @route DELETE /api/accounts/:id/transactions/:id
+// @route DELETE /api/accounts/transactions/:id
 // @access Owner
 
 export async function DELETE(req:NextRequest) {

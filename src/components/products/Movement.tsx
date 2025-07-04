@@ -4,13 +4,13 @@ import { useAuth } from "@context/AuthContext";
 import { getAvatars } from "@utils/avatars";
 import { ICONS } from "@utils/data";
 import { addThousandsSeparator } from "@utils/helper";
-import { TypeTransaction } from "@utils/types";
-import Modal from "@components/Modal";
-import TransactionForm from "@components/accounts/TransactionForm";
+import { TypeMovement } from "@utils/types";
+import Modal from "../Modal";
+import MovementForm from "./MovementForm";
 
-export default function Transaction({ transaction, refresh }:{ transaction:TypeTransaction, refresh:()=>void }) {
+export default function Movement({ movement, refresh }:{ movement:TypeMovement, refresh:()=>void }) {
   const { user } = useAuth();
-  const { _id, account, category, title, description, type, amount, status, createdBy } = transaction;
+  const { _id, product, category, title, description, type, quantity, status, createdBy } = movement;
 
   const [openForm, setOpenForm] = useState(false);
 
@@ -19,11 +19,16 @@ export default function Transaction({ transaction, refresh }:{ transaction:TypeT
     return <Icon className="text-lg"/>
   };
 
+  const onRefresh = () => {
+    refresh();
+    setOpenForm(false);
+  };
+
   return(
     <>
-    <li key={_id} onClick={user && (user.role === "owner" || user.role === "admin") ? ()=>setOpenForm(true) : ()=>{}} className={`relative flex items-center gap-2 p-4 rounded-md bg-secondary-light dark:bg-secondary-dark hover:bg-primary-light dark:hover:bg-primary-dark ${user && (user.role === "owner" || user.role === "admin") && "cursor-pointer"} group duration-300`}>
+    <li key={_id} onClick={user && (user.role === "owner" || user.role === "admin") ? ()=>setOpenForm(true) : ()=>{}} className={`relative flex items-center gap-2 p-4 rounded-md hover:bg-secondary-light dark:hover:bg-secondary-dark ${user && (user.role === "owner" || user.role === "admin") && "cursor-pointer"} group duration-300`}>
       <div className="flex flex-col gap-1">
-        <span className="absolute top-0 hidden group-hover:flex w-4/5">
+        <span className="absolute top-1 hidden group-hover:flex w-4/5">
           <p className="line-clamp-1 text-xs text-quaternary">{category ? category.label : "Sin categoría"}</p>
         </span>
         <span className="flex items-center justify-center size-10 rounded-full text-primary-light dark:text-primary-dark bg-primary-dark dark:bg-primary-light">
@@ -31,12 +36,12 @@ export default function Transaction({ transaction, refresh }:{ transaction:TypeT
         </span>
       </div>
       <div className="flex-1 flex flex-col">
-        <span className="font-medium text-primary-dark dark:text-primary-light">{title}</span>
+        <span className="font-medium">{title}</span>
         <p className="text-sm text-quaternary">{description}</p>
       </div>
       <div className="flex flex-col items-end justify-between">
-        <span className={`font-bold ${type === "income" ? "text-green-light dark:text-green-light" : "text-red-light dark:text-red-light"}`}>
-          {type === "income" ? "+" : "-"}${addThousandsSeparator(amount)}
+        <span className={`font-bold ${type === "inflow" ? "text-green-light dark:text-green-light" : "text-red-light dark:text-red-light"}`}>
+          {type === "inflow" ? "+" : "-"}{addThousandsSeparator(quantity)}
         </span>
         <span className={`font-medium text-xs text-quaternary`}>{status}</span>
       </div>
@@ -48,8 +53,8 @@ export default function Transaction({ transaction, refresh }:{ transaction:TypeT
         </div>
       </span>
     </li>
-    <Modal title="Editar Transacción" isOpen={openForm} onClose={()=>setOpenForm(false)}>
-      {user && (user.role === "owner" || user.role === "admin") && openForm && <TransactionForm account={account} type={type} values={transaction} closeForm={()=>setOpenForm(false)} refresh={refresh}/>}
+    <Modal title="Editar Movimiento" isOpen={openForm} onClose={()=>setOpenForm(false)}>
+      {user && (user.role === "owner" || user.role === "admin") && openForm && <MovementForm product={product} type={type} values={movement} refresh={onRefresh}/>}
     </Modal>
     </>
   );

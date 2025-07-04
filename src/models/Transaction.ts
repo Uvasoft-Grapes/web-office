@@ -2,7 +2,7 @@ import { Schema, model, models } from 'mongoose';
 
 const TransactionSchema = new Schema({
   account:{ type:Schema.Types.ObjectId, ref:'Account', required:[true, 'DB: Account required.'] },
-  category:{ type:Schema.Types.ObjectId, ref:'Category', required:[true, 'DB: Category required.'] },
+  category:{ type:Schema.Types.ObjectId, ref:'Category', default:undefined },
   type: { type:String, enum:["income", "expense"], required:true },
   title:{ type:String, required:[true, 'DB: Title required.'], minLength:[1, 'DB: Title must be at least 1 characters.'], maxLength:[200, 'DB: Title must be at most 200 characters.'], trim:true },
   description: { type:String, maxLength:[600, 'DB: Title must be at most 600 characters.'], trim:true },

@@ -15,11 +15,13 @@ import {
   LuWarehouse,
   LuPackage2,
   LuGoal,
-  LuSquareDashed,
+  LuCircleDashed,
+  LuCircleHelp,
 } from "react-icons/lu";
 
 export const ICONS = [
-  LuSquareDashed,
+  LuCircleDashed,
+  LuCircleHelp,
   LuBanknote,
   LuBaggageClaim,
   LuShoppingCart,

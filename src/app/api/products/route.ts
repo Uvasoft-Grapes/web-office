@@ -3,8 +3,9 @@ import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import ProductModel from "@models/Product";
-import StockModel from "@models/Stock";
-import { TypeDesk, TypeInventory, TypeUser } from "@utils/types";
+// import StockModel from "@models/Stock";
+import { TypeDesk, TypeUser } from "@utils/types";
+import MovementModel from "@/src/models/movements";
 
 // @desc Get all Products
 // @route GET /api/inventories/products
@@ -21,11 +22,9 @@ export async function GET(req:Request) {
     const queries = req.url.split("?")[1]?.split("&") || [];
     const queryTitle = queries.find(item => item.includes("title="))?.split("=")[1];
     const queryCategory = queries.find(item => item.includes("category="))?.split("=")[1];
-    const queryInventory = queries.find(item => item.includes("inventory="))?.split("=")[1];
     const filter = {
       title:queryTitle ? decodeURIComponent(queryTitle).replace("+", " ") : undefined,
       category:queryCategory ? decodeURIComponent(queryCategory).replace("+", " ") : undefined,
-      inventory:queryInventory ? decodeURIComponent(queryInventory).replace("+", " ") : undefined,
     };
 
     const querySort = queries.find(item => item.includes("sort="))?.split("=")[1];
@@ -45,7 +44,6 @@ export async function GET(req:Request) {
 //! Filter products
     if(filter.title) products = products.filter(product => product.title.toLowercase().includes(filter.title));
     if(filter.category) products = products.filter(product => product.category._id.toString() === filter.category);
-    if(filter.inventory) products = products.filter(product => product.stocks.includes((stock:{ inventory:TypeInventory, stock:number }) => stock.inventory._id === filter.inventory));
 
 //! Sort Products
     if(sort === "Título (asc)") products = products.sort((a, b) => a.title.localeCompare(b.title));
@@ -55,15 +53,21 @@ export async function GET(req:Request) {
     if(sort === "Stock (asc)") products = products.sort((a, b) => a.stock - b.stock);
     if(sort === "Stock (desc)") products = products.sort((a, b) => b.stock - a.stock);
 
-//! Add inventories and stock
+//! Add movements
     products = await Promise.all(products.map(async (product) => {
-      const stocks = await StockModel.find({ product:product._id });
-      let quantity = 0;
-      stocks.forEach((stock) => {
-        quantity += stock.quantity;
-      });
-      return { ...product._doc, inventories:stocks.length, quantity };
+      const movements = await MovementModel.find({ product:product._id }).sort({ date:-1 }).populate("createdBy", "name email profileImageUrl").populate("category", "icon label type");
+      return { ...product._doc, movements };
     }));
+
+//! Add inventories and stock
+    // products = await Promise.all(products.map(async (product) => {
+    //   const stocks = await StockModel.find({ product:product._id });
+    //   let quantity = 0;
+    //   stocks.forEach((stock) => {
+    //     quantity += stock.quantity;
+    //   });
+    //   return { ...product._doc, inventories:stocks.length, quantity };
+    // }));
 
     return NextResponse.json(products, { status:200 });
   } catch (error) {

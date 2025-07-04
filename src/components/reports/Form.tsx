@@ -126,7 +126,6 @@ export default function ReportForm({ values, onClose, refresh }:{ values?:TypeRe
           <DateInput
             name="date"
             label="Fecha"
-            placeholder="Fecha del reporte"
             defaultValue={values ? format(values.date, "yyyy-MM-dd", { locale:es }) : undefined}
           />
         </div>

@@ -1,24 +1,24 @@
+import { TypeCategory, TypeMovement } from "@/src/utils/types";
+import TextInput from "../inputs/Text";
+import NumberInput from "../inputs/Number";
+import CategorySelect from "../inputs/CategorySelect";
+import { useAuth } from "@/src/context/AuthContext";
 import { FormEvent, useState } from "react";
+import toast from "react-hot-toast";
+import axiosInstance from "@/src/utils/axiosInstance";
+import { API_PATHS } from "@/src/utils/apiPaths";
 import { isAxiosError } from "axios";
 import { format, parseISO } from "date-fns";
+import DropdownSelect from "../inputs/Dropdown";
+import { TRANSACTIONS_STATUS_DATA } from "@/src/utils/data";
+import DateInput from "../inputs/Date";
 import { es } from "date-fns/locale";
-import toast from "react-hot-toast";
+import Textarea from "../inputs/Textarea";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
-import { useAuth } from "@context/AuthContext";
-import { TypeCategory, TypeTransaction } from "@utils/types";
-import axiosInstance from "@utils/axiosInstance";
-import { API_PATHS } from "@utils/apiPaths";
-import { TRANSACTIONS_STATUS_DATA } from "@utils/data";
-import SelectDropdown from "@components/inputs/Dropdown";
-import InputText from "@components/inputs/Text";
-import Textarea from "@components/inputs/Textarea";
-import InputDate from "@components/inputs/Date";
-import Modal from "@components/Modal";
-import DeleteAlert from "@components/DeleteAlert";
-import NumberInput from "@components/inputs/Number";
-import CategorySelect from "@components/inputs/CategorySelect";
+import Modal from "../Modal";
+import DeleteAlert from "../DeleteAlert";
 
-export default function TransactionForm({ account, closeForm, type, values, refresh }:{ account:string, closeForm:()=>void, type:"income"|"expense", values?:TypeTransaction, refresh:()=>void }) {
+export default function MovementForm({ product, type, values, refresh }:{ product:string, type:"inflow"|"outflow", values?:TypeMovement, refresh:()=>void }) {
   const { user } = useAuth();
 
   const [category, setCategory] = useState<TypeCategory|undefined>(values && values.category);
@@ -27,17 +27,16 @@ export default function TransactionForm({ account, closeForm, type, values, refr
   const [loading, setLoading] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
 
-  const createTransaction = async (data:{ title:string, description:string, amount:number, date:Date }) => {
+  const createMovement = async (data:{ title:string, description:string, quantity:number, date:Date }) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(API_PATHS.ACCOUNTS.CREATE_TRANSACTION, { accountId:account, ...data, type, category:category?._id, status });
+      const res = await axiosInstance.post(API_PATHS.PRODUCTS.CREATE_MOVEMENT, { productId:product, ...data, type, category:category?._id, status });
       if(res.status === 201) {
         toast.success(res.data.message);
-        closeForm();
         refresh();
       };
     } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error fetching products:", error);
+      if(!isAxiosError(error)) return console.error("Error creating movement:", error);
       if(error.response && error.response.data.message) {
         toast.error(error.response.data.message);
       } else {
@@ -48,18 +47,17 @@ export default function TransactionForm({ account, closeForm, type, values, refr
     };
   };
 
-  const updateTransaction = async (data:{ title:string, description:string, amount:number, date:Date }) => {
+  const updateMovement = async (data:{ title:string, description:string, quantity:number, date:Date }) => {
     if(!values) return;
     setLoading(true);
     try {
-      const res = await axiosInstance.put(API_PATHS.ACCOUNTS.UPDATE_TRANSACTION(values._id), { ...data, category:category?._id, status });
+      const res = await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE_MOVEMENT(values._id), { ...data, category:category?._id, status });
       if(res.status === 201) {
         toast.success(res.data.message);
-        closeForm();
         refresh();
       };
     } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error updating transaction:", error);
+      if(!isAxiosError(error)) return console.error("Error updating movement:", error);
       if(error.response && error.response.data.message) {
         setError(error.response.data.message);
       } else {
@@ -70,17 +68,16 @@ export default function TransactionForm({ account, closeForm, type, values, refr
     };
   };
 
-  const deleteTransaction = async () => {
+  const deleteMovement = async () => {
     if(!values) return;
     try {
-      const res = await axiosInstance.delete(API_PATHS.ACCOUNTS.DELETE_TRANSACTION(values._id));
+      const res = await axiosInstance.delete(API_PATHS.PRODUCTS.DELETE_MOVEMENT(values._id));
       if(res.status === 200) {
         toast.success(res.data.message);
-        closeForm();
         refresh();
       };
     } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error deleting transaction:", error);
+      if(!isAxiosError(error)) return console.error("Error deleting movement:", error);
       if(error.response && error.response.data.message) {
         toast.error(error.response.data.message);
       } else {
@@ -96,7 +93,7 @@ export default function TransactionForm({ account, closeForm, type, values, refr
     const formData = new FormData(e.currentTarget);
     const title = formData.get('title')?.toString() || "";
     const description = formData.get('description')?.toString() || "";
-    const amount = Number(formData.get('amount')?.toString() || "0");
+    const quantity = Number(formData.get('quantity')?.toString() || "");
     const textDate = formData.get('date')?.toString() || undefined;
     const date = textDate ? parseISO(textDate) : undefined;
 
@@ -104,54 +101,48 @@ export default function TransactionForm({ account, closeForm, type, values, refr
 //! Validate form data
     if(!title?.trim()) return setError("Título obligatorio.");
     if(!date) return setError("Fecha obligatoria.");
-    if(!amount) return setError("Monto obligatorio.");
+    if(!quantity) return setError("Cantidad obligatoria.");
     if(!category) return setError("Categoría obligatoria.");
 
-    if(!values) createTransaction({ title, description, amount, date });
-    if(values) updateTransaction({ title, description, amount, date });
+    if(!values) createMovement({ title, description, quantity, date });
+    if(values) updateMovement({ title, description, quantity, date });
   };
 
   return(
     <form onSubmit={(e) => handleSubmit(e)} className="flex flex-col gap-4 max-h-full">
       <div className="flex flex-col gap-4 pr-4 overflow-y-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <SelectDropdown
+          <CategorySelect label currentCategory={category} type="movement" setCategory={(selectedCategory:TypeCategory|undefined)=>setCategory(selectedCategory)}/>
+          <DropdownSelect
             label="Estado"
             options={TRANSACTIONS_STATUS_DATA}
             placeholder="Seleccionar estado"
             defaultValue={values?.status || TRANSACTIONS_STATUS_DATA[1].value}
             handleValue={(value:string)=>setStatus(value)}
           />
-          <CategorySelect
-            label
-            currentCategory={category}
-            type="transaction"
-            setCategory={(selectedCategory:TypeCategory|undefined)=>setCategory(selectedCategory)}
-          />
-          <InputDate
+          <DateInput
             name="date"
             label="Fecha"
             defaultValue={values?.date ? format(values.date, "yyyy-MM-dd", { locale:es }) : undefined}
           />
           <NumberInput
-            name="amount"
-            label="Monto"
-            placeholder="Monto de la transacción"
-            defaultValue={values ? values.amount : 1}
-            negative={type === "expense"}
-            decimal
+            name="quantity"
+            label="Cantidad"
+            placeholder="Número de unidades"
+            defaultValue={values ? values.quantity : 1}
+            negative={type === "outflow"}
           />
         </div>
-        <InputText
+        <TextInput
           name="title"
           label="Concepto"
-          placeholder="Concepto de la transacción"
+          placeholder="Concepto del movimiento"
           defaultValue={values?.title || ""}
         />
         <Textarea
           name="description"
           label="Descripción"
-          placeholder="Descripción de la transacción"
+          placeholder="Descripción del movimiento"
           defaultValue={values?.description || ""}
         />
       </div>
@@ -170,8 +161,8 @@ export default function TransactionForm({ account, closeForm, type, values, refr
           </button>
         </div>
       </div>
-      <Modal title="Eliminar Transacción" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
-        {<DeleteAlert content="¿Estás seguro de que quieres eliminar esta transacción?" onDelete={deleteTransaction}/>}
+      <Modal title="Eliminar Movimiento" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
+        {<DeleteAlert content="¿Estás seguro de que quieres eliminar este movimiento?" description="Se modificara el stock del producto" onDelete={deleteMovement}/>}
       </Modal>
     </form>
   );

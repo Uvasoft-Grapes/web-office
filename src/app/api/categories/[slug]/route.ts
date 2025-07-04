@@ -4,6 +4,10 @@ import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@middlewares/authMiddleware";
 import { TypeDesk, TypeUser } from "@utils/types";
 import CategoryModel from "@/src/models/Category";
+import TransactionModel from "@/src/models/Transaction";
+import ProductModel from "@/src/models/Product";
+import MovementModel from "@/src/models/movements";
+import ItemModel from "@/src/models/Item";
 
 // @desc Update category
 // @route PUT /api/categories/:id
@@ -66,6 +70,28 @@ export async function DELETE(req:NextRequest) {
 //! Delete category
     const deletedCategory = await CategoryModel.findByIdAndDelete(categoryId);
     if(!deletedCategory) return NextResponse.json({ message:"Error deleting category" }, { status:500 });
+
+//! Update all documents that have this category
+  //? Transactions
+    if(deletedCategory.type === "transaction") {
+      const updatedTransactions = await TransactionModel.updateMany({ category:categoryId }, { $unset:{ category: "" } });
+      if(!updatedTransactions.acknowledged) return NextResponse.json({ message:"Error updating transactions" }, { status:500 });
+    };
+  //? Products
+    if(deletedCategory.type === "product") {
+      const updatedProducts = await ProductModel.updateMany({ category:categoryId }, { $unset:{ category:"" } });
+      if(!updatedProducts.acknowledged) return NextResponse.json({ message:"Error updating products" }, { status:500 });
+    };
+  //? Movements
+    if(deletedCategory.type === "movement") {
+      const updatedMovements = await MovementModel.updateMany({ category:categoryId }, { $unset:{ category:"" } });
+      if(!updatedMovements.acknowledged) return NextResponse.json({ message:"Error updating movements" }, { status:500 });
+    };
+  //? Items
+    if(deletedCategory.type === "item") {
+      const updatedItems = await ItemModel.updateMany({ category:categoryId }, { $unset:{ category:"" } });
+      if(!updatedItems.acknowledged) return NextResponse.json({ message:"Error updating items" }, { status:500 });
+    };
 
     return NextResponse.json({ message:"Categoría eliminada" }, { status:200 });
   } catch (error) {

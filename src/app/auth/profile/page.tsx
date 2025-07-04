@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { PiDesktopBold } from "react-icons/pi";
-import { LuFolder, LuUser } from "react-icons/lu";
+import { LuCircleDashed, LuFolder, LuUser } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
 import { getAvatars } from "@utils/avatars";
 import { ROLES_DATA } from "@utils/data";
@@ -15,11 +15,13 @@ import DeskForm from "@components/desks/Form";
 import FormProfile from "@components/auth/FormProfile";
 import Folders from "@components/folders/Folders";
 import AvatarGroup from "@components/users/AvatarGroup";
+import Categories from "@/src/components/categories/Categories";
 
 export default function Profile() {
   const { user, desk } = useAuth();
 
   const [openFoldersForm, setOpenFoldersForm] = useState(false);
+  const [openCategoriesForm, setOpenCategoriesForm] = useState(false);
   const [openUserForm, setOpenUserForm] = useState(false);
   const [openDeskForm, setOpenDeskForm] = useState(false);
 
@@ -49,10 +51,14 @@ export default function Profile() {
                   <LuFolder className="text-lg"/>
                   Carpetas
                 </button>
+                <button onClick={()=>setOpenCategoriesForm(true)} className="flex-1 sm:flex-none card-btn-fill">
+                  <LuCircleDashed className="text-lg"/>
+                  Categorías
+                </button>
               </div>
               <Link href="/" className="flex-1 sm:flex-none card-btn-red">
                 <PiDesktopBold className="text-lg"/>
-                Salir del escritorio
+                Cambiar
               </Link>
             </div>
           </section>
@@ -80,6 +86,9 @@ export default function Profile() {
         </div>
         <Modal title="Carpetas" isOpen={openFoldersForm} onClose={()=>setOpenFoldersForm(false)}>
           {openFoldersForm && <Folders/>}
+        </Modal>
+        <Modal title="Categorías" isOpen={openCategoriesForm} onClose={()=>setOpenCategoriesForm(false)}>
+          {openCategoriesForm && <Categories/>}
         </Modal>
         <Modal title="Editar Perfil" isOpen={openUserForm} onClose={()=>setOpenUserForm(false)}>
           {openUserForm && <FormProfile closeForm={()=>setOpenUserForm(false)}/>}

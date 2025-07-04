@@ -43,9 +43,9 @@ export default function TodoListInput({ label, todoList, setTodoList }:{ label:s
           onChange={(e)=>setTodo(e.target.value)}
           className="w-full px-3 py-3 outline-none rounded-md font-medium text-sm text-basic bg-secondary-light dark:bg-secondary-dark focus-within:bg-primary-light dark:focus-within:bg-primary-dark border border-tertiary-light dark:border-tertiary-dark placeholder:text-quaternary/50 duration-300"
         />
-        <button type="button" onClick={handleAddTodo} className="card-btn text-nowrap">
-          <HiMiniPlus className="text-lg"/>
-          <span className="hidden sm:inline">Agregar</span>
+        <button type="button" onClick={handleAddTodo} className="card-btn max-w-1/4 text-nowrap">
+          <HiMiniPlus className="text-xl"/>
+          <span className="hidden sm:inline font-semibold text-sm">Agregar</span>
         </button>
       </div>
     </div>

@@ -107,10 +107,10 @@ export default function CategoryForm({ type, values, refresh }:{ type:"transacti
           </button>
         </div>
       </section>
-      <Modal title="Eliminar Carpeta" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
+      <Modal title="Eliminar Categoría" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
         <DeleteAlert
-          content="¿Estas seguro de eliminar esta carpeta?"
-          description="Se eliminara todo el contenido marcado con esta carpeta"
+          content="¿Estas seguro de eliminar esta categoría?"
+          description="Todo el contenido marcado con esta categoría se marcará sin categoría"
           error={error}
           onDelete={deleteCategory}
         />

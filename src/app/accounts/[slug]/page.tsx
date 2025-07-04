@@ -84,7 +84,6 @@ export default function AccountPage() {
     <ProtectedRoute>
       <AppLayout activeMenu="Cuentas">
         <div className="flex-1 flex flex-col gap-4">
-{/* Filters */}
           <section className="flex flex-col justify-between gap-x-5 gap-y-2 min-w-full">
           {!account ?
             <span className="flex h-24">
@@ -109,6 +108,7 @@ export default function AccountPage() {
             </div>
             </>
           }
+{/* Filters */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <div className="flex-1 min-w-48">
                 <DropdownSelect disabled={!account ? true : false} options={[{ label:"Todos", value:"" }, ...TRANSACTIONS_STATUS_DATA]} defaultValue="" icon={<LuFilter className="text-lg"/>} placeholder="Estado" handleValue={(value:string)=>setStatus(value)}/>
@@ -164,7 +164,7 @@ export default function AccountPage() {
         <Modal title="Editar Cuenta" isOpen={openForm} onClose={()=>setOpenForm(false)}>
           {openForm && <AccountForm values={account} refresh={refresh}/>}
         </Modal>
-        <Modal title="Crear ingreso" isOpen={incomeForm} onClose={()=>setIncomeForm(false)}>
+        <Modal title="Crear Ingreso" isOpen={incomeForm} onClose={()=>setIncomeForm(false)}>
           {account && incomeForm && <TransactionForm account={account._id} type="income" closeForm={()=>setIncomeForm(false)} refresh={fetchAccount}/>}
         </Modal>
         <Modal title="Crear gasto" isOpen={expenseForm} onClose={()=>setExpenseForm(false)}>

@@ -25,8 +25,8 @@ export default function Navbar({ activeMenu }:{ activeMenu:string }) {
         }
         </button>
         <Link href="/auth/profile" className="hidden sm:flex items-center gap-2 px-4 w-full rounded-xl font-medium text-sm py-2 hover:bg-primary-light dark:hover:bg-primary-dark cursor-pointer duration-300">
-          <PiDesktopDuotone className="text-2xl"/>
-          <h2 className="font-medium text-xl">{desk?.title}</h2>
+          <PiDesktopDuotone className="text-2xl text-basic"/>
+          <h2 className="font-medium text-xl text-basic">{desk?.title}</h2>
         </Link>
       </div>
       <div className="flex items-center gap-4">

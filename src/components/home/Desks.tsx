@@ -43,7 +43,7 @@ export default function HomeDesks() {
   return(
     <section className="flex-1 flex flex-col gap-2 min-h-96 min-w-3/5 p-2 sm:p-5 rounded border border-secondary-light dark:border-secondary-dark shadow">
       <div>
-        <h1 className="font-medium text-lg sm:text-xl text-basic">Mis Escritorios</h1>
+        <h1 className="font-medium text-lg sm:text-xl text-basic">Escritorios</h1>
         <p className="text-xs sm:text-sm text-quaternary">Selecciona{user?.role === "owner" ? " o crea " : " "}un escritorio para continuar</p>
       </div>
     {desks === undefined &&
@@ -61,15 +61,15 @@ export default function HomeDesks() {
       </span>
     }
     {desks && desks.length > 0 &&
-      <ul className="flex-1 flex flex-col gap-1 overflow-y-auto">
+      <ul className="flex-1 flex flex-col overflow-y-auto">
       {desks?.map((desk) => (
-        <li key={desk._id} className="flex items-center rounded-lg bg-transparent min-h-16 hover:bg-secondary-light dark:hover:bg-secondary-dark duration-300">
-          <button onClick={()=>handleDesk(desk)} type="button" className="flex items-center gap-2 w-full px-5 py-1 overflow-hidden text-start text-sm text-basic cursor-pointer">
+        <li key={desk._id} onClick={()=>handleDesk(desk)} className="flex items-center gap-2 px-5 py-1 min-h-16 rounded-lg text-primary-dark dark:text-primary-light bg-transparent hover:bg-secondary-light dark:hover:bg-secondary-dark cursor-pointer duration-300">
+          {/* <button onClick={()=>handleDesk(desk)} type="button" className="flex items-center gap-2 w-full h-full px-5 py-1 overflow-hidden text-start text-sm text-basic cursor-pointer"> */}
             <span className="min-w-fit">
               <PiDesktopBold className="text-2xl"/>
             </span>
-            <span className="truncate text-xl">{desk.title}</span>
-          </button>
+            <span className="truncate font-medium text-xl">{desk.title}</span>
+          {/* </button> */}
         </li>
       ))}
       </ul>

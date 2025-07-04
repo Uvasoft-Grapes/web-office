@@ -73,7 +73,7 @@ export default function GoalCard({ goal, refresh }:{ goal:TypeGoal, refresh:()=>
             </div>
           </div>
           <div className="flex items-center justify-between mt-3">
-            <AvatarGroup avatars={selectedUsersAvatars || []} maxVisible={3}/>
+            <AvatarGroup avatars={selectedUsersAvatars || []} maxVisible={5}/>
           </div>
         </section>
       </li>

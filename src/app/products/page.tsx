@@ -89,7 +89,7 @@ export default function ProductsPage() {
             <p className="flex-1 flex items-center justify-center font-semibold text-2xl text-quaternary">No hay productos</p>
           }
           {products && products?.length > 0 &&
-            <ul className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-2">
+            <ul className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-2">
             {products?.map((product) => (
               <li key={product._id}>
                 <ProductCard product={product} refresh={fetchProducts}/>

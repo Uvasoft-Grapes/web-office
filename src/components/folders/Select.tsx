@@ -62,10 +62,12 @@ export default function FolderSelect({ disabled, label, selectedFolder, setSelec
           </li>
         }
         {folders?.map(folder => (
-          <li key={folder._id} className={`${!label && folder._id === selectedFolder?._id && "hidden"} overflow-hidden min-h-fit mr-1 rounded-md bg-transparent hover:bg-secondary-light dark:hover:bg-secondary-dark border-2 border-secondary-light dark:border-secondary-dark duration-300`}>
-            <button type="button" onClick={()=>handleFolder(folder)} className="flex items-center gap-2 px-5 h-16 w-full cursor-pointer">
-              <LuFolder className="text-lg sm:text-xl text-basic"/>
-              <span className="font-medium text-sm sm:text-base text-basic">{folder.title}</span>
+          <li key={folder._id} className={`${!label && folder._id === selectedFolder?._id && "hidden"} flex`}>
+            <button type="button" onClick={()=>handleFolder(folder)} className="flex items-center gap-2 py-2 px-4 w-full h-16 rounded-md hover:bg-secondary-light dark:hover:bg-secondary-dark cursor-pointer duration-300">
+              <span className="flex items-center justify-center min-h-10 min-w-10 rounded-full text-primary-light dark:text-primary-light bg-primary-dark dark:bg-secondary-dark">
+                <LuFolder className="text-xl"/>
+              </span>
+              <p className="rounded line-clamp-1 text-start text-primary-dark dark:text-primary-light duration-300">{folder.title}</p>
             </button>
           </li>
         ))}

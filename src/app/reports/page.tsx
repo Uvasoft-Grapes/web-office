@@ -67,7 +67,7 @@ export default function ReportsPage() {
       <AppLayout activeMenu="Reports">
         <article className="flex-1 flex flex-col gap-4">
           <section className="flex flex-wrap items-center justify-between gap-4 w-full">
-            <h2 className="font-semibold text-3xl">Reportes</h2>
+            <h2 className="font-semibold text-3xl text-basic">Reportes</h2>
             <div className="flex-1 sm:flex-none min-w-48">
               <FolderSelect disabled={!reports ? true : false} selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
             </div>

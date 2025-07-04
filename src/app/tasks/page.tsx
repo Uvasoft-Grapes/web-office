@@ -24,7 +24,7 @@ export default function TasksPage() {
 
   const [allTasks, setAllTasks] = useState<TypeTask[]|undefined>();
   const [tabs, setTabs] = useState<{ label:string, count:number }[]|undefined>();
-  const [taskForm, setTaskForm] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string|undefined>();
   const [filterPriority, setFilterPriority] = useState<string|undefined>();
   const [filterFolder, setFilterFolder] = useState<TypeFolder|undefined>();
@@ -80,6 +80,11 @@ export default function TasksPage() {
   const handleSortLabel = (label:string) => {
     setSortLabel(label);
     setSortForm(false);
+  };
+
+  const onRefresh = () => {
+    fetchTasks();
+    setOpenForm(false);
   };
 
   return(
@@ -155,7 +160,7 @@ export default function TasksPage() {
                 </button>
               </div>
             {user && (user.role === "owner" || user.role === "admin") &&
-              <button type="button" onClick={()=>setTaskForm(true)} className="tool-btn">
+              <button type="button" onClick={()=>setOpenForm(true)} className="tool-btn">
                 <LuPlus className="text-xl"/>
                 Crear Tarea
               </button>
@@ -164,8 +169,8 @@ export default function TasksPage() {
           </section>
         </article>
 {/* Modals */}
-        <Modal title="Crear Tarea" isOpen={taskForm} onClose={()=>setTaskForm(false)}>
-          {taskForm && <FormTask refresh={fetchTasks}/>}
+        <Modal title="Crear Tarea" isOpen={openForm} onClose={()=>setOpenForm(false)}>
+          {openForm && <FormTask refresh={onRefresh}/>}
         </Modal>
         <Modal title="Ordenar Tareas" isOpen={sortForm} onClose={()=>setSortForm(false)}>
           <ul className="flex-1 flex flex-col gap-1.5 overflow-y-auto">

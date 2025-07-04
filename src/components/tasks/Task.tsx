@@ -77,7 +77,7 @@ export default function Task({ task, refresh }:{ task:TypeTask, refresh:()=>void
 
   return(
     <>
-      <div className="flex-1 flex flex-col gap-5 overflow-y-auto">
+      <div className="flex-1 flex flex-col gap-5 pr-4 overflow-y-auto">
         <div className="flex justify-center">
           <article className="flex flex-col gap-4 w-full">
             <section className="flex flex-wrap items-center justify-between gap-2">

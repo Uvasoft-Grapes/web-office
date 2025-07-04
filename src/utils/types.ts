@@ -118,7 +118,7 @@ export interface TypeTransaction {
   _id:string;
   account:string;
   type:"income"|"expense";
-  category:TypeCategory;
+  category:TypeCategory|undefined;
   title:string;
   description:string,
   amount:number;
@@ -154,7 +154,7 @@ export interface TypeItem {
   inventory:string;
   title:string;
   description?:string;
-  category:TypeCategory;
+  category:TypeCategory|undefined;
   stock:number;
   price:number;
 };
@@ -171,16 +171,32 @@ export interface TypeInventory {
 };
 
 //! Products
+
 export interface TypeProduct {
   _id:string;
   desk:string;
-  folder:TypeFolder;
   title:string;
   description?:string;
-  category:TypeCategory;
+  category:TypeCategory|undefined;
   price:number;
   stock:number;
+  movements?:TypeMovement[];
 };
+
+export interface TypeMovement {
+  _id:string;
+  product:string;
+  category:TypeCategory|undefined;
+  type:"outflow"|"inflow";
+  title:string;
+  description:string;
+  quantity:number;
+  date:Date;
+  createdBy:TypeAssigned;
+  status:"Pendiente"|"Finalizado"|"Cancelado";
+};
+
+//! Punto de venta
 
 //! Calendar
 

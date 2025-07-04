@@ -63,7 +63,7 @@ export default function TaskCard({ task, refresh }:{ task:TypeTask, refresh:()=>
           <Progress progress={progress <= 2 ? "2%" : `${progress}%`} color={progress < 26 ? "red" : progress < 51 ? "orange" : progress < 100 ? "yellow" : "green"}/>
         </section>
         <section className="px-4 flex flex-col gap-2">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-1.5 items-center justify-between">
             <div className="">
               <label className="font-medium text-xs text-quaternary">Inicio</label>
               <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{createdAt && format(createdAt, "dd/MM/yyyy", { locale:es })}</p>
@@ -74,7 +74,7 @@ export default function TaskCard({ task, refresh }:{ task:TypeTask, refresh:()=>
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <AvatarGroup avatars={selectedUsersAvatars || []} maxVisible={3}/>
+            <AvatarGroup avatars={selectedUsersAvatars || []} maxVisible={5}/>
           {attachments.length > 0 &&
             <div className="flex items-center gap-2 bg-primary-dark dark:bg-primary-light px-2.5 py-1.5 rounded-lg">
               <IoLink className="text-primary-light dark:text-primary-dark"/>

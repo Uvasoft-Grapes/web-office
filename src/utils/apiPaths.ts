@@ -1,5 +1,5 @@
 export const BASE_URL = "http://localhost:3000";
-// export const BASE_URL = "https://web-office-pied.vercel.app";
+// export const BASE_URL = "https://check-rho-olive.vercel.app";
 
 export const API_PATHS = {
   AUTH:{
@@ -90,6 +90,9 @@ export const API_PATHS = {
     CREATE_PRODUCT:"/api/products", // Admin Token required
     UPDATE_PRODUCT:(productId:string) => `/api/products/${productId}`, // Admin Token required
     DELETE_PRODUCT:(productId:string) => `/api/products/${productId}`, // Owner Token required
+    CREATE_MOVEMENT:`/api/products/movements`, // Admin Token required
+    UPDATE_MOVEMENT:(movementId:string) => `/api/products/movements/${movementId}`, // Admin Token required
+    DELETE_MOVEMENT:(movementId:string) => `/api/products/movements/${movementId}`, // Admin Token required
   },
 
   INVENTORIES:{
@@ -106,13 +109,6 @@ export const API_PATHS = {
       DELETE_ITEM:(itemId:string) => `/api/inventories/items/${itemId}`, // Owner Token required
       UPDATE_STOCK:(itemId:string) => `/api/inventories/items/${itemId}/stock`, // Admin Token required
     },
-  },
-
-
-  MOVEMENTS:{
-    CREATE_MOVEMENT:`/api/movements`, // Auth Token required
-    UPDATE_MOVEMENT:(movementId:string) => `/api/movements/${movementId}`, // Admin Token required
-    DELETE_MOVEMENT:(movementId:string) => `/api/movements/${movementId}`, // Owner Token required
   },
 
   EVENTS:{

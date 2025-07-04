@@ -138,7 +138,6 @@ export default function GoalForm({ values, refresh }:{ values?:TypeGoal, refresh
           <InputDate
             name="due-date"
             label="Fecha final"
-            placeholder="Fecha de entrega"
             defaultValue={values?.dueDate ? format(values.dueDate, "yyyy-MM-dd", { locale:es }) : undefined}
           />
         </div>

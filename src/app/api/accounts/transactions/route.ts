@@ -7,7 +7,7 @@ import TransactionModel from "@models/Transaction";
 import { TypeDesk, TypeUser } from "@utils/types";
 
 // @desc Create transaction
-// @route POST /api/accounts/:id/transactions
+// @route POST /api/accounts/transactions
 // @access Assigned only
 
 export async function POST(req:Request) {
