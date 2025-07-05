@@ -5,6 +5,7 @@ import UserModel from "@models/User";
 import DeskModel from "@models/Desk";
 import { TypeUser } from "@utils/types";
 import { serialize } from "cookie";
+import { ROLES_DATA } from "../utils/data";
 
 const { JWT_SECRET, NODE_ENV } =  process.env;
 
@@ -48,7 +49,7 @@ export const decodedInviteToken = async (token:string) => {
   if(!JWT_SECRET) return undefined;
   const decoded = jwt.verify(token, JWT_SECRET);
   if(typeof decoded !== "object" || !("role" in decoded)) return NextResponse.json({ message:"Unauthorized token" }, { status:401 });
-  if(decoded.role === "admin" || decoded.role === "user") return decoded.role;
+  if(ROLES_DATA.some(role => role.value === decoded.role)) return decoded.role;
   return undefined;
 };
 
