@@ -75,7 +75,6 @@ export async function PUT(req:NextRequest) {
     if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
     if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
     if(!Array.isArray(assignedTo)) return NextResponse.json({ message:"AssignedTo must be an array of users IDs" }, { status:400 });
-    if(!assignedTo.includes(userToken._id.toString())) assignedTo.push(userToken._id.toString());
 
 //! Update Inventory
     const updatedInventory = await InventoryModel.findById(inventoryId);

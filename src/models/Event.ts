@@ -20,7 +20,7 @@ const EventSchema = new Schema(
   { timestamps: true }
 );
 
-delete models.Event;
+// delete models.Event;
 
 const EventModel = models.Event || model('Event', EventSchema);
 export default EventModel;

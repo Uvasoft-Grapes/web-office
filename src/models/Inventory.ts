@@ -8,7 +8,7 @@ const InventorySchema = new Schema({
   assignedTo:[{ type:Schema.Types.ObjectId, ref:'User' }],
 }, { timestamps:true });
 
-delete models.Inventory;
+// delete models.Inventory;
 
 const InventoryModel = models.Inventory || model('Inventory', InventorySchema);
 export default InventoryModel;

@@ -83,7 +83,6 @@ export async function POST(req:Request) {
     if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
     if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
     if(!Array.isArray(assignedTo)) return NextResponse.json({ message:"AssignedTo must be an array of users IDs" }, { status:400 });
-    if(!assignedTo.includes(userToken._id.toString())) assignedTo.push(userToken._id.toString());
 
     const newInventory = await InventoryModel.create({
       desk:desk._id,
@@ -97,8 +96,9 @@ export async function POST(req:Request) {
     const inventory = await InventoryModel.findById(newInventory._id).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
     if(!inventory) return NextResponse.json({ message:"Inventory not found"}, { status:404 });
 
-    return NextResponse.json({ message:"Inventario creado", inventory }, { status:201 });
+    return NextResponse.json({ message:"Inventario creado" }, { status:201 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };
 };

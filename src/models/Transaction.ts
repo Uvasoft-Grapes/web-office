@@ -16,7 +16,7 @@ TransactionSchema.index({ account:1 });
 TransactionSchema.index({ createdBy:1 });
 TransactionSchema.index({ date:-1 });
 
-delete models.Transaction;
+// delete models.Transaction;
 
 const TransactionModel = models.Transaction || model('Transaction', TransactionSchema);
 export default TransactionModel;

@@ -8,7 +8,7 @@ const AccountSchema = new Schema({
   balance:{ type:Number, default:0 },
 }, { timestamps:true });
 
-delete models.Account;
+// delete models.Account;
 
 const AccountModel = models.Account || model('Account', AccountSchema);
 export default AccountModel;

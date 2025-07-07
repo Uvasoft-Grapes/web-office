@@ -9,7 +9,7 @@ const ReportSchema = new Schema({
   date:{ type:Date, required:[true, 'DB: Due date required.'] },
 }, { timestamps:true });
 
-delete models.Report;
+// delete models.Report;
 
 const ReportModel = models.Report || model('Report', ReportSchema);
 export default ReportModel;

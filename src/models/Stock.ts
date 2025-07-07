@@ -6,7 +6,7 @@ const StockSchema = new Schema({
   quantity: { type:Number, required:true, min:1 },
 }, { timestamps:true });
 
-delete models.Stock;
+// delete models.Stock;
 
 const StockModel = models.Stock || model('Stock', StockSchema);
 export default StockModel;

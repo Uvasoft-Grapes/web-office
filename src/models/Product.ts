@@ -9,7 +9,7 @@ const ProductSchema = new Schema({
   stock:{ type:Number, default:0 },
 }, { timestamps:true });
 
-delete models.Product;
+// delete models.Product;
 
 const ProductModel = models.Product || model('Product', ProductSchema);
 export default ProductModel;

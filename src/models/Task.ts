@@ -20,7 +20,7 @@ const TaskSchema = new Schema({
   progress:{ type:Number, default:0 },
 }, { timestamps:true });
 
-delete models.Task;
+// delete models.Task;
 
 const TaskModel = models.Task || model('Task', TaskSchema);
 export default TaskModel;

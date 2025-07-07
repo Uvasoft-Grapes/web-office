@@ -20,7 +20,7 @@ const GoalSchema = new Schema({
   progress:{ type:Number, default:0 },
 }, { timestamps:true });
 
-delete models.Goal;
+// delete models.Goal;
 
 const GoalModel = models.Goal || model('Goal', GoalSchema);
 export default GoalModel;

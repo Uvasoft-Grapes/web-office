@@ -15,7 +15,7 @@ import DeleteAlert from "@components/DeleteAlert";
 export default function InventoryForm({ values, refresh }:{ values?:TypeInventory, refresh:()=>void }) {
   const { user } = useAuth();
 
-  const [assignedTo, setAssignedTo] = useState<TypeAssigned[]>(values ? values.assignedTo : user ? [{ _id:user?._id, name:user.name, email:user.email, profileImageUrl:user.profileImageUrl||"" }] : []);
+  const [assignedTo, setAssignedTo] = useState<TypeAssigned[]>(values ? values.assignedTo : []);
   const [folder, setFolder] = useState<TypeFolder|undefined>(values?.folder);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);

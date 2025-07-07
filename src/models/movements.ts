@@ -16,7 +16,7 @@ const MovementSchema = new Schema({
 // TransactionSchema.index({ createdBy:1 });
 // TransactionSchema.index({ date:-1 });
 
-delete models.Movement;
+// delete models.Movement;
 
 const MovementModel = models.Movement || model('Movement', MovementSchema);
 export default MovementModel;

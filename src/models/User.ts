@@ -8,7 +8,7 @@ const UserSchema = new Schema({
   role:{ type:String, enum:["owner", "admin", "user", "client"], default:"user" },
 }, { timestamps:true });
 
-delete models.User;
+// delete models.User;
 
 const UserModel = models.User || model('User', UserSchema);
 export default UserModel;

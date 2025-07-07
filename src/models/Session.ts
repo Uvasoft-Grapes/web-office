@@ -6,7 +6,7 @@ const SessionSchema = new Schema({
   checkOut:{ type:Date, default:null },
 }, { timestamps:true });
 
-delete models.Session;
+// delete models.Session;
 
 const SessionModel = models.Session || model('Session', SessionSchema);
 export default SessionModel;

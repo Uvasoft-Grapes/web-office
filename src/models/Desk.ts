@@ -5,7 +5,7 @@ const DeskSchema = new Schema({
   members:[{ type:Schema.Types.ObjectId, ref:'User' }],
 }, { timestamps:true });
 
-delete models.Desk;
+// delete models.Desk;
 
 const DeskModel = models.Desk || model('Desk', DeskSchema);
 export default DeskModel;
