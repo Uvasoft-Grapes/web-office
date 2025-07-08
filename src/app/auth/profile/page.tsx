@@ -16,6 +16,7 @@ import FormProfile from "@components/auth/FormProfile";
 import Folders from "@components/folders/Folders";
 import AvatarGroup from "@components/users/AvatarGroup";
 import Categories from "@/src/components/categories/Categories";
+import ThemeToggle from "@/src/components/ThemeSwitcher";
 
 export default function Profile() {
   const { user, desk } = useAuth();
@@ -28,7 +29,9 @@ export default function Profile() {
   return(
     <ProtectedRoute>
       <AppLayout activeMenu="desk">
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-4">
+{/* Theme */}
+          <ThemeToggle/>
 {/* Desk */}
           <section className="flex flex-col gap-3">
             <div className="flex flex-col gap-4 py-5 px-7 rounded-md border border-secondary-light dark:border-secondary-dark shadow-md dark:shadow-secondary-dark/50">

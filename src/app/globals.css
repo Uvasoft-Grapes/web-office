@@ -1,31 +1,9 @@
 @import "tailwindcss";
 
-@theme {
-  --font-display: 'Poppins', "sans-serif";
-  --breakpoint-3xl: 1920px;
-  --color-blue-light: #1447e6;
-  --color-blue-dark:  #51a2ff;
-  --color-red-light: #e7000b;
-  --color-red-dark:  #fb2c36;
-  --color-yellow-light: #d08700;
-  --color-yellow-dark:  #efb100;
-  --color-green-light: #00a63e;
-  --color-green-dark:  #00c951;
-  --color-primary-light: #f5f5f4;
-  --color-secondary-light: #e7e5e4;
-  --color-tertiary-light: #d6d3d1;
-  --color-primary-dark: #0c0a09;
-  --color-secondary-dark: #1c1917;
-  --color-tertiary-dark: #292524;
-  --color-quaternary: #79716b;
-}
+@config "../../tailwind.config.ts";
 
 @layer base {
-  html {
-    font-family: var(--font-display);
-  }
   body {
-    background-color: #FCFBFC;
     overflow-x: hidden;
   }
 }
@@ -52,10 +30,10 @@
   @apply flex justify-center items-center gap-1.5 w-full px-3 min-h-12 rounded-md font-medium text-primary-dark dark:text-primary-light bg-secondary-light dark:bg-secondary-dark focus-within:bg-primary-light dark:focus-within:bg-primary-dark border border-tertiary-light dark:border-tertiary-dark cursor-pointer disabled:cursor-not-allowed duration-300;
 }
 .card-btn-fill {
-  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent cursor-pointer duration-300;
+  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent dark:hover:bg-transparent cursor-pointer duration-300;
 }
 .card-btn-red {
-  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-red-light hover:dark:text-red-dark bg-red-light dark:bg-red-dark hover:bg-transparent cursor-pointer duration-300;
+  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-red-light hover:dark:text-red-dark bg-red-light dark:bg-red-dark hover:bg-transparent dark:hover:bg-transparent cursor-pointer duration-300;
 }
 
 .form-card {
@@ -93,3 +71,41 @@
 .info-box-value {
   @apply font-medium text-sm text-tertiary-dark dark:text-tertiary-light;
 }
+
+
+/* @import "tailwindcss";
+
+@theme {
+  --font-display: 'Poppins', "sans-serif";
+  --breakpoint-3xl: 1920px;
+  --color-blue-light: #1447e6;
+  --color-blue-dark:  #51a2ff;
+  --color-red-light: #e7000b;
+  --color-red-dark:  #fb2c36;
+  --color-yellow-light: #d08700;
+  --color-yellow-dark:  #efb100;
+  --color-green-light: #00a63e;
+  --color-green-dark:  #00c951;
+  --color-primary-light: #f5f5f4;
+  --color-secondary-light: #e7e5e4;
+  --color-tertiary-light: #d6d3d1;
+  --color-primary-dark: #0c0a09;
+  --color-secondary-dark: #1c1917;
+  --color-tertiary-dark: #292524;
+  --color-quaternary: #79716b;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-display);
+  }
+  body {
+    overflow-x: hidden;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+} */
