@@ -6,6 +6,9 @@
   body {
     overflow-x: hidden;
   }
+  * {
+    scrollbar-color: #79716b transparent;
+  }
 }
 
 @layer utilities {
