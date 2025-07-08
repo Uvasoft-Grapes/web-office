@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { PiDesktopBold } from "react-icons/pi";
-import { LuLogOut } from "react-icons/lu";
+import { LuLogOut, LuScreenShare } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
 import { TypeDesk } from "@utils/types";
 import { API_PATHS } from "@utils/apiPaths";
@@ -70,7 +70,7 @@ export default function HomeDesks() {
       {desks?.map((desk) => (
         <li key={desk._id} onClick={isMember(desk) ? ()=>handleDesk(desk) : ()=>toast.error("No eres miembro")} className={`flex items-center gap-2 px-5 py-1 min-h-16 rounded-lg text-primary-dark dark:text-primary-light bg-transparent hover:bg-secondary-light dark:hover:bg-secondary-dark cursor-pointer duration-300 ${!isMember(desk) && "cursor-not-allowed opacity-50"}`}>
           <span className="min-w-fit">
-            <PiDesktopBold className="text-2xl"/>
+            <LuScreenShare className="text-2xl"/>
           </span>
           <span className="truncate font-medium text-xl">{desk.title}</span>
         </li>

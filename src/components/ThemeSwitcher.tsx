@@ -1,5 +1,5 @@
 // components/ThemeToggle.tsx
-import { LuMoon, LuSun, LuMonitor } from 'react-icons/lu'
+import { LuMoon, LuSun, LuMonitorSmartphone } from 'react-icons/lu'
 import { useTheme } from '../context/ThemeContext'
 import { ReactNode } from 'react';
 
@@ -17,7 +17,7 @@ const options: { value: 'light' | 'dark' | 'system'; label: string; icon:ReactNo
   {
     value: 'system',
     label: 'Navegador',
-    icon: <LuMonitor className="text-xl text-blue-light dark:text-blue-dark" />
+    icon: <LuMonitorSmartphone className="text-xl text-blue-light dark:text-blue-dark" />
   }
 ]
 

@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { PiDesktopBold } from "react-icons/pi";
-import { LuCircleDashed, LuFolder, LuUser } from "react-icons/lu";
+import { LuCircleDashed, LuFolder, LuMonitorCog, LuScreenShareOff, LuUser } from "react-icons/lu";
 import { useAuth } from "@context/AuthContext";
 import { getAvatars } from "@utils/avatars";
 import { ROLES_DATA } from "@utils/data";
@@ -47,7 +46,7 @@ export default function Profile() {
             <div className="flex flex-col sm:flex-row sm:justify-between gap-4">
               <div className="flex flex-wrap gap-4">
                 <button onClick={()=>setOpenDeskForm(true)} className="flex-1 sm:flex-none card-btn-fill">
-                  <PiDesktopBold className="text-lg"/>
+                  <LuMonitorCog className="text-lg"/>
                   Editar
                 </button>
                 <button onClick={()=>setOpenFoldersForm(true)} className="flex-1 sm:flex-none card-btn-fill">
@@ -60,8 +59,8 @@ export default function Profile() {
                 </button>
               </div>
               <Link href="/" className="flex-1 sm:flex-none card-btn-red">
-                <PiDesktopBold className="text-lg"/>
-                Cambiar
+                <LuScreenShareOff className="text-lg"/>
+                Salir
               </Link>
             </div>
           </section>
