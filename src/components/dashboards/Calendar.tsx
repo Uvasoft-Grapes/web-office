@@ -82,7 +82,7 @@ export default function CalendarDashboard() {
           </span>
         :
           <CustomPieChart
-            title="Folder"
+            title="Carpetas"
             data={dashboardData.eventsByFolder}
             colors={dashboardData.eventsByFolder.map((folder) => ({ label:folder.label, color:getRandomColor() }))}
           />
