@@ -3,8 +3,8 @@ import { BASE_URL } from "@utils/apiPaths";
 
 const axiosInstance = axios.create({
   baseURL:BASE_URL,
-  timeout:10000,
-  withCredentials: true, // Importante para que el navegador envíe las cookies en las peticiones
+  timeout:20000,
+  withCredentials:true, // Importante para que el navegador envíe las cookies en las peticiones
   headers:{
     "Content-Type":"application/json",
     Accept:"application/json",

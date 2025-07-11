@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 const { NODE_ENV } =  process.env;
 
 export async function GET() {
-  // Eliminar la cookie estableciendo una cookie con una fecha de expiración en el pasado
   try {
     const serializedDeskCookie = serialize("deskToken", "", {
       httpOnly:true,

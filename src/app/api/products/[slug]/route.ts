@@ -5,6 +5,7 @@ import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } 
 import ProductModel from "@models/Product";
 import StockModel from "@models/Stock";
 import { TypeDesk, TypeUser } from "@utils/types";
+import { uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
 
 // @desc Get product by ID
 // @route GET /api/products/:id
@@ -44,45 +45,66 @@ export async function GET(req:NextRequest) {
 // @route PUT /api/products/:id
 // @access Owner, Admin
 
-export async function PUT(req:NextRequest) {
+export async function PUT(req: NextRequest) {
   try {
     await connectDB();
+
+    //! Extract product ID from URL
     const productId = req.url.split("/")[5].split("?")[0];
-    const { title, description, category, price } = await req.json();
+
+    //! Parse cookies
     const cookieHeader = req.headers.get("cookie");
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const authToken = cookies.authToken;
     const deskToken = cookies.deskToken;
 
-//! Validate user token
-    const userToken:TypeUser|NextResponse = await verifyAdminToken(authToken);
-    if(userToken instanceof NextResponse) return userToken;
+    //! Validate user token
+    const userToken: TypeUser | NextResponse = await verifyAdminToken(authToken);
+    if (userToken instanceof NextResponse) return userToken;
 
-//! Validate desk token
-    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
-    if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
+    //! Validate desk token
+    const desk: TypeDesk | undefined = await verifyDeskToken(deskToken, userToken._id);
+    if (!desk) return NextResponse.json({ message: "Acceso denegado" }, { status: 403 });
 
-//! Validations
-    if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
-    if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
-    if(!category) return NextResponse.json({ message:"Categoría obligatoria" }, { status:400 });
-    if(Number(price) < 0) return NextResponse.json({ message:"Precio obligatorio" }, { status:400 });
+    //! Parse form data
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+    const title = formData.get("title")?.toString().trim() || "";
+    const description = formData.get("description")?.toString().trim() || "";
+    const category = formData.get("category")?.toString();
+    const price = Number(formData.get("price")?.toString() || 0);
 
-//! Update Product
+    //! Validations
+    if (!title) return NextResponse.json({ message: "El título debe tener al menos 1 carácter." }, { status: 400 });
+    if (title.length > 200) return NextResponse.json({ message: "El título puede tener un máximo de 200 caracteres." }, { status: 400 });
+    if (!category) return NextResponse.json({ message: "Categoría obligatoria" }, { status: 400 });
+    if (isNaN(price) || price < 0) return NextResponse.json({ message: "Precio obligatorio" }, { status: 400 });
+
+    //! Find product
     const product = await ProductModel.findById(productId);
-    if(!product) return NextResponse.json({ message:"Product not found" }, { status:404 });
+    if (!product) return NextResponse.json({ message: "Product not found" }, { status: 404 });
 
-    product.title = title || product.title;
-    product.description = description || product.description;
-    product.category = category || product.category;
-    product.price = price || product.price;
+    //! Update image if a new file is sent
+    if (file) {
+      const imageUrl = await uploadImageToCloudinary(file, {
+        folder: "products",
+        publicId: product._id.toString(),
+      });
+      product.imageUrl = imageUrl;
+    }
+
+    //! Update fields
+    product.title = title;
+    product.description = description;
+    product.category = category;
+    product.price = price;
 
     await product.save();
 
-    return NextResponse.json({ message:"Producto actualizado", product }, { status:201 });
+    return NextResponse.json({ message: "Producto actualizado" }, { status: 201 });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ message:"Server error", error }, { status:500 });
+    console.error("Update product error:", error);
+    return NextResponse.json({ message: "Server error", error }, { status: 500 });
   };
 };
 

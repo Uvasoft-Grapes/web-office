@@ -18,12 +18,17 @@ import Categories from "@/src/components/categories/Categories";
 import ThemeToggle from "@/src/components/ThemeSwitcher";
 
 export default function Profile() {
-  const { user, desk } = useAuth();
+  const { user, desk, changeDesk } = useAuth();
 
   const [openFoldersForm, setOpenFoldersForm] = useState(false);
   const [openCategoriesForm, setOpenCategoriesForm] = useState(false);
   const [openUserForm, setOpenUserForm] = useState(false);
   const [openDeskForm, setOpenDeskForm] = useState(false);
+
+  const onRefresh = () => {
+    if(desk) changeDesk(desk._id)
+    setOpenUserForm(false);
+  };
 
   return(
     <ProtectedRoute>
@@ -93,7 +98,7 @@ export default function Profile() {
           {openCategoriesForm && <Categories/>}
         </Modal>
         <Modal title="Editar Perfil" isOpen={openUserForm} onClose={()=>setOpenUserForm(false)}>
-          {openUserForm && <FormProfile closeForm={()=>setOpenUserForm(false)}/>}
+          {openUserForm && <FormProfile refresh={onRefresh}/>}
         </Modal>
         <Modal title="Editar Escritorio" isOpen={openDeskForm} onClose={()=>setOpenDeskForm(false)}>
           {desk && openDeskForm && <DeskForm value={desk} closeForm={()=>setOpenDeskForm(false)}/>}

@@ -7,3 +7,5 @@ export default function Loader() {
     </main>
   );
 };
+
+// loader-circle

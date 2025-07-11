@@ -6,6 +6,8 @@ import ProductModel from "@models/Product";
 // import StockModel from "@models/Stock";
 import { TypeDesk, TypeUser } from "@utils/types";
 import MovementModel from "@/src/models/movements";
+import { PRODUCT_PICTURE } from "@/src/utils/data";
+import { uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
 
 // @desc Get all Products
 // @route GET /api/inventories/products
@@ -80,43 +82,64 @@ export async function GET(req:Request) {
 // @route POST /api/products
 // @access Owner, Admin
 
-export async function POST(req:Request) {
+export async function POST(req: Request) {
   try {
     await connectDB();
-    const { title, description, category, price } = await req.json();
+
+    const formData = await req.formData();
+    const file = formData.get("file") as File | null;
+
+    const title = formData.get("title")?.toString().trim() || "";
+    const description = formData.get("description")?.toString().trim() || "";
+    const category = formData.get("category")?.toString();
+    const price = Number(formData.get("price")?.toString() || 0);
+
     const cookieHeader = req.headers.get("cookie");
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const authToken = cookies.authToken;
     const deskToken = cookies.deskToken;
 
 //! Validate user token
-    const userToken:TypeUser|NextResponse = await verifyAdminToken(authToken);
-    if(userToken instanceof NextResponse) return userToken;
+    const userToken: TypeUser | NextResponse = await verifyAdminToken(authToken);
+    if (userToken instanceof NextResponse) return userToken;
 
 //! Validate desk token
-    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
-    if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
+    const desk: TypeDesk | undefined = await verifyDeskToken(deskToken, userToken._id);
+    if (!desk) return NextResponse.json({ message: "Acceso denegado" }, { status: 403 });
 
 //! Validations
-    if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
-    if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
-    if(!category) return NextResponse.json({ message:"Categoría obligatoria" }, { status:400 });
-    if(Number(price) < 0) return NextResponse.json({ message:"Precio obligatorio" }, { status:400 });
+    if (!title) return NextResponse.json({ message: "El título debe tener al menos 1 carácter." }, { status: 400 });
+    if (title.length > 200) return NextResponse.json({ message: "El título puede tener un máximo de 200 caracteres." }, { status: 400 });
+    if (!category) return NextResponse.json({ message: "Categoría obligatoria" }, { status: 400 });
+    if (isNaN(price) || price < 0) return NextResponse.json({ message: "Precio obligatorio" }, { status: 400 });
 
+//! Create product with default image
     const newProduct = await ProductModel.create({
-      desk:desk._id,
+      desk: desk._id,
       title,
       description,
       category,
-      price:Number(price),
+      price,
+      imageUrl:PRODUCT_PICTURE,
     });
-    if(!newProduct) return NextResponse.json({ message:"Create product error"}, { status:500 });
 
-    const product = await ProductModel.findById(newProduct._id);
-    if(!product) return NextResponse.json({ message:"Product not found"}, { status:404 });
+//! Upload image to Cloudinary if provided
+    if (file) {
+      try {
+        const imageUrl = await uploadImageToCloudinary(file, {
+          folder: "products",
+          publicId: newProduct._id.toString(),
+        });
+        newProduct.imageUrl = imageUrl;
+        await newProduct.save();
+      } catch (uploadError) {
+        console.error("Image upload error:", uploadError);
+      };
+    };
 
-    return NextResponse.json({ message:"Producto creado", product }, { status:201 });
+    return NextResponse.json({ message: "Producto creado" }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ message:"Server error", error }, { status:500 });
-  };
-};
+    console.error("Server error creating product:", error);
+    return NextResponse.json({ message: "Server error", error }, { status: 500 });
+  }
+}

@@ -48,6 +48,9 @@ export const COLORS = [
   "#BA01EB",
 ];
 
+export const PROFILE_PICTURE = "https://res.cloudinary.com/diddhgjew/image/upload/v1752085228/profile_wdbg0b.webp";
+export const PRODUCT_PICTURE = "https://res.cloudinary.com/diddhgjew/image/upload/v1752167832/product_jk3io7.webp";
+
 export const ROLES_DATA:{ value:"owner"|"admin"|"user"|"client", label:string }[] = [
   { value:"owner", label:"Ownership" }, // level === 0 (index)
   { value:"admin", label:"Administrador" }, // level === 1 (index)

@@ -7,59 +7,72 @@ import { validateEmail } from "@utils/helper";
 import EmailInput from "@components/inputs/Email";
 import PasswordInput from "@components/inputs/Password";
 import TextInput from "@components/inputs/Text";
-import ProfilePhotoSelector from "@components/inputs/ProfilePhoto";
 import toast from "react-hot-toast";
 import { LuCheck } from "react-icons/lu";
+import ImageInput from "../inputs/Image";
+import { PROFILE_PICTURE } from "@/src/utils/data";
 
-export default function FormProfile({ closeForm }:{ closeForm:()=>void }) {
+export default function FormProfile({ refresh }:{ refresh:()=>void }) {
   const { user, updateUser } = useAuth();
 
-  const [profileImageUrl, setProfileImageUrl] = useState(user?.profileImageUrl || "");
+  const [file, setFile] = useState<File | null>();
   const [error, setError] = useState("");
 
-  const updateUserData = async ({ name, email, profileImageUrl, newPassword, password }:{ name:string, email:string, profileImageUrl:string, newPassword:string, password:string }) => {
-    if(!user) return;
-    try {
-      const res = await axiosInstance.put(API_PATHS.USERS.UPDATE_USER(user._id), { name, email, profileImageUrl, newPassword, password });
-      if(res.status === 201) {
-        toast.success(res.data.message);
-        updateUser(res.data.user);
-        closeForm();
-      };
-    } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error updating user:", error);
-      if(error.response && error.response.data.message) {
-        setError(error.response.data.message);
-      } else {
-        setError("Something went wrong. Please try again.");
-      };
-    }
-  };
-
-  const handleSubmit = async (e:FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
+    if (!user) return;
+
     const formData = new FormData(e.currentTarget);
-    const name = formData.get('user-name')?.toString() || "";
-    const email = formData.get('user-email')?.toString() || "";
-    const newPassword = formData.get('new-password')?.toString() || "";
-    const password = formData.get('user-password')?.toString() || "";
+    const name = formData.get("user-name")?.toString() || "";
+    const email = formData.get("user-email")?.toString() || "";
+    const newPassword = formData.get("new-password")?.toString() || "";
+    const password = formData.get("user-password")?.toString() || "";
 
-//! Validate form data
-    if(!profileImageUrl) return setError("Selecciona una imagen de perfil.");
-    if(!name?.trim()) return setError("Nombre obligatorio.");
-    if(!validateEmail(email)) return setError("Por favor introduzca una dirección de correo electrónico válida.");
-    if(newPassword.trim().length > 0 && newPassword.trim().length < 8) return setError("La contraseña debe tener mínimo 8 caracteres.");
-    if(password.trim().length < 8) return setError("La contraseña debe tener mínimo 8 caracteres.");
+    //! Validate form data
+    if (!name.trim()) return setError("Nombre obligatorio.");
+    if (!validateEmail(email)) return setError("Correo electrónico no válido.");
+    if (newPassword.trim().length > 0 && newPassword.trim().length < 8) return setError("La contraseña nueva debe tener mínimo 8 caracteres.");
+    if (password.trim().length < 8) return setError("La contraseña actual debe tener mínimo 8 caracteres.");
 
-    updateUserData({ name, email, profileImageUrl, newPassword, password });
+    const data = new FormData();
+    data.append("name", name);
+    data.append("email", email);
+    data.append("password", password);
+    data.append("newPassword", newPassword);
+    if (file) data.append("file", file);
+
+    try {
+      const res = await axiosInstance.put(
+        API_PATHS.USERS.UPDATE_USER(user._id),
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (res.status === 201) {
+        toast.success(res.data.message);
+        updateUser(res.data.user);
+        refresh();
+      }
+    } catch (error) {
+      if (!isAxiosError(error)) return console.error("Error updating user:", error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Error inesperado. Intenta nuevamente.");
+      };
+    };
   };
 
   return(
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-h-full">
       <div className="flex flex-col gap-6 overflow-y-auto">
-        <ProfilePhotoSelector imageUrl={profileImageUrl} setImageUrl={setProfileImageUrl}/>
+        <ImageInput initialImage={user?.profileImageUrl || PROFILE_PICTURE} onFileSelect={(newFile:File|null)=>setFile(newFile)} />
         <TextInput name="user-name" label="*Nombre" placeholder="Nombre Completo" autoComplete="name" defaultValue={user?.name}/>
         <EmailInput name="user-email" label="*Correo" placeholder="Correo@Ejemplo.com" defaultValue={user?.email}/>
         <PasswordInput name="new-password" label="Contraseña nueva" autoComplete="new-password" placeholder="Mínimo 8 caracteres"/>

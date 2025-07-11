@@ -9,6 +9,12 @@
   * {
     scrollbar-color: #79716b transparent;
   }
+  button {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  };
 }
 
 @layer utilities {
@@ -16,6 +22,33 @@
     text-wrap: balance;
   }
 }
+
+/*! Inputs */
+
+.input-label-container {
+  @apply flex flex-col gap-1;
+}
+
+.input-label {
+  @apply font-medium text-sm text-tertiary-dark dark:text-tertiary-light;
+}
+
+.input-container {
+  @apply w-full flex justify-between gap-2 px-5 py-2.5 rounded bg-secondary-light focus-within:bg-primary-light dark:bg-secondary-dark dark:focus-within:bg-primary-dark border border-tertiary-light dark:border-tertiary-dark outline-none duration-300;
+}
+
+.input {
+  @apply w-full bg-transparent outline-none font-medium text-primary-dark dark:text-primary-light;
+}
+
+
+
+
+
+
+
+
+
 
 .text-basic {
   @apply text-primary-dark dark:text-primary-light;

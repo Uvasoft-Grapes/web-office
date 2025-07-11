@@ -29,7 +29,7 @@ export default function AuthLayout({ children }:{ children:ReactNode }) {
       </section>
       <section className="hidden lg:flex items-center justify-center w-[40vw] h-screen bg-stone-950 dark:bg-stone-100 bg-cover bg-no-repeat bg-center overflow-hidden"> {/* bg-[url('/bg-img.png')] */}
         {/* <p className="text-stone-100 dark:text-stone-950 text-6xl">Imagen</p> */}
-        <Image src={Wallpaper} alt="Wallpaper para formulario" className="w-full"/>
+        <Image src={Wallpaper} alt="Wallpaper para formulario" className="w-full" priority/>
       </section>
     </main>
   );

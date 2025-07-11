@@ -1,6 +1,6 @@
 import { NextApiRequest } from "next";
 import { NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
+import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import UserModel from "@models/User";
 import DeskModel from "@models/Desk";
 import { TypeUser } from "@utils/types";
@@ -35,22 +35,27 @@ const getErrorResponse = ({ message, status }:{ message:string, status:number })
 // Generate Login and desk Token
 export const generateAuthToken = (id:string) => {
   if(!JWT_SECRET) return;
-  return jwt.sign({ id:id }, JWT_SECRET, { expiresIn:"0.5d" });
+  return jwt.sign({ id }, JWT_SECRET, { expiresIn:"0.5d" });
 };
 
 // Generate invite Token
 export const generateInviteToken = (role:"owner"|"admin"|"user"|"client") => {
   if(!JWT_SECRET) return;
-  return jwt.sign({ role }, JWT_SECRET, { expiresIn:"10d" });
+  return jwt.sign({ role }, JWT_SECRET, { expiresIn:"7d" });
 };
 
-// Middleware for invite token
 export const decodedInviteToken = async (token:string) => {
-  if(!JWT_SECRET) return undefined;
-  const decoded = jwt.verify(token, JWT_SECRET);
-  if(typeof decoded !== "object" || !("role" in decoded)) return NextResponse.json({ message:"Unauthorized token" }, { status:401 });
-  if(ROLES_DATA.some(role => role.value === decoded.role)) return decoded.role;
-  return undefined;
+  if (!JWT_SECRET) return NextResponse.json({ message: "Falta token de seguridad" }, { status: 500 });
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (typeof decoded !== "object" || !("role" in decoded)) return NextResponse.json({ message:"El token no es válido" }, { status:401 });
+    if (!ROLES_DATA.some(role => role.value === decoded.role)) return NextResponse.json({ message:"El token no es válido" }, { status:401 });
+    return decoded.role;
+  } catch (error:unknown) {
+    if (error instanceof TokenExpiredError) return NextResponse.json({ message:"El token ha expirado" }, { status:401 });
+    if (error instanceof JsonWebTokenError) return NextResponse.json({ message:"El token no es válido" }, { status:401 });
+    return NextResponse.json({ message:"Error al verificar el token" }, { status:500 });
+  };
 };
 
 // Middleware to verify desk token
@@ -88,11 +93,9 @@ export const verifyOwnerToken = async (token:string|undefined) => {
 
 //! User not found
       if(!findUser) return getErrorResponse({ message:"User not found", status:404 });
-
-//? OK
+  //? OK
       if(findUser.role === "owner") return findUser;
-
-//! Role not allowed
+  //! Role not allowed
       return getErrorResponse({ message:"Acceso denegado", status:403 });
 
     } else {

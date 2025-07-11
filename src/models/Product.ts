@@ -7,6 +7,7 @@ const ProductSchema = new Schema({
   description:{ type:String, maxLength:[600, 'DB: Description must be at most 600 characters.'], trim:true },
   price:{ type:Number, default:0 },
   stock:{ type:Number, default:0 },
+  imageUrl:{ type:String, require:[true, 'Image url required'] },
 }, { timestamps:true });
 
 // delete models.Product;

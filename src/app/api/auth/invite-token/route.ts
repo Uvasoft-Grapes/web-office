@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { TypeUser } from "@utils/types";
 import { generateInviteToken, verifyOwnerToken } from "@middlewares/authMiddleware";
+import { connectDB } from "@config/db";
 
 // @desc Create Invite Token
 // @route GET /api/auth/invite-token
@@ -9,6 +10,7 @@ import { generateInviteToken, verifyOwnerToken } from "@middlewares/authMiddlewa
 
 export async function GET(req:Request) {
   try {
+    await connectDB();
     const cookieHeader = req.headers.get("cookie");
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const authToken = cookies.authToken;

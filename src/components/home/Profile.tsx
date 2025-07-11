@@ -11,7 +11,7 @@ import FormProfile from "@components/auth/FormProfile";
 export default function HomeProfile() {
   const { user, logout } = useAuth();
 
-  const [openUserForm, setOpenUserForm] = useState(false);
+  const [openForm, setOpenForm] = useState(false);
 
   return(
     <div className="flex-1 flex flex-col gap-2 min-h-96 min-w-3/5 p-2 sm:p-5 rounded border border-secondary-light dark:border-secondary-dark shadow">
@@ -30,13 +30,13 @@ export default function HomeProfile() {
           <LuLogOut className="text-base sm:text-lg"/>
           Cerrar sesión
         </button>
-        <button type="button" onClick={()=>setOpenUserForm(true)} className={`card-btn-fill flex-1 sm:max-w-52`}>
+        <button type="button" onClick={()=>setOpenForm(true)} className={`card-btn-fill flex-1 sm:max-w-52`}>
           <LuUser className="text-base sm:text-lg"/>
           Editar
         </button>
       </section>
-      <Modal title="Editar Perfil" isOpen={openUserForm} onClose={()=>setOpenUserForm(false)}>
-        {openUserForm && <FormProfile closeForm={()=>setOpenUserForm(false)}/>}
+      <Modal title="Editar Perfil" isOpen={openForm} onClose={()=>setOpenForm(false)}>
+        {openForm && <FormProfile refresh={()=>setOpenForm(false)}/>}
       </Modal>
     </div>
   );

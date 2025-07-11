@@ -180,6 +180,7 @@ export interface TypeProduct {
   category:TypeCategory|undefined;
   price:number;
   stock:number;
+  imageUrl:string;
   movements?:TypeMovement[];
 };
 

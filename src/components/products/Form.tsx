@@ -12,97 +12,102 @@ import DeleteAlert from "@components/DeleteAlert";
 import CategorySelect from "@components/inputs/CategorySelect";
 import NumberInput from "@components/inputs/Number";
 import Textarea from "../inputs/Textarea";
+import ImageInput from "../inputs/Image";
+import { PRODUCT_PICTURE } from "@/src/utils/data";
 
 export default function ProductForm({ values, refresh, }:{ values?:TypeProduct, refresh:()=>void }) {
   const { user } = useAuth();
 
+  const [file, setFile] = useState<File|null>();
   const [category, setCategory] = useState<TypeCategory|undefined>(values?.category);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
 
-  const createProduct = async (data:{ title:string, description:string, price:string }) => {
-    setLoading(true);
+  const createProduct = async (formData:FormData) => {
     try {
-      const res = await axiosInstance.post(API_PATHS.PRODUCTS.CREATE_PRODUCT, { ...data, category:category?._id });
-      if(res.status === 201) {
+      const res = await axiosInstance.post(API_PATHS.PRODUCTS.CREATE_PRODUCT, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (res.status === 201) {
         toast.success(res.data.message);
         refresh();
       };
     } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error creating inventory:", error);
-      if(error.response && error.response.data.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Something went wrong. Please try again.");
-      };
+      if (!isAxiosError(error)) return console.error("Error creating product:", error);
+      toast.error(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
     };
   };
 
-  const updateProduct = async (data:{ title:string, description:string, price:string }) => {
-    if(!values) return;
-    setLoading(true);
+  const updateProduct = async (formData: FormData) => {
+    if (!values) return;
     try {
-      const res = await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE_PRODUCT(values?._id), { ...data, category:category?._id });
-      if(res.status === 201) {
+      const res = await axiosInstance.put(API_PATHS.PRODUCTS.UPDATE_PRODUCT(values._id), formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      if (res.status === 201) {
         toast.success(res.data.message);
         refresh();
-      };
+      }
     } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error updating inventory:", error);
-      if(error.response && error.response.data.message) {
-        setError(error.response.data.message);
-      } else {
-        setError("Something went wrong. Please try again.");
-      };
+      if (!isAxiosError(error)) return console.error("Error updating product:", error);
+      setError(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
-    };
+    }
   };
 
   const deleteProduct = async () => {
-    if(!values) return;
+    if (!values) return;
     setLoading(true);
     try {
       const res = await axiosInstance.delete(API_PATHS.PRODUCTS.DELETE_PRODUCT(values._id));
-      if(res.status === 200) {
+      if (res.status === 200) {
         toast.success(res.data.message);
         refresh();
-      };
+      }
     } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error deleting inventory:", error);
-      if(error.response && error.response.data.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Something went wrong. Please try again.");
-      };
+      if (!isAxiosError(error)) return console.error("Error deleting product:", error);
+      toast.error(error.response?.data?.message || "Something went wrong.");
     } finally {
       setLoading(false);
-    };
+    }
   };
-  
-  const handleSubmit = async (e:FormEvent<HTMLFormElement>) => {
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
 
-    const formData = new FormData(e.currentTarget);
-    const title = formData.get('title')?.toString() || "";
-    const description = formData.get('description')?.toString() || "";
-    const price = formData.get('price')?.toString() || "0";
+    const form = new FormData(e.currentTarget);
 
-//! Validate form data
-    if(!title?.trim()) return setError("Título obligatorio.");
-    if(Number(price) < 0) return setError("Precio obligatorio.");
+    const title = form.get('title')?.toString().trim() || "";
+    const description = form.get('description')?.toString().trim() || "";
+    const price = Number(form.get('price')?.toString() || 0);
 
-    if(!values) createProduct({ title, description, price });
-    if(values) updateProduct({ title, description, price });
+    //! Validations
+    if (!title) return setError("Título obligatorio.");
+    if (!category?._id) return setError("Categoría obligatoria.");
+    if (isNaN(price) || price < 0) return setError("Introduce un precio válido.");
+
+    //! Construct final FormData with extra fields
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("price", price.toString());
+    formData.append("category", category._id);
+    if (file) formData.append("file", file); // only send if selected
+
+    const action = values ? updateProduct : createProduct;
+    action(formData);
   };
 
   return(
     <form onSubmit={(e) => handleSubmit(e)} className="flex-1 flex flex-col gap-4 max-h-full">
       <div className="flex-1 flex flex-col gap-4 pr-4 overflow-y-auto">
+        <ImageInput initialImage={values ? values.imageUrl : PRODUCT_PICTURE} onFileSelect={(newFile:File|null)=>setFile(newFile)}/>
         <TextInput
           name="title"
           label="Título"

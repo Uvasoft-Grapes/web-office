@@ -8,6 +8,7 @@ import TaskModel from "@models/Task";
 import UserModel from "@models/User";
 import AccountModel from "@models/Account";
 import { TypeDesk, TypeUser } from "@utils/types";
+import { uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
 
 const hashedPassword = async (newPassword:string) => {
   const salt = await bcrypt.genSalt(10);
@@ -50,64 +51,87 @@ export async function GET(req:NextRequest) {
 // @route PUT /api/users/:id
 // @access Private
 
-export async function PUT(req:Request) {
+export async function PUT(req: Request) {
   try {
     await connectDB();
-    const { name, email, newPassword, password, profileImageUrl } = await req.json();
+
+    const formData = await req.formData();
+    const name = formData.get("name")?.toString() || "";
+    const email = formData.get("email")?.toString() || "";
+    const newPassword = formData.get("newPassword")?.toString() || "";
+    const password = formData.get("password")?.toString() || "";
+    const file = formData.get("file") as File | null;
+
     const formattedEmail = email.toLowerCase().trim();
+
+    //! Get auth token from cookies
     const cookieHeader = req.headers.get("cookie");
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const authToken = cookies.authToken;
 
-//! Validate user token
-    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
-    if(userToken instanceof NextResponse) return userToken;
+    //! Validate user token
+    const userToken: TypeUser | NextResponse = await verifyUserToken(authToken);
+    if (userToken instanceof NextResponse) return userToken;
 
-//! Validations
-    if(!name) return NextResponse.json({ message:"Missing name" }, { status:500 });
-    if(!email) return NextResponse.json({ message:"Missing email" }, { status:500 });
-    if(!profileImageUrl) return NextResponse.json({ message:"Missing profile image" }, { status:500 });
-    if(!password) return NextResponse.json({ message:"Unauthorized" }, { status:500 });
+    //! Validations
+    if (!name) return NextResponse.json({ message: "Missing name" }, { status: 400 });
+    if (!email) return NextResponse.json({ message: "Missing email" }, { status: 400 });
+    if (!password) return NextResponse.json({ message: "Missing current password" }, { status: 400 });
 
-//! Find user
+    //! Find user
     const user = await UserModel.findOne({ email:userToken.email }).select("+password");
-    if(!user) return NextResponse.json({ message:"Token error" }, { status:401 });
-    if(userToken._id.toString() !== user._id.toString()) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
+    if (!user) return NextResponse.json({ message:"Token error" }, { status: 401 });
+    if (userToken._id.toString() !== user._id.toString()) return NextResponse.json({ message: "Acceso denegado" }, { status: 403 });
 
-//! Check if email already exists
-    const emailExists = await UserModel.findOne({ email:formattedEmail });
-    if(user.email !== formattedEmail && emailExists) return NextResponse.json({ message:"El correo ya esta registrado" }, { status:400 });
+    //! Check if email is used by someone else
+    const emailExists = await UserModel.findOne({ email: formattedEmail });
+    if (user.email !== formattedEmail && emailExists) return NextResponse.json({ message: "El correo ya está registrado" }, { status: 400 });
 
-//! Compare current password
+    //! Compare current password
     const isMatch = await bcrypt.compare(password, user.password);
-    if(!isMatch) return NextResponse.json({ message:"Contraseña incorrecta" }, { status:400 });
+    if (!isMatch) return NextResponse.json({ message: "Contraseña incorrecta" }, { status: 400 });
 
-//! Hash new password if provided 
+    //! Hash new password if provided
     const hash = newPassword ? await hashedPassword(newPassword) : user.password;
 
-//! Update user
-    const updatedUser = await UserModel.findByIdAndUpdate(user._id, {
-      name,
-      email:formattedEmail,
-      password:hash,
-      profileImageUrl,
-    }, { new:true });
+    //! Upload new image if provided
+    let imageUrl = user.profileImageUrl;
+    if (file) {
+      imageUrl = await uploadImageToCloudinary(file, {
+        folder: 'users',
+        publicId: user._id.toString(),
+      });
+    };
 
-//! Return new user data
-    return NextResponse.json({
-      message:"Usuario actualizado",
-      user:{ 
-        _id:updatedUser._id,
-        name:updatedUser.name,
-        email:updatedUser.email,
-        profileImageUrl:updatedUser.profileImageUrl,
-        role:updatedUser.role,
-      }
-    }, { status:201 });
+    //! Update user
+    const updatedUser = await UserModel.findByIdAndUpdate(user._id,
+      {
+        name,
+        email: formattedEmail,
+        password: hash,
+        profileImageUrl: imageUrl,
+      },
+      { new: true }
+    );
+
+    return NextResponse.json(
+      {
+        message: "Usuario actualizado",
+        user: {
+          _id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+          profileImageUrl: updatedUser.profileImageUrl,
+          role: updatedUser.role,
+        },
+      },
+      { status: 201 }
+    );
   } catch (error) {
-    return NextResponse.json({ message:"Unauthorized token", error }, { status:500 });
-  };
-};
+    console.error("Error actualizando usuario:", error);
+    return NextResponse.json({ message: "Server error", error }, { status: 500 });
+  }
+}
 
 // @desc Delete user
 // @route DELETE /api/users/:id

@@ -7,61 +7,67 @@ import { isAxiosError } from "axios";
 import { useAuth } from "@context/AuthContext";
 import { API_PATHS } from "@utils/apiPaths";
 import axiosInstance from "@utils/axiosInstance";
-import { getAvatars } from "@utils/avatars";
 import { validateEmail } from "@utils/helper";
 import AuthLayout from "@components/layouts/AuthLayout";
 import EmailInput from "@components/inputs/Email";
 import PasswordInput from "@components/inputs/Password";
 import TextInput from "@components/inputs/Text";
-import ProfilePhotoSelector from "@components/inputs/ProfilePhoto";
 import toast from "react-hot-toast";
+import ImageInput from "@/src/components/inputs/Image";
+import { PROFILE_PICTURE } from "@/src/utils/data";
 
 export default function SignUpPage() {
-  const router = useRouter();
-  const { updateUser } = useAuth();
+const router = useRouter();
+const { updateUser } = useAuth();
 
-  const [profilePic, setProfilePic] = useState<string>(getAvatars()[0].src);
-  const [error, setError] = useState<string|undefined>();
+const [file, setFile] = useState<File | null>();
 
-  const signup = async (data:{ name:string, email:string, password:string, token:string }) => {
-    try {
-      const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, { profilePic, ...data });
-      if(res.status === 201) {
-        toast.success(res.data.message);
-        updateUser(res.data.user);
-        router.push("/");
-      };
-    } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error register user", error);
-      if(error.response && error.response.data.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Something went wrong. Please try again.");
-      };
+const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  const formData = new FormData(e.currentTarget);
+  const name = formData.get('user-name')?.toString() || "";
+  const email = formData.get('user-email')?.toString() || "";
+  const password = formData.get('user-password')?.toString() || "";
+  const token = formData.get('user-token')?.toString() || "";
+
+  //! Validaciones antes de enviar
+  if (!name.trim()) return toast.error("Introduce tu nombre");
+  if (!validateEmail(email)) return toast.error("Introduce un correo electrónico válido");
+  if (password.trim().length < 8) return toast.error("La contraseña debe tener mínimo 8 caracteres");
+  if (!token.trim()) return toast.error("Introduce un token de registro");
+
+  const data = new FormData();
+  data.append('name', name);
+  data.append('email', email);
+  data.append('password', password);
+  data.append('token', token);
+  if(file) data.append('file', file);
+
+  try {
+    const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (res.status === 201) {
+      toast.success(res.data.message);
+      updateUser(res.data.user);
+      router.push('/');
+    }
+  } catch (error) {
+    if (!isAxiosError(error)) {
+      console.error("Error al registrar usuario:", error);
+      return toast.error("Error inesperado");
+    };
+    if (error.response?.data?.message) {
+      toast.error(error.response.data.message);
+    } else {
+      toast.error("No se pudo registrar. Intenta nuevamente.");
     };
   };
-
-  const handleSubmit = (e:FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError("");
-
-//! Get form data
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get('user-name')?.toString() || "";
-    const email = formData.get("user-email")?.toString() || "";
-    const password = formData.get("user-password")?.toString() || "";
-    const token = formData.get("user-token")?.toString() || "";
-
-//! Validate form data
-    if(!profilePic) return setError("Selecciona una imagen de perfil.");
-    if(!name?.trim()) return setError("Nombre obligatorio.");
-    if(!validateEmail(email)) return setError("Por favor introduzca una dirección de correo electrónico válida.");
-    if(password.trim().length < 8) return setError("La contraseña debe tener mínimo 8 caracteres.");
-    if(!token.trim()) return setError("Por favor solicita un token de registro.");
-
-//! Signup
-    signup({ name, email, password, token });
-  };
+};
 
   return(
     <AuthLayout>
@@ -69,16 +75,13 @@ export default function SignUpPage() {
         <h3 className="text-xl font-semibold text-basic">Crear Cuenta</h3>
         <p className="text-xs font-medium text-quaternary mt-[5px] mb-6">Introduce tus datos a continuación para registrarte</p>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <ProfilePhotoSelector imageUrl={profilePic} setImageUrl={(file:string)=>setProfilePic(file)}/>
+          <ImageInput initialImage={PROFILE_PICTURE} onFileSelect={(newFile:File|null)=>setFile(newFile)} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <TextInput name="user-name" label="Nombre completo" placeholder="Nombre Apellido" autoComplete="nickname"/>
             <EmailInput name="user-email" label="Correo Electrónico" placeholder="Nombre@Ejemplo.com"/>
             <PasswordInput name="user-password" label="Contraseña" placeholder="Mínimo 8 caracteres" autoComplete="new-password" />
             <TextInput name="user-token" label="Token" placeholder="Token de registro" autoComplete="none"/>
           </div>
-        {error && 
-          <p className="text-red-500 text-xs pb-2.5">{error}</p>
-        }
           <button className="w-full p-[10px] my-1 rounded-md font-medium text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-tertiary-light dark:hover:bg-tertiary-dark shadow-lg shadow-quaternary/5 dark:shadow-quaternary/10 cursor-pointer duration-300">Crear cuenta</button>
           <div className="flex flex-wrap items-center gap-1 mt-3 text-[13px]">
             <p className="text-nowrap font-medium text-quaternary">¿Ya tienes una cuenta?</p>
