@@ -3,7 +3,6 @@ import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
 import ProductModel from "@models/Product";
-import StockModel from "@models/Stock";
 import { TypeDesk, TypeUser } from "@utils/types";
 import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
 import { PRODUCT_PICTURE } from "@/src/utils/data";
@@ -33,10 +32,7 @@ export async function GET(req:NextRequest) {
     const product = await ProductModel.findById(productId).populate("folder", "title").populate("category");
     if(!product) return NextResponse.json({ message:"Product not found" }, { status:404 });
 
-//! Find Stocks
-    const stocks = await StockModel.find({ product:product._id }).populate("inventory");
-
-    return NextResponse.json({ product, stocks }, { status:200 });
+    return NextResponse.json({ product }, { status:200 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };
@@ -133,9 +129,6 @@ export async function DELETE(req:NextRequest) {
 //! Delete Product
     const product = await ProductModel.findByIdAndDelete(productId);
     if(!product) return NextResponse.json({ message:"Product not found" }, { status:404 });
-  //? Delete Stocks
-    const deletedStocks = await StockModel.deleteMany({ product:product._id });
-    if(!deletedStocks.acknowledged) return NextResponse.json({ message:"Error deleting stocks" }, { status:500 });
   //? Delete Image
     console.log(product);
     const deleteImage = product.imageUrl !== PRODUCT_PICTURE ? await deleteImageFromCloudinary({ folder:"products", publicId:productId }) : true;

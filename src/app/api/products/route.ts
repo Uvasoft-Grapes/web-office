@@ -3,7 +3,6 @@ import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import ProductModel from "@models/Product";
-// import StockModel from "@models/Stock";
 import { TypeDesk, TypeUser } from "@utils/types";
 import MovementModel from "@/src/models/movements";
 import { PRODUCT_PICTURE } from "@/src/utils/data";
