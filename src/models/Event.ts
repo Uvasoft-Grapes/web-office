@@ -1,4 +1,7 @@
 import { Schema, model, models } from 'mongoose';
+import "./Desk";
+import "./Folder";
+import "./User";
 
 const recurrenceSchema = new Schema({
   frequency:{ type:String, enum:["daily", "weekly", "monthly", "yearly"], },

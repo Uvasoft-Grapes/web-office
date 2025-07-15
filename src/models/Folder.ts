@@ -1,4 +1,5 @@
 import { Schema, model, models } from 'mongoose';
+import "./Desk";
 
 const FolderSchema = new Schema({
   desk:{ type:Schema.Types.ObjectId, ref:'Desk', required:[true, 'DB: Desk id required'] },

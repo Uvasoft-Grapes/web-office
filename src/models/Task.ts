@@ -1,4 +1,7 @@
 import { Schema, model, models } from 'mongoose';
+import "./Desk";
+import "./Folder";
+import "./User";
 
 const todoSchema = new Schema({
   text:{ type:String, required:[true, 'DB: Text required.'], minLength:[1, 'DB: Text must be at least 1 characters.'], maxLength:[600, 'DB: Text must be at most 600 characters.'], trim:true },

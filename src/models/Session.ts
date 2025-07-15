@@ -1,4 +1,5 @@
 import { Schema, model, models } from 'mongoose';
+import "./User";
 
 const SessionSchema = new Schema({
   user:{ type:Schema.Types.ObjectId, ref:'User', required:[true, 'DB: User id required'] },

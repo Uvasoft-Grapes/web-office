@@ -1,4 +1,6 @@
 import { Schema, model, models } from "mongoose";
+import "./Desk";
+import "./Category";
 
 const ProductSchema = new Schema({
   desk:{ type:Schema.Types.ObjectId, ref:'Desk', required:[true, 'DB: Desk required.'] },

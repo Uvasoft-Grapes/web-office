@@ -1,4 +1,6 @@
 import { Schema, model, models } from "mongoose";
+import "./Inventory";
+import "./Category";
 
 const ItemSchema = new Schema({
   inventory:{ type:Schema.Types.ObjectId, ref:'Inventory', required:[true, 'DB: Inventory required.'] },

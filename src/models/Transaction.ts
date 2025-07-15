@@ -1,4 +1,7 @@
 import { Schema, model, models } from 'mongoose';
+import "./Account";
+import "./Category";
+import "./User";
 
 const TransactionSchema = new Schema({
   account:{ type:Schema.Types.ObjectId, ref:'Account', required:[true, 'DB: Account required.'] },

@@ -1,4 +1,7 @@
 import { Schema, model, models } from 'mongoose';
+import "./Account";
+import "./Category";
+import "./User";
 
 const MovementSchema = new Schema({
   product:{ type:Schema.Types.ObjectId, ref:'Account', required:[true, 'DB: Account required.'] },
