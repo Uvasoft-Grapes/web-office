@@ -152,7 +152,7 @@ export default function ProductForm({ values, refresh, }:{ values?:TypeProduct, 
         </div>
       </div>
       <Modal title="Eliminar Producto" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
-        {<DeleteAlert content="¿Estás seguro de que quieres eliminar este producto?" description="Se eliminaran todos sus movimientos y stocks" onDelete={deleteProduct}/>}
+        {<DeleteAlert content="¿Estás seguro de que quieres eliminar este producto?" description="Se eliminaran todos sus movimientos" onDelete={deleteProduct}/>}
       </Modal>
     </form>
   );

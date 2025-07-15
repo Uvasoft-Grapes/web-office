@@ -26,3 +26,15 @@ export async function uploadImageToCloudinary( file:File, options:{ folder:'user
     uploadStream.end(buffer);
   });
 };
+
+export async function deleteImageFromCloudinary({ folder, publicId }:{ folder:string, publicId:string }): Promise<boolean> {
+
+  try {
+    const result = await cloudinary.uploader.destroy(`${folder}/${publicId}`);
+    return result.result === "ok" || result.result === "not found";
+  } catch (error) {
+    console.error("Error deleting image from Cloudinary:", error);
+    return false;
+  };
+};
+

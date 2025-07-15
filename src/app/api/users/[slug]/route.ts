@@ -8,7 +8,8 @@ import TaskModel from "@models/Task";
 import UserModel from "@models/User";
 import AccountModel from "@models/Account";
 import { TypeDesk, TypeUser } from "@utils/types";
-import { uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
+import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
+import { PROFILE_PICTURE } from "@/src/utils/data";
 
 const hashedPassword = async (newPassword:string) => {
   const salt = await bcrypt.genSalt(10);
@@ -149,6 +150,8 @@ export async function DELETE(req:NextRequest) {
     const userToken:TypeUser|NextResponse = await verifyOwnerToken(authToken);
     if(userToken instanceof NextResponse) return userToken;
 
+    const deleteImage = userToken.profileImageUrl !== PROFILE_PICTURE ? await deleteImageFromCloudinary({ folder:"users", publicId:userId }) : true;
+    if(!deleteImage) return NextResponse.json({ message:"Error al eliminar la imagen" }, { status:404 });
     const deletedUser = await UserModel.findByIdAndDelete(userId);
     if(!deletedUser) return NextResponse.json({ message:"User not found" }, { status:404 });
 

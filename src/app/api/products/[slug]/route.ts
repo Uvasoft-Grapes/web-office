@@ -5,7 +5,8 @@ import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } 
 import ProductModel from "@models/Product";
 import StockModel from "@models/Stock";
 import { TypeDesk, TypeUser } from "@utils/types";
-import { uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
+import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
+import { PRODUCT_PICTURE } from "@/src/utils/data";
 
 // @desc Get product by ID
 // @route GET /api/products/:id
@@ -135,6 +136,10 @@ export async function DELETE(req:NextRequest) {
   //? Delete Stocks
     const deletedStocks = await StockModel.deleteMany({ product:product._id });
     if(!deletedStocks.acknowledged) return NextResponse.json({ message:"Error deleting stocks" }, { status:500 });
+  //? Delete Image
+    console.log(product);
+    const deleteImage = product.imageUrl !== PRODUCT_PICTURE ? await deleteImageFromCloudinary({ folder:"products", publicId:productId }) : true;
+    if(!deleteImage) return NextResponse.json({ message:"Error al eliminar la imagen" }, { status:404 });
 
     return NextResponse.json({ message:"Producto eliminado" }, { status:200 });
   } catch (error) {
