@@ -137,7 +137,7 @@ export default function Sessions({ userId }:{ userId:string }) {
               <span className="font-light text-2xl">/</span>
               <span className="flex-1">{weeks[currentWeek].week.split("-")[1]}</span>
             </span>
-            <span className="flex-1/4 flex items-center justify-center font-semibold text-xs md:text-sm p-1 rounded-md text-basic bg-primary-light dark:bg-primary-dark">{weeks[currentWeek].total}</span>
+            <span className="flex-1/4 flex items-center justify-center font-semibold text-xs md:text-sm p-1 rounded-md text-basic bg-primary-light dark:bg-primary-dark">{weeks[currentWeek].total.toFixed(2)}</span>
           </caption>
           <thead className="flex flex-col gap-1 w-full">
             <tr className="flex justify-between items-center h-16 gap-1 overflow-hidden duration-300">
@@ -184,7 +184,7 @@ function Row({ session, update }:{ session:TypeSession, update:(updateSession:Ty
         <p className={`font-semibold text-xs md:text-sm ${session.checkOut ? "text-basic" : "text-red-light dark:text-red-dark"}`}>{session.checkOut ? format(session.checkOut, "HH:mm", { locale:es }) : "Pendiente"}</p>
       </td>
       <td className={`flex-1 flex items-center justify-center h-full p-1 rounded-md text-center group-hover:bg-primary-light group-hover:dark:bg-primary-dark duration-300`}>
-        <p className={`font-bold text-xs md:text-sm text-basic`}>{session.hours || 0}</p>
+        <p className={`font-bold text-xs md:text-sm text-basic`}>{session.hours.toFixed(2) || 0}</p>
       </td>
     </tr>
   );

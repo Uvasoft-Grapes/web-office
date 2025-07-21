@@ -99,7 +99,7 @@ export default function SessionForm({ session, update }:{ session:TypeSession, u
           </button>
         </div>
       </div>
-      <Modal title="Eliminar Tarea" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
+      <Modal title="Eliminar Sesión" isOpen={openAlert} onClose={()=>setOpenAlert(false)}>
         {<DeleteAlert content="¿Estás seguro de que quieres eliminar esta sesión?" onDelete={deleteSession}/>}
       </Modal>
     </form>
