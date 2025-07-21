@@ -8,6 +8,7 @@ import FolderModel from "@models/Folder";
 import AccountModel from "@models/Account";
 import TransactionModel from "@models/Transaction";
 import { TypeDesk, TypeUser } from "@utils/types";
+import EventModel from "@/src/models/Event";
 
 // @desc Get folder
 // @route GET /api/folders/:id
@@ -117,6 +118,9 @@ export async function DELETE(req:NextRequest) {
       const deletedAccounts = await AccountModel.deleteMany({ folder:objectId });
       if(!deletedAccounts.acknowledged) return NextResponse.json({ message:"Error deleting accounts" }, { status:500 });
     }
+  //? Events
+    const deletedEvents = await EventModel.deleteMany({ folder:objectId });
+    if(!deletedEvents.acknowledged) return NextResponse.json({ message:"Error deleting events" }, { status:500 });
 
     return NextResponse.json({ message:"Carpeta eliminada", folder:deletedFolder }, { status:200 });
   } catch (error) {
