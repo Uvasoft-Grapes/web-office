@@ -7,6 +7,8 @@ import { TypeAssigned, TypeUser } from "@utils/types";
 import { getAvatars } from "@utils/avatars";
 import Modal from "@components/Modal";
 import AvatarGroup from "@components/users/AvatarGroup";
+import { isAxiosError } from "axios";
+import toast from "react-hot-toast";
 
 export default function AssignedSelect({ label, selectedUsers, setSelectedUsers }:{ label?:string, selectedUsers:TypeAssigned[], setSelectedUsers:(users:TypeAssigned[])=>void }) {
   const [allUsers, setAllUsers] = useState<TypeUser[]>([]);
@@ -18,13 +20,24 @@ export default function AssignedSelect({ label, selectedUsers, setSelectedUsers 
       const res = await axiosInstance.get(API_PATHS.USERS.GET_MEMBERS);
       setAllUsers(res.data);
     } catch (error) {
-      console.error("Error fetching users:", error);
-    }
+      if(!isAxiosError(error)) return console.error("Error fetching accounts:", error);
+      if(error.response && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      };
+    };
   };
 
   const toggleUserSelection = (userId:string) => {
+    if(userId === "all") setTempSelectedUsers(allUsers.map(user => ({ _id:user._id })));
     if(tempSelectedUsers.some(temp => temp._id === userId)) return setTempSelectedUsers(tempSelectedUsers.filter(temp => temp._id !== userId));
     setTempSelectedUsers([ ...tempSelectedUsers, { _id:userId } ]);
+  };
+
+  const toggleAllUsers = () => {
+    if(tempSelectedUsers.length === allUsers.length) return setTempSelectedUsers([]);
+    setTempSelectedUsers(allUsers.map(user => ({ _id:user._id })));
   };
 
   const handleAssign = () => {
@@ -61,6 +74,21 @@ export default function AssignedSelect({ label, selectedUsers, setSelectedUsers 
     }
       <Modal isOpen={openModal} onClose={()=>setOpenModal(false)} title="Seleccionar miembros">
         <ul className="flex-1 overflow-y-auto">
+          <li className="flex items-center gap-4 p-3 border-b border-secondary-light dark:border-secondary-dark">
+            <div className="flex items-center justify-center size-10 size-10 rounded-full border border-secondary-light dark:border-secondary-dark">
+              <LuUsers className="text-lg"/>
+            </div>
+            <div className="flex-1 overflow-hidden">
+              <p className="font-medium text-sm sm:text-base text-basic">Todos</p>
+              <p className="text-xs sm:text-sm text-quaternary">Agregar a todos</p>
+            </div>
+            <input
+              type="checkbox"
+              checked={tempSelectedUsers.length === allUsers.length}
+              onChange={toggleAllUsers}
+              className="size-4"
+            />
+          </li>
         {allUsers.map(user => (
           <li key={user._id} className="flex items-center gap-4 p-3 border-b border-secondary-light dark:border-secondary-dark">
             <Image
