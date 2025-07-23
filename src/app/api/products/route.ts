@@ -41,7 +41,7 @@ export async function GET(req:Request) {
 
 //! All products
     let products = await ProductModel.find({ desk:desk._id }).populate("category");
-
+console.log(products);
 //! Filter products
     if(filter.title) products = products.filter(product => product.title.toLowercase().includes(filter.title));
     if(filter.category) products = products.filter(product => product.category._id.toString() === filter.category);

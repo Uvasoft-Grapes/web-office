@@ -9,6 +9,10 @@ import AccountModel from "@models/Account";
 import TransactionModel from "@models/Transaction";
 import { TypeDesk, TypeUser } from "@utils/types";
 import EventModel from "@/src/models/Event";
+import GoalModel from "@/src/models/Goal";
+import InventoryModel from "@/src/models/Inventory";
+import ItemModel from "@/src/models/Item";
+import ReportModel from "@/src/models/Report";
 
 // @desc Get folder
 // @route GET /api/folders/:id
@@ -121,6 +125,21 @@ export async function DELETE(req:NextRequest) {
   //? Events
     const deletedEvents = await EventModel.deleteMany({ folder:objectId });
     if(!deletedEvents.acknowledged) return NextResponse.json({ message:"Error deleting events" }, { status:500 });
+  //? Goals
+    const deletedGoals = await GoalModel.deleteMany({ folder:objectId });
+    if(!deletedGoals.acknowledged) return NextResponse.json({ message:"Error deleting goals" }, { status:500 });
+  //? Inventories
+    const inventories = await InventoryModel.find({ folder:objectId });
+    if (inventories.length) {
+      const inventoryIds = accounts.map((account) => account._id);
+      const deletedItems = await ItemModel.deleteMany({ account:{ $in:inventoryIds } });
+      if(!deletedItems.acknowledged) return NextResponse.json({ message:"Error deleting items" }, { status:500 });
+      const deletedInventories = await InventoryModel.deleteMany({ folder:objectId });
+      if(!deletedInventories.acknowledged) return NextResponse.json({ message:"Error deleting inventory" }, { status:500 });
+    };
+  //? Reports
+    const deletedReports = await  ReportModel.deleteMany({ folder:objectId });
+    if(!deletedReports.acknowledged) return NextResponse.json({ message:"Error deleting reports" }, { status:500 });
 
     return NextResponse.json({ message:"Carpeta eliminada", folder:deletedFolder }, { status:200 });
   } catch (error) {
