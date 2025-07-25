@@ -130,6 +130,13 @@ export const SIDE_MENU_DATA:TypeMenuData[] = [
     path:"/goals",
     level:1,
   },
+  {
+    id:"10",
+    label:"Punto de venta",
+    icon:LuStore,
+    path:"/store",
+    level:2,
+  },
 ];
 
 export const PRIORITY_DATA = [
