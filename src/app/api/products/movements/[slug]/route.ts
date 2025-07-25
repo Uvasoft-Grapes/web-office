@@ -3,7 +3,7 @@ import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@middlewares/authMiddleware";
 import { TypeDesk, TypeUser } from "@utils/types";
-import MovementModel from "@/src/models/movements";
+import MovementModel from "@/src/models/Movements";
 import ProductModel from "@/src/models/Product";
 
 const STATUSES = [

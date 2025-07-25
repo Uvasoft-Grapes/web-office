@@ -13,7 +13,7 @@ export default function Transactions({ transactions, refresh }:{ transactions:Ty
   });
 
   return(
-    <div className="flex flex-col gap-2 p-5 rounded-md bg-secondary-light dark:bg-secondary-dark">
+    <li className="flex flex-col gap-2 p-5 rounded-md bg-secondary-light dark:bg-secondary-dark">
       {groupedByDate.map(({ date, group }, index) => (
         <div key={index} className="flex flex-col gap-2">
           <h2 className="text-lg font-semibold px-4 py-2 rounded-md text-primary-dark dark:text-primary-light bg-primary-light dark:bg-primary-dark">
@@ -26,6 +26,6 @@ export default function Transactions({ transactions, refresh }:{ transactions:Ty
           </ul>
         </div>
       ))}
-    </div>
+    </li>
   );
 };

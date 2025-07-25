@@ -4,7 +4,7 @@ import "./Category";
 import "./User";
 
 const MovementSchema = new Schema({
-  product:{ type:Schema.Types.ObjectId, ref:'Account', required:[true, 'DB: Account required.'] },
+  product:{ type:Schema.Types.ObjectId, ref:'Product', required:[true, 'DB: Product required.'] },
   category:{ type:Schema.Types.ObjectId, ref:'Category', default:undefined },
   type: { type:String, enum:["outflow", "inflow"], required:true },
   title:{ type:String, required:[true, 'DB: Title required.'], minLength:[1, 'DB: Title must be at least 1 characters.'], maxLength:[200, 'DB: Title must be at most 200 characters.'], trim:true },
@@ -19,7 +19,7 @@ const MovementSchema = new Schema({
 // TransactionSchema.index({ createdBy:1 });
 // TransactionSchema.index({ date:-1 });
 
-// delete models.Movement;
+delete models.Movement;
 
 const MovementModel = models.Movement || model('Movement', MovementSchema);
 export default MovementModel;

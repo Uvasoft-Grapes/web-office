@@ -4,7 +4,7 @@ import { connectDB } from "@config/db";
 import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
 import { TypeDesk, TypeUser } from "@utils/types";
 import ProductModel from "@models/Product";
-import MovementModel from "@models/movements";
+import MovementModel from "@/src/models/Movements";
 
 const STATUSES = [
   "Pendiente",

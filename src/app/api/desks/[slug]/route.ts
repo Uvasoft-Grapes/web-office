@@ -9,6 +9,14 @@ import TaskModel from "@models/Task";
 import AccountModel from "@models/Account";
 import TransactionModel from "@models/Transaction";
 import { TypeDesk, TypeUser } from "@utils/types";
+import EventModel from "@/src/models/Event";
+import GoalModel from "@/src/models/Goal";
+import InventoryModel from "@/src/models/Inventory";
+import ItemModel from "@/src/models/Item";
+import ReportModel from "@/src/models/Report";
+import CategoryModel from "@/src/models/Category";
+import ProductModel from "@/src/models/Product";
+import MovementModel from "@/src/models/Movements";
 
 const { NODE_ENV } =  process.env;
 
@@ -124,9 +132,15 @@ export async function DELETE(req:NextRequest) {
   //? Folders
     const deletedFolders = await FolderModel.deleteMany({ desk:objectId });
     if(!deletedFolders.acknowledged) return NextResponse.json({ message:"Error deleting folders" }, { status:500 });
+  //? Categories
+    const deletedCategories = await CategoryModel.deleteMany({ desk:objectId });
+    if(!deletedCategories.acknowledged) return NextResponse.json({ message:"Error deleting categories" }, { status:500 });
   //? Tasks
     const deletedTasks = await TaskModel.deleteMany({ desk:objectId });
     if(!deletedTasks.acknowledged) return NextResponse.json({ message:"Error deleting tasks" }, { status:500 });
+  //? Events
+    const deletedEvents = await EventModel.deleteMany({ desk:objectId });
+    if(!deletedEvents.acknowledged) return NextResponse.json({ message:"Error deleting events" }, { status:500 });
   //? Accounts
     const accounts = await AccountModel.find({ desk:objectId });
     if (accounts.length) {
@@ -136,6 +150,30 @@ export async function DELETE(req:NextRequest) {
       const deletedAccounts = await AccountModel.deleteMany({ desk:objectId });
       if(!deletedAccounts.acknowledged) return NextResponse.json({ message:"Error deleting accounts" }, { status:500 });
     }
+  //? Inventories
+    const inventories = await InventoryModel.find({ desk:objectId });
+    if (inventories.length) {
+      const inventoryIds = accounts.map((account) => account._id);
+      const deletedItems = await ItemModel.deleteMany({ account:{ $in:inventoryIds } });
+      if(!deletedItems.acknowledged) return NextResponse.json({ message:"Error deleting items" }, { status:500 });
+      const deletedInventories = await InventoryModel.deleteMany({ folder:objectId });
+      if(!deletedInventories.acknowledged) return NextResponse.json({ message:"Error deleting inventories" }, { status:500 });
+    };
+  //? Products
+    const products = await ProductModel.find({ desk:objectId });
+    if (products.length) {
+      const productIds = products.map((product) => product._id);
+      const deletedMovements = await MovementModel.deleteMany({ product:{ $in:productIds } });
+      if(!deletedMovements.acknowledged) return NextResponse.json({ message:"Error deleting movements" }, { status:500 });
+      const deletedProducts = await InventoryModel.deleteMany({ desk:objectId });
+      if(!deletedProducts.acknowledged) return NextResponse.json({ message:"Error deleting products" }, { status:500 });
+    };
+  //? Reports
+    const deletedReports = await  ReportModel.deleteMany({ desk:objectId });
+    if(!deletedReports.acknowledged) return NextResponse.json({ message:"Error deleting reports" }, { status:500 });
+  //? Goals
+    const deletedGoals = await GoalModel.deleteMany({ desk:objectId });
+    if(!deletedGoals.acknowledged) return NextResponse.json({ message:"Error deleting goals" }, { status:500 });
 
     return NextResponse.json({ message:"Escritorio eliminado", desk:deletedDesk }, { status:200 });
   } catch (error) {

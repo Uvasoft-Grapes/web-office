@@ -121,7 +121,7 @@ export default function AccountPage() {
               </div>
             </div>
           </section>
-          <section className="flex-1 flex flex-col gap-6 min-w-full mb-10">
+          <ul className="flex-1 flex flex-col gap-6 min-w-full mb-10">
           {!account && 
             <div className="flex-1 flex min-h-32">
               <Skeleton/>
@@ -133,7 +133,7 @@ export default function AccountPage() {
           {account?.transactions && account.transactions.length > 0 &&
             <Transactions transactions={account.transactions} refresh={fetchAccount}/>
           }
-          </section>
+          </ul>
         </div>
         <section>
           <div className="fixed bottom-2 xl:bottom-4 left-0 w-full max-w-[1750px] flex flex-wrap-reverse justify-between gap-2 px-3">

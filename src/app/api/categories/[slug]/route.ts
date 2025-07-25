@@ -6,7 +6,7 @@ import { TypeDesk, TypeUser } from "@utils/types";
 import CategoryModel from "@/src/models/Category";
 import TransactionModel from "@/src/models/Transaction";
 import ProductModel from "@/src/models/Product";
-import MovementModel from "@/src/models/movements";
+import MovementModel from "@/src/models/Movements";
 import ItemModel from "@/src/models/Item";
 
 // @desc Update category
