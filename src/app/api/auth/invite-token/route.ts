@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
-import { TypeUser } from "@utils/types";
-import { generateInviteToken, verifyOwnerToken } from "@middlewares/authMiddleware";
 import { connectDB } from "@config/db";
+import { TypeUser } from "@shared/utils/types";
+import { generateInviteToken, verifyOwnerToken } from "@shared/middlewares/authMiddleware";
 
 // @desc Create Invite Token
 // @route GET /api/auth/invite-token

@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { parse, serialize } from 'cookie';
 import { connectDB } from "@config/db";
-import { TypeUser } from "@utils/types";
-import { generateAuthToken, verifyUserToken } from "@middlewares/authMiddleware";
-import DeskModel from "@models/Desk";
+import { TypeUser } from "@shared/utils/types";
+import { generateAuthToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import DeskModel from "@desks/models/Desk";
 
 const { NODE_ENV } =  process.env;
 

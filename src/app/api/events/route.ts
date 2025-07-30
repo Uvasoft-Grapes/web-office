@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { isBefore, isSameMonth } from "date-fns";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import EventModel from "@models/Event";
-import { TypeDesk, TypeEvent, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import EventModel from "@events/models/Event";
+import { TypeDesk, TypeEvent, TypeUser } from "@shared/utils/types";
 
 // @desc Get all events
 // @route GET /api/events

@@ -1,10 +1,10 @@
-import { TypeDesk, TypeObjective, TypeUser } from "@utils/types";
+import { TypeDesk, TypeObjective, TypeUser } from "@shared/utils/types";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongoose";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import GoalModel from "@models/Goal";
+import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import GoalModel from "@goals/models/Goal";
 
 // @desc Update objectives
 // @route PUT /api/goals/:id/objectives

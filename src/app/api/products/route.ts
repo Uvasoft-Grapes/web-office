@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import ProductModel from "@models/Product";
-import { TypeDesk, TypeUser } from "@utils/types";
-import MovementModel from "@/src/models/Movements";
-import { PRODUCT_PICTURE } from "@/src/utils/data";
-import { uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import ProductModel from "@products/models/Product";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import MovementModel from "@movements/models/Movements";
+import { PRODUCT_PICTURE } from "@shared/utils/data";
+import { uploadImageToCloudinary } from "@shared/lib/cloudinaryUpload";
 
 // @desc Get all Products
 // @route GET /api/inventories/products

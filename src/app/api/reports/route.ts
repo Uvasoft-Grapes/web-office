@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { compareAsc, compareDesc } from "date-fns";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import ReportModel from "@models/Report";
-import { TypeDesk, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import ReportModel from "@reports/models/Report";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
 
 // @desc Get all reports
 // @route GET /api/reports

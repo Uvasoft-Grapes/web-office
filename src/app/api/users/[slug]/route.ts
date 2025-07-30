@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@config/db";
-import { verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import DeskModel from "@models/Desk";
-import TaskModel from "@models/Task";
-import UserModel from "@models/User";
-import AccountModel from "@models/Account";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
-import { PROFILE_PICTURE } from "@/src/utils/data";
+import { verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import DeskModel from "@desks/models/Desk";
+import TaskModel from "@tasks/models/Task";
+import UserModel from "@users/models/User";
+import AccountModel from "@accounts/models/Account";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@shared/lib/cloudinaryUpload";
+import { PROFILE_PICTURE } from "@shared/utils/data";
 
 const hashedPassword = async (newPassword:string) => {
   const salt = await bcrypt.genSalt(10);

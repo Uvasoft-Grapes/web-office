@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import ReportModel from "@models/Report";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import ReportModel from "@reports/models/Report";
 
 // @desc Update report details
 // @route PUT /api/reports/:id

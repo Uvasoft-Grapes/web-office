@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@middlewares/authMiddleware";
-import EventModel from "@models/Event";
-import { TypeDesk, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@shared/middlewares/authMiddleware";
+import EventModel from "@events/models/Event";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
 
 // @desc Update event
 // @route PUT /api/events/:id

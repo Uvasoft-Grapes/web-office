@@ -1,21 +1,10 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import AccountModel from "@models/Account";
-import TransactionModel from "@models/Transaction";
-import { TypeDesk, TypeUser } from "@utils/types";
-
-// const statusManagement: Record<string, number> = {
-//   "Pendiente": 1,
-//   "Finalizado": 2,
-//   "Cancelado":3
-// };
-
-// const typeManagement: Record<string, number> = {
-//   "income": 1,
-//   "expense": 2,
-// };
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import AccountModel from "@accounts/models/Account";
+import TransactionModel from "@transactions/models/Transaction";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
 
 // @desc Get all accounts
 // @route GET /api/accounts

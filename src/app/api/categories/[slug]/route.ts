@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@middlewares/authMiddleware";
-import { TypeDesk, TypeUser } from "@utils/types";
-import CategoryModel from "@/src/models/Category";
-import TransactionModel from "@/src/models/Transaction";
-import ProductModel from "@/src/models/Product";
-import MovementModel from "@/src/models/Movements";
-import ItemModel from "@/src/models/Item";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@shared/middlewares/authMiddleware";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import CategoryModel from "@categories/models/Category";
+import TransactionModel from "@transactions/models/Transaction";
+import ProductModel from "@products/models/Product";
+import MovementModel from "@movements/models/Movements";
+import ItemModel from "@items/models/Item";
 
 // @desc Update category
 // @route PUT /api/categories/:id

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { TypeUser } from "@utils/types";
-import { verifyOwnerToken } from "@middlewares/authMiddleware";
-import UserModel from "@models/User";
+import { TypeUser } from "@shared/utils/types";
+import { verifyOwnerToken } from "@shared/middlewares/authMiddleware";
+import UserModel from "@users/models/User";
 
 // @desc Update user role
 // @route PUT /api/users/:id/role

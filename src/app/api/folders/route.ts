@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import FolderModel from "@models/Folder";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import FolderModel from "@folders/models/Folder";
 
 // @desc Get all desk folders
 // @route GET /api/folders

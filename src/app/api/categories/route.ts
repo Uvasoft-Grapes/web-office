@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import CategoryModel from "@models/Category";
-import { TypeDesk, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import CategoryModel from "@categories/models/Category";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
 
 // @desc Get all categories or by type
 // @route GET /api/categories

@@ -4,18 +4,19 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { LuCircleDashed, LuFolder, LuMonitorCog, LuScreenShareOff, LuUser } from "react-icons/lu";
-import { useAuth } from "@context/AuthContext";
-import { getAvatars } from "@utils/avatars";
-import { ROLES_DATA } from "@utils/data";
+import { useAuth } from "@shared/context/AuthContext";
+import { getAvatars } from "@shared/utils/avatars";
+import { ROLES_DATA } from "@shared/utils/data";
+import { TypeUser } from "@shared/utils/types";
+import ThemeToggle from "@shared/components/ThemeSwitcher";
+import AppLayout from "@shared/layouts/AppLayout";
+import Modal from "@shared/components/Modal";
 import ProtectedRoute from "@app/ProtectedRoute";
-import AppLayout from "@components/layouts/AppLayout";
-import Modal from "@components/Modal";
-import DeskForm from "@components/desks/Form";
-import FormProfile from "@components/auth/FormProfile";
-import Folders from "@components/folders/Folders";
-import AvatarGroup from "@components/users/AvatarGroup";
-import Categories from "@/src/components/categories/Categories";
-import ThemeToggle from "@/src/components/ThemeSwitcher";
+import DeskForm from "@domains/desks/components/DeskForm";
+import FormProfile from "@domains/users/components/UserForm";
+import Folders from "@domains/desks/folders/components/FolderList";
+import AvatarGroup from "@domains/users/components/AvatarGroup";
+import Categories from "@domains/desks/categories/components/CategoryList";
 
 export default function Profile() {
   const { user, desk, changeDesk } = useAuth();
@@ -45,7 +46,7 @@ export default function Profile() {
               </div>
               <div className="flex flex-col gap-2">
                 <label className="info-box-label">Miembros</label>
-                <AvatarGroup maxVisible={10} avatars={desk?.members.map(user => ({ name:user.name||"", img:user.profileImageUrl||getAvatars()[0].src })) || []}/>
+                <AvatarGroup maxVisible={10} avatars={desk?.members.map((user:TypeUser) => ({ name:user.name||"", img:user.profileImageUrl||getAvatars()[0].src })) || []}/>
               </div>
             </div>
             <div className="flex flex-col sm:flex-row sm:justify-between gap-4">

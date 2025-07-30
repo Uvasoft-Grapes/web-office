@@ -4,13 +4,13 @@ import { useState } from "react";
 import Image from "next/image";
 import { format } from "date-fns";
 import { es } from 'date-fns/locale';
-import { useAuth } from "@context/AuthContext";
-import { ROLES_DATA } from "@utils/data";
+import { useAuth } from "@shared/context/AuthContext";
+import { ROLES_DATA } from "@shared/utils/data";
+import AppLayout from "@shared/layouts/AppLayout";
 import ProtectedRoute from "@app/ProtectedRoute";
-import AppLayout from "@components/layouts/AppLayout";
-import TasksDashboard from "@components/dashboards/Tasks";
-import AccountsDashboard from "@components/dashboards/Accounts";
-import CalendarDashboard from "@components/dashboards/Calendar";
+import TaskDashboard from "@dashboard/tasks/components/TaskDashboard";
+import AccountDashboard from "@dashboard/accounts/components/AccountDashboard";
+import EventDashboard from "@dashboard/events/components/EventDashboard";
 
 const dashboards = [
   "Tareas",
@@ -47,9 +47,9 @@ export default function DashboardPage() {
             </button>
           ))}
           </div>
-          {dashboard === "Tareas" && <TasksDashboard />}
-          {dashboard === "Cuentas" && <AccountsDashboard />}
-          {dashboard === "Calendario" && <CalendarDashboard />}
+          {dashboard === "Tareas" && <TaskDashboard />}
+          {dashboard === "Cuentas" && <AccountDashboard />}
+          {dashboard === "Calendario" && <EventDashboard />}
         </div>
       </AppLayout>
     </ProtectedRoute>

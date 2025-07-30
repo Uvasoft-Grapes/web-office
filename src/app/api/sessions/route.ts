@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyAdminToken, verifyDeskToken } from "@middlewares/authMiddleware";
-import SessionModel from "@models/Session";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { verifyAdminToken, verifyDeskToken } from "@shared/middlewares/authMiddleware";
+import SessionModel from "@sessions/models/Session";
 
 // @desc Get user sessions
 // @route GET /api/sessions

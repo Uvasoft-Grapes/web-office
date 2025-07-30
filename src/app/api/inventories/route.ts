@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import InventoryModel from "@models/Inventory";
-import { TypeDesk, TypeUser } from "@utils/types";
-import ItemModel from "@/src/models/Item";
-import CategoryModel from "@/src/models/Category";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import InventoryModel from "@inventories/models/Inventory";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import ItemModel from "@items/models/Item";
+import CategoryModel from "@categories/models/Category";
 
 // @desc Get all inventories
 // @route GET /api/inventories

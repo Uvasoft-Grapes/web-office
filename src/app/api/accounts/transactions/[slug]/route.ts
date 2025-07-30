@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@middlewares/authMiddleware";
-import AccountModel from "@models/Account";
-import TransactionModel from "@models/Transaction";
-import { TypeDesk, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@shared/middlewares/authMiddleware";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import AccountModel from "@accounts/models/Account";
+import TransactionModel from "@transactions/models/Transaction";
 
 const STATUSES = [
   "Pendiente",

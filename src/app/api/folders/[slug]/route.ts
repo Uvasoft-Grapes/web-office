@@ -2,17 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import Mongoose from "mongoose";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
-import FolderModel from "@models/Folder";
-import AccountModel from "@models/Account";
-import TransactionModel from "@models/Transaction";
-import { TypeDesk, TypeUser } from "@utils/types";
-import EventModel from "@/src/models/Event";
-import GoalModel from "@/src/models/Goal";
-import InventoryModel from "@/src/models/Inventory";
-import ItemModel from "@/src/models/Item";
-import ReportModel from "@/src/models/Report";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import TaskModel from "@tasks/models/Task";
+import FolderModel from "@folders/models/Folder";
+import AccountModel from "@accounts/models/Account";
+import TransactionModel from "@transactions/models/Transaction";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import EventModel from "@events/models/Event";
+import GoalModel from "@goals/models/Goal";
+import InventoryModel from "@inventories/models/Inventory";
+import ItemModel from "@items/models/Item";
+import ReportModel from "@reports/models/Report";
 
 // @desc Get folder
 // @route GET /api/folders/:id

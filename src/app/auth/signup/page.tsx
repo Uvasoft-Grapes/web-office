@@ -2,19 +2,19 @@
 
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { isAxiosError } from "axios";
-import { useAuth } from "@context/AuthContext";
-import { API_PATHS } from "@utils/apiPaths";
-import axiosInstance from "@utils/axiosInstance";
-import { validateEmail } from "@utils/helper";
-import AuthLayout from "@components/layouts/AuthLayout";
-import EmailInput from "@components/inputs/Email";
-import PasswordInput from "@components/inputs/Password";
-import TextInput from "@components/inputs/Text";
+import Link from "next/link";
 import toast from "react-hot-toast";
-import ImageInput from "@/src/components/inputs/Image";
-import { PROFILE_PICTURE } from "@/src/utils/data";
+import { useAuth } from "@shared/context/AuthContext";
+import { API_PATHS } from "@shared/utils/apiPaths";;
+import { validateEmail } from "@shared/utils/helper";
+import { PROFILE_PICTURE } from "@shared/utils/data"
+import axiosInstance from "@shared/utils/axiosInstance";
+import AuthLayout from "@shared/layouts/AuthLayout";
+import EmailInput from "@shared/inputs/components/Email";
+import PasswordInput from "@shared/inputs/components/Password";
+import TextInput from "@shared/inputs/components/Text";
+import ImageInput from "@shared/inputs/components/Image";
 
 export default function SignUpPage() {
 const router = useRouter();

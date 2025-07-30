@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import { TypeDesk, TypeUser } from "@utils/types";
-import ItemModel from "@models/Item";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import ItemModel from "@items/models/Item";
 
 // @desc Get item by ID
 // @route GET /api/inventories/items/:id
