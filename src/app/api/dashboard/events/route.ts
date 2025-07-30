@@ -3,10 +3,10 @@ import { parse } from "cookie";
 import { startOfMonth, endOfMonth, format, getHours, isBefore, addDays, addWeeks, addMonths, addYears, getDayOfYear } from "date-fns";
 import { es } from "date-fns/locale";
 import { connectDB } from "@config/db";
-import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import EventModel from "@models/Event";
-import { EVENTS_FREQUENCY_DATA } from "@utils/data";
-import { TypeDesk, TypeEvent, TypeEventsDashboardData, TypeUser } from "@utils/types";
+import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import EventModel from "@events/models/Event";
+import { EVENTS_FREQUENCY_DATA } from "@shared/utils/data";
+import { TypeDesk, TypeEvent, TypeEventsDashboardData, TypeUser } from "@shared/utils/types";
 
 const addRecurrence = (allEvents:TypeEvent[], today:Date) => {
   const newEvents: TypeEvent[] = [];

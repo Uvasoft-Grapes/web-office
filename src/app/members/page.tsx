@@ -1,15 +1,15 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { API_PATHS } from "@utils/apiPaths";
-import axiosInstance from "@utils/axiosInstance";
-import { ROLES_DATA } from "@utils/data";
-import { TypeUser } from "@utils/types";
+import { API_PATHS } from "@shared/utils/apiPaths";
+import axiosInstance from "@shared/utils/axiosInstance";
+import { ROLES_DATA } from "@shared/utils/data";
+import { TypeUser } from "@shared/utils/types";
+import AppLayout from "@shared/layouts/AppLayout";
+import Skeleton from "@shared/components/Skeleton";
+import DropdownSelect from "@shared/inputs/components/Dropdown";
 import ProtectedRoute from "@app/ProtectedRoute";
-import AppLayout from "@components/layouts/AppLayout";
-import UserCard from "@components/users/Card";
-import Skeleton from "@components/Skeleton";
-import DropdownSelect from "@components/inputs/Dropdown";
+import UserCard from "@users/components/UserCard";
 
 export default function UsersPage() {
   const [allUsers, setAllUsers] = useState<TypeUser[]|undefined>();

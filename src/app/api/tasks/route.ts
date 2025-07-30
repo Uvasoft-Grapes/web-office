@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { compareAsc, compareDesc } from "date-fns";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
-import { TypeDesk, TypeTaskStatusSummary, TypeTodo, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import TaskModel from "@tasks/models/Task";
+import { TypeDesk, TypeTaskStatusSummary, TypeTodo, TypeUser } from "@shared/utils/types";
 
 const statusManagement: Record<string, number> = {
   "Pendiente":1,

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import TaskModel from "@tasks/models/Task";
 
 // @desc Get task by ID
 // @route GET /api/tasks/:id

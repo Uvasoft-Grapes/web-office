@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import AccountModel from "@models/Account";
-import TransactionModel from "@models/Transaction";
-import { TypeDesk, TypeUser } from "@utils/types";
+import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import AccountModel from "@accounts/models/Account";
+import TransactionModel from "@transactions/models/Transaction";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
 
 // @desc Create transaction
 // @route POST /api/accounts/transactions

@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import ProductModel from "@models/Product";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@/src/lib/cloudinaryUpload";
-import { PRODUCT_PICTURE } from "@/src/utils/data";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import ProductModel from "@products/models/Product";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { deleteImageFromCloudinary, uploadImageToCloudinary } from "@shared/lib/cloudinaryUpload";
+import { PRODUCT_PICTURE } from "@shared/utils/data";
 
 // @desc Get product by ID
 // @route GET /api/products/:id

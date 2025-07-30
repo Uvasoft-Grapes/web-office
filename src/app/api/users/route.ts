@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { parse } from 'cookie';
 import { connectDB } from "@config/db";
-import { TypeUser } from "@utils/types";
-import { verifyOwnerToken } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
-import UserModel from "@models/User";
+import { TypeUser } from "@shared/utils/types";
+import { verifyOwnerToken } from "@shared/middlewares/authMiddleware";
+import TaskModel from "@tasks/models/Task";
+import UserModel from "@users/models/User";
 
 const rolManagement: Record<string, number> = {
   "owner":1,

@@ -6,18 +6,18 @@ import toast from "react-hot-toast";
 import { addMonths, format, subMonths } from "date-fns";
 import { es } from "date-fns/locale";
 import { LuCircleChevronLeft, LuCircleChevronRight, LuPlus } from "react-icons/lu";
-import { useAuth } from "@context/AuthContext";
-import axiosInstance from "@utils/axiosInstance";
-import { TypeEvent, TypeFolder } from "@utils/types";
-import { API_PATHS } from "@utils/apiPaths";
+import { useAuth } from "@shared/context/AuthContext";
+import { TypeEvent, TypeFolder } from "@shared/utils/types";
+import { API_PATHS } from "@shared/utils/apiPaths";
+import axiosInstance from "@shared/utils/axiosInstance";
+import AppLayout from "@shared/layouts/AppLayout"
+import Skeleton from "@shared/components/Skeleton";
+import Modal from "@shared/components/Modal";
 import ProtectedRoute from "@app/ProtectedRoute"
-import AppLayout from "@components/layouts/AppLayout"
-import Calendar from "@components/calendar/Calendar";
-import EventCard from "@components/calendar/Card";
-import FolderSelect from "@components/folders/Select";
-import Skeleton from "@components/Skeleton";
-import Modal from "@components/Modal";
-import EventForm from "@components/calendar/Form";
+import FolderSelect from "@folders/components/FolderSelect";
+import Calendar from "@calendar/components/CalendarBody";
+import EventCard from "@calendar/events/components/EventCard";
+import EventForm from "@calendar/events/components/EventForm";
 
 export default function CalendarPage() {
   const { user } = useAuth();

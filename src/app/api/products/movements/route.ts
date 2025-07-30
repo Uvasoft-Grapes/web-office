@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import { TypeDesk, TypeUser } from "@utils/types";
-import ProductModel from "@models/Product";
-import MovementModel from "@/src/models/Movements";
+import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import ProductModel from "@products/models/Product";
+import MovementModel from "@movements/models/Movements";
 
 const STATUSES = [
   "Pendiente",

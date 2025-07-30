@@ -1,7 +1,7 @@
 import { connectDB } from "@config/db";
-import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
-import { TypeDesk, TypeTodo, TypeUser } from "@utils/types";
+import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import TaskModel from "@tasks/models/Task";
+import { TypeDesk, TypeTodo, TypeUser } from "@shared/utils/types";
 import { parse } from "cookie";
 import { ObjectId } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";

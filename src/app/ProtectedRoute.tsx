@@ -2,8 +2,8 @@
 
 import { ReactNode, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@context/AuthContext";
-import Loader from "@components/Loader";
+import { useAuth } from "@shared/context/AuthContext";
+import Loader from "@shared/components/Loader";
 
 export default function ProtectedRoute({ children }:Readonly<{ children:ReactNode; }>) {
   const { user, desk, loading } = useAuth();

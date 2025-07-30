@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from 'cookie';
 import { connectDB } from "@config/db";
-import { verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import DeskModel from "@models/Desk";
-import { TypeUser } from "@utils/types";
+import { verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import DeskModel from "@desks/models/Desk";
+import { TypeUser } from "@shared/utils/types";
 
 // @desc Get all desks
 // @route GET /api/desks

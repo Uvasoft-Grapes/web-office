@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { PiDesktopDuotone } from "react-icons/pi";
-import { useAuth } from "@context/AuthContext";
-import { BRAND_NAME } from "@utils/data";
+import { useAuth } from "@shared/context/AuthContext";
+import { BRAND_NAME } from "@shared/utils/data";
 import ProtectedRoute from "@app/ProtectedRoute";
-import HomeDesks from "@components/home/Desks";
-import HomeUsers from "@components/home/Users";
-import HomeProfile from "@components/home/Profile";
+import DeskList from "@home/components/DeskList";
+import UserList from "@home/components/UserList";
+import UserProfile from "@home/components/UserProfile";
 
 const MENU_ITEMS = [
   { label:"Usuarios", value:"users", owner:true },
@@ -36,9 +36,9 @@ export default function HomePage() {
           ))}
           </div>
         </section>
-        {active === "desks" && <HomeDesks/>}
-        {active === "users" && <HomeUsers/>}
-        {active === "profile" && <HomeProfile/>}
+        {active === "desks" && <DeskList/>}
+        {active === "users" && <UserList/>}
+        {active === "profile" && <UserProfile/>}
       </main>
     </ProtectedRoute>
   );

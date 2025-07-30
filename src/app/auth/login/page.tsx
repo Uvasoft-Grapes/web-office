@@ -2,11 +2,11 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { useAuth } from "@context/AuthContext";
-import { validateEmail } from "@utils/helper";
-import InputEmail from "@components/inputs/Email";
-import InputPassword from "@components/inputs/Password";
-import AuthLayout from "@components/layouts/AuthLayout";
+import { useAuth } from "@shared/context/AuthContext";
+import { validateEmail } from "@shared/utils/helper";
+import InputEmail from "@shared/inputs/components/Email";
+import InputPassword from "@shared/inputs/components/Password";
+import AuthLayout from "@shared/layouts/AuthLayout";
 
 export default function LoginPage() {
   const { login } = useAuth();

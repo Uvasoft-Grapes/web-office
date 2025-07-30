@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import InventoryModel from "@models/Inventory";
-import { TypeDesk, TypeUser } from "@utils/types";
-import ItemModel from "@/src/models/Item";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import InventoryModel from "@inventories/models/Inventory";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import ItemModel from "@items/models/Item";
 
 // @desc Get inventory by ID
 // @route GET /api/inventories/:id
