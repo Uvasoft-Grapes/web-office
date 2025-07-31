@@ -6,7 +6,7 @@ import { TypeGoal } from "@shared/utils/types";
 import Modal from "@shared/components/Modal";
 import AvatarGroup from "@users/components/AvatarGroup";
 import Progress from "@tasks/components/ProgressBar";
-import Goal from "@goals/components/GoalCard";
+import Goal from "@goals/components/GoalDetails";
 
 export default function GoalCard({ goal, refresh }:{ goal:TypeGoal, refresh:()=>void }) {
   const { folder, title, description, priority, status, progress, createdAt, dueDate, assignedTo, objectives  } = goal;
