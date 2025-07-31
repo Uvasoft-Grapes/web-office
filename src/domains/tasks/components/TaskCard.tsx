@@ -7,7 +7,7 @@ import { TypeTask } from "@shared/utils/types";
 import Modal from "@shared/components/Modal";
 import AvatarGroup from "@users/components/AvatarGroup";
 import Progress from "@tasks/components/ProgressBar";
-import Task from "@tasks/components/TaskCard";
+import Task from "@tasks/components/TaskDetails";
 
 export default function TaskCard({ task, refresh }:{ task:TypeTask, refresh:()=>void }) {
   const { folder, title, description, priority, status, progress, createdAt, dueDate, assignedTo, attachments, completedTodoCount, todoChecklist  } = task;
