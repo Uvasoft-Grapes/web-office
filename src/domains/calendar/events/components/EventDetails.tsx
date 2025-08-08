@@ -24,13 +24,13 @@ export default function EventDetails({ event, avatars, refresh }:{ event:TypeEve
       <div className="flex flex-wrap items-center justify-between gap-2 my-1 mx-4">
         <div className="">
           <label className="font-medium text-xs text-quaternary">Inicio</label>
-          <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{format(event.startDate, "dd/MM/yyyy", { locale:es })}</p>
-          <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{format(event.startDate, "hh:mm:ss a", { locale:es })}</p>
+          <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{format(event.start, "dd/MM/yyyy", { locale:es })}</p>
+          <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{format(event.start, "hh:mm:ss a", { locale:es })}</p>
         </div>
         <div className="">
           <label className="font-medium text-xs text-quaternary">Final</label>
-          <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{format(event.endDate, "dd/MM/yyyy", { locale:es })}</p>
-          <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{format(event.endDate, "hh:mm:ss a", { locale:es })}</p>
+          <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{format(event.end, "dd/MM/yyyy", { locale:es })}</p>
+          <p className="font-medium text-[13px] text-tertiary-dark dark:text-tertiary-light">{format(event.end, "hh:mm:ss a", { locale:es })}</p>
         </div>
       </div>
       <textarea readOnly defaultValue={event.description} placeholder="Sin descripción" className="flex-1 p-4 rounded font-medium text-lg bg-secondary-light dark:bg-secondary-dark border border-tertiary-light dark:border-tertiary-dark overflow-y-auto"/>

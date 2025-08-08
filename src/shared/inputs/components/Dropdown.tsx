@@ -14,7 +14,7 @@ export default function DropdownSelect({ disabled, label, options, icon, default
 
   return(
     <div className={`flex-1 relative flex flex-col gap-1 max-h-fit ${disabled && "opacity-50"}`}>
-      {label && <label className="font-medium text-sm text-tertiary-dark dark:text-tertiary-light">{label}</label>}
+      {label && <label className="font-medium text-start text-sm text-tertiary-dark dark:text-tertiary-light">{label}</label>}
       <button type="button" onClick={()=>setIsOpen(!isOpen)} disabled={disabled} className="flex justify-between items-center w-full px-3 min-h-12 rounded-md font-medium text-basic bg-secondary-light dark:bg-secondary-dark focus-within:bg-primary-light dark:focus-within:bg-primary-dark border border-tertiary-light dark:border-tertiary-dark cursor-pointer disabled:cursor-not-allowed duration-300">
         <span className="flex items-center gap-2">
           {icon && icon}

@@ -190,12 +190,12 @@ export const WEEK_DAYS_DATA = [
   { value:"dom", label:"Dom"}
 ];
 
-export const EVENTS_FREQUENCY_DATA = [
-  { value:"daily", label:"Diariamente"},
-  { value:"weekly", label:"Semanalmente"},
-  { value:"monthly", label:"Mensualmente"},
-  { value:"yearly", label:"Anualmente"},
-  { value:"none", label:"Sin repetición"},
+export const EVENTS_RECURRENCE_DATA = [
+  { value: "none", label: "Ninguna" },
+  { value: "daily", label: "Diaria" },
+  { value: "weekly", label: "Semanal" },
+  { value: "monthly", label: "Mensual" },
+  { value: "yearly", label: "Anual" }
 ];
 
 export const REPORTS_SORT_DATA = [

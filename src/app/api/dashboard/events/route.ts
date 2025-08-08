@@ -54,7 +54,7 @@ const addRecurrence = (allEvents:TypeEvent[], today:Date) => {
     }
     newEvents.push(...occurrences);
   });
-  return newEvents.filter(event => getDayOfYear(event.startDate) >= getDayOfYear(today) || getDayOfYear(event.endDate) >= getDayOfYear(today));
+  return newEvents.filter(event => getDayOfYear(event.start) >= getDayOfYear(today) || getDayOfYear(event.endDate) >= getDayOfYear(today));
 };
 
 export async function GET(req:Request) {
@@ -120,9 +120,9 @@ export async function GET(req:Request) {
 
     //* 📅 Eventos del dia
     const eventsToday = recurrenceEvents.filter(event => 
-      format(event.startDate, "yyyy-MM-dd") === format(today, "yyyy-MM-dd") ||
-      format(event.endDate, "yyyy-MM-dd") === format(today, "yyyy-MM-dd") ||
-      (event.startDate <= today && event.endDate >= today)
+      format(event.start, "yyyy-MM-dd", { locale:es }) === format(today, "yyyy-MM-dd", { locale:es }) ||
+      format(event.end, "yyyy-MM-dd", { locale:es }) === format(today, "yyyy-MM-dd", { locale:es }) ||
+      (event.start <= today && event.end >= today)
     );
 
     //* 📅 Eventos por día del mes
@@ -130,12 +130,12 @@ export async function GET(req:Request) {
     const endMonth = endOfMonth(today);
     const eventsByMonth: { label: string; count: number }[] = [];
     const eventsInCurrentMonth = recurrenceEvents.filter(event => 
-      event.startDate >= startMonth && event.startDate <= endMonth
+      event.start >= startMonth && event.start <= endMonth
     );
     eventsInCurrentMonth.forEach(event => {
-      let date = event.startDate
-      let currentDay = getDayOfYear(event.startDate);
-      const endDay = getDayOfYear(event.endDate);
+      let date = event.start
+      let currentDay = getDayOfYear(event.start);
+      const endDay = getDayOfYear(event.end);
       while (currentDay <= endDay) {
         if (currentDay >= getDayOfYear(today)) { // SOLO incluir días actuales o futuros
           const formattedDay = format(date, "dd/MMMM", { locale:es });

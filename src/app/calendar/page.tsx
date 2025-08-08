@@ -22,22 +22,23 @@ import EventForm from "@calendar/events/components/EventForm";
 export default function CalendarPage() {
   const { user } = useAuth();
 
-  const [events, setEvents] = useState<TypeEvent[]>();
-  const [date, setDate] = useState(format(new Date(), "yyyy-MM-dd", { locale:es }));
+  const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState<TypeEvent[]>([]);
+  const [date, setDate] = useState(new Date());
   const [filterFolder, setFilterFolder] = useState<TypeFolder|undefined>();
   const [openForm, setOpenForm] = useState(false);
 
   const fetchEvents = async () => {
+    setLoading(true);
     try {
       const res = await axiosInstance.get(API_PATHS.EVENTS.GET_ALL_EVENTS, {
-        params:{
-          date:date,
-          folder:filterFolder ? filterFolder._id : ""
+        params: {
+          month: date.getMonth() + 1, // de 1 a 12
+          year: date.getFullYear(),
+          folder: filterFolder?._id || ""
         }
       });
-      if(res.status === 200) {
-        setEvents(res.data.length > 0 ? res.data : []);
-      };
+      if(res.status === 200) setEvents(res.data.length > 0 ? res.data : []);
     } catch (error) {
       if(!isAxiosError(error)) return console.error("Error fetching accounts:", error);
       if(error.response && error.response.data.message) {
@@ -45,74 +46,77 @@ export default function CalendarPage() {
       } else {
         toast.error("Something went wrong. Please try again.");
       };
+    } finally {
+      setLoading(false);
     };
   };
 
   useEffect(() => {
     fetchEvents();
-    return () => {};
   },[date, filterFolder]);
 
   const handleFilterFolder = (value:TypeFolder|undefined) => {
-    setEvents(undefined);
+    if (value?._id === filterFolder?._id) return;
     setFilterFolder(value);
   };
 
-  const handleMonth = (type:boolean) => {
-    const newDate = type ? addMonths(new Date(date), 1) : subMonths(new Date(date), 1);
-    setDate(format(newDate, "yyyy-MM-dd", { locale:es }));
+  const handleMonth = (direction: "prev" | "next") => {
+    setEvents([]);
+    setDate(direction === "next" ? addMonths(date, 1) : subMonths(date, 1));
   };
+
+  const gridClass = "grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4";
 
   return(
     <ProtectedRoute>
       <AppLayout activeMenu="Calendario">
-        <div className="flex-1 flex flex-col gap-4 mb-10 text-basic">
-          <section className="flex flex-col bg-primary-light dark:bg-primary-dark border-2 border-secondary-light dark:border-secondary-dark shadow-md rounded-lg overflow-hidden">
+        <div className="relative flex-1 flex flex-col gap-8 text-basic">
+          <section aria-label="Calendario" className="flex flex-col bg-primary-light dark:bg-primary-dark border-2 border-secondary-light dark:border-secondary-dark shadow-md rounded-lg overflow-hidden">
             <div className="flex items-center justify-between p-4 text-primary-dark dark:text-primary-light bg-secondary-light dark:bg-secondary-dark">
-              <button onClick={()=>handleMonth(false)}>
+              <button onClick={()=>handleMonth("prev")} aria-label="Mes anterior">
                 <LuCircleChevronLeft className="text-3xl hover:text-quaternary cursor-pointer duration-300"/>
               </button>
-              <span className="text-center font-semibold">{format(new Date(date), "MMMM yyyy", { locale:es })}</span>
-              <button onClick={()=>handleMonth(true)}>
+              <h1 className="text-center font-semibold">{format(new Date(date), "MMMM yyyy", { locale: es }).replace(/^./, m => m.toUpperCase())}</h1>
+              <button onClick={()=>handleMonth("next")} aria-label="Mes siguiente">
                 <LuCircleChevronRight className="text-3xl hover:text-quaternary cursor-pointer duration-300"/>
               </button>
             </div>
-            <Calendar date={date} events={events || []}/>
+            <Calendar refresh={fetchEvents} date={date} events={events}/>
           </section>
-          <section className="flex flex-col gap-2">
-            <div className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 w-full">
-              <h2 className="font-semibold text-3xl">Eventos</h2>
+          <section aria-labelledby="section-title" className="flex flex-col gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 w-full">
+              <h2 id="section-title" className="flex flex-col font-semibold text-3xl">Eventos <span className="text-sm text-quaternary">({format(date, "MMMM", { locale:es }).replace(/^./, m => m.toUpperCase())} - {format(addMonths(date, 1), "MMMM", { locale:es }).replace(/^./, m => m.toUpperCase())})</span></h2>
               <div className="flex-1 sm:flex-none sm:min-w-64">
-                <FolderSelect disabled={!events ? true : false} selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
+                <FolderSelect disabled={loading} selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
               </div>
             </div>
 {/* Loading */}
-          {events === undefined &&
-            <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
-            {[1,2].map((i) => (
+          {loading &&
+            <div className={gridClass}>
+            {[1,2,3,4].map((i) => (
               <div key={`card-${i}`} className="flex min-h-56 md:min-h-64 min-w-full">
                 <Skeleton/>
               </div>
             ))}
             </div>
           }
-{/* There are tasks */}
-            <ul className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
-            {events?.map((event, index) => (
-              <EventCard key={index} event={event} refresh={fetchEvents}/>
-            ))}
-            </ul>
 {/* There are no tasks */}
-          {events && events.length < 1 &&
+          {!loading && events.length === 0 &&
             <div className="flex-1 flex items-center justify-center min-h-72">
               <p className="font-semibold text-2xl text-quaternary">No hay eventos</p>
             </div>
           }
+{/* There are tasks */}
+            <ul className={`${gridClass}`}>
+            {events.map((event) => (
+              <EventCard key={event._id} date={date} event={event} refresh={fetchEvents}/>
+            ))}
+            </ul>
           </section>
 {/* Tools (sort, create) */}
           <section className="fixed bottom-2 xl:bottom-4 left-0 flex flex-wrap justify-end gap-2 w-full max-w-[1750px] px-3">
           {user && (user.role === "owner" || user.role === "admin") &&
-            <button type="button" onClick={()=>setOpenForm(true)} className="tool-btn">
+            <button type="button" onClick={()=>setOpenForm(true)} aria-label="Crear evento" className="tool-btn">
               <LuPlus className="text-xl"/>
               Crear Evento
             </button>
@@ -121,7 +125,7 @@ export default function CalendarPage() {
         </div>
 {/* Modals */}
         <Modal title="Crear Evento" isOpen={openForm} onClose={()=>setOpenForm(false)}>
-          {openForm && <EventForm closeForm={()=>setOpenForm(false)} refresh={fetchEvents}/>}
+          {openForm && <EventForm refresh={fetchEvents} closeForm={()=>setOpenForm(false)}/>}
         </Modal>
       </AppLayout>
     </ProtectedRoute>

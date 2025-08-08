@@ -114,7 +114,7 @@ export default function Goal({ goal, refresh }:{ goal:TypeGoal, refresh:()=>void
               <input type="checkbox" checked={obj.completed} disabled={loading} onChange={()=>updateObjective(index)} className="min-w-5 min-h-5 rounded-sm outline-none text-blue-light bg-quaternary border-quaternary cursor-pointer"/>
               <div className="flex-1 flex flex-col sm:flex-row sm:justify-between gap-x-2 pr-5">
                 <p className="font-medium text-sm text-basic">{obj.text}</p>
-                <p className="font-medium text-xs text-quaternary">{format(obj.dueDate, "dd/MM/yyyy")}</p>
+                <p className="font-medium text-xs text-quaternary">{format(obj.dueDate, "dd/MM/yyyy", { locale:es })}</p>
               </div>
             </div>
           ))}

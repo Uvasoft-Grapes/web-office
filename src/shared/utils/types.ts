@@ -201,35 +201,56 @@ export interface TypeMovement {
 
 //! Calendar
 
-export interface TypeRecurrence {
-  frequency:"daily" | "weekly" | "monthly" | "yearly";
-  endFrequency:Date;
-};
+// export interface TypeRecurrence {
+//   frequency:"daily" | "weekly" | "monthly" | "yearly";
+//   endFrequency:Date;
+// };
+
+// export interface TypeEvent {
+//   _id:string;
+//   desk:string;
+//   folder:TypeFolder;
+//   title:string;
+//   description?:string;
+//   startDate:Date;
+//   endDate:Date;
+//   createdBy:TypeAssigned;
+//   assignedTo:TypeAssigned[];
+//   recurrence?:TypeRecurrence;
+//   createdAt?:Date;
+//   updatedAt?:Date;
+// };
+
+// export interface TypeEventsDashboardData {
+//   totalEvents: number;
+//   eventsByHour:{ label:string; count:number; }[];
+//   eventsByFolder:{ label:string; count:number; }[];
+//   recurrence:{
+//     eventsToday:TypeEvent[];
+//     eventsByMonth:{ label:string; count:number; }[];
+//     recurrenceStats:{ label:string; count:number; }[];
+//   }
+// };
+
+export type TypeRecurrence = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export interface TypeEvent {
   _id:string;
   desk:string;
   folder:TypeFolder;
-  title:string;
-  description?:string;
-  startDate:Date;
-  endDate:Date;
-  createdBy:TypeAssigned;
-  assignedTo:TypeAssigned[];
-  recurrence?:TypeRecurrence;
-  createdAt?:Date;
-  updatedAt?:Date;
-};
-
-export interface TypeEventsDashboardData {
-  totalEvents: number;
-  eventsByHour:{ label:string; count:number; }[];
-  eventsByFolder:{ label:string; count:number; }[];
-  recurrence:{
-    eventsToday:TypeEvent[];
-    eventsByMonth:{ label:string; count:number; }[];
-    recurrenceStats:{ label:string; count:number; }[];
-  }
+  title: string;
+  description?: string;
+  assignedTo: TypeAssigned[];
+  allDay?: boolean;
+  start: Date;
+  end: Date;
+  recurrence?: TypeRecurrence;
+  recurrenceEnd?: Date;
+  createdBy: TypeAssigned;
+  isRecurringInstance?: boolean;
+  originalEventId?:string;
+  createdAt?: Date;
+  updatedAt?: Date;
 };
 
 //! Reports

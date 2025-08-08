@@ -10,8 +10,8 @@ const config: Config = {
         'blue-dark': '#51a2ff',
         'red-light': '#e7000b',
         'red-dark': '#fb2c36',
-        'yellow-light': '#d08700',
-        'yellow-dark': '#efb100',
+        'yellow-light': '#E6B120',
+        'yellow-dark': '#F0B000',
         'green-light': '#00a63e',
         'green-dark': '#00c951',
         'primary-light': '#f5f5f4',
@@ -33,17 +33,3 @@ const config: Config = {
   plugins: [],
 };
 export default config;
-
-// const config: Config = {
-//   darkMode:"class",
-//   content: [
-//     './src/**/*.{js,ts,jsx,tsx,mdx}',
-//   ],
-//   theme: {
-//     extend: {
-      
-//     },
-//   },
-//   plugins: [],
-// };
-// export default config;

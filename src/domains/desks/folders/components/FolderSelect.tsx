@@ -41,7 +41,7 @@ export default function FolderSelect({ disabled, label, selectedFolder, setSelec
 
   return(
     <div className={`flex flex-col gap-1 ${disabled && "opacity-50"}`}>
-      {label && <label className="font-medium text-sm text-tertiary-dark dark:text-tertiary-light">Carpeta</label>}
+      {label && <label className="font-medium text-start text-sm text-tertiary-dark dark:text-tertiary-light">Carpeta</label>}
       <button type="button" onClick={() => setOpenModal(true)} disabled={disabled} className="card-btn">
         <LuFolder className="text-lg"/>
         {!selectedFolder ? "Seleccionar carpeta" : tempSelectedFolder?.title}

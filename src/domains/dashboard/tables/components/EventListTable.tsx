@@ -20,10 +20,10 @@ export default function EventListTable({ tableData }:{ tableData:TypeEvent[] }) 
                 {event.title}
               </td>
               <td className={`p-4 text-xs`}>
-                {format(event.startDate, "dd/MM/yyyy", { locale:es })}
+                {format(event.start, "dd/MM/yyyy", { locale:es })}
               </td>
               <td className={`p-4 text-xs`}>
-                {format(event.endDate, "dd/MM/yyyy", { locale:es })}
+                {format(event.end, "dd/MM/yyyy", { locale:es })}
               </td>
             </tr>
           ))}

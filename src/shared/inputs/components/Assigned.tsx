@@ -58,7 +58,7 @@ export default function AssignedSelect({ label, selectedUsers, setSelectedUsers 
 
   return(
     <div className="flex flex-col gap-1">
-      <label className="font-medium text-sm text-tertiary-dark dark:text-tertiary-light">{label}</label>
+      <label className="font-medium text-start text-sm text-tertiary-dark dark:text-tertiary-light">{label}</label>
     {selectedUsersAvatars.length <= 0 ?
       <button type="button" onClick={() => setOpenModal(true)} className="card-btn">
         <LuUsers className="text-sm"/>
@@ -78,7 +78,7 @@ export default function AssignedSelect({ label, selectedUsers, setSelectedUsers 
             <div className="flex items-center justify-center size-10 size-10 rounded-full border border-secondary-light dark:border-secondary-dark">
               <LuUsers className="text-lg"/>
             </div>
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 text-start overflow-hidden">
               <p className="font-medium text-sm sm:text-base text-basic">Todos</p>
               <p className="text-xs sm:text-sm text-quaternary">Agregar a todos</p>
             </div>
@@ -98,7 +98,7 @@ export default function AssignedSelect({ label, selectedUsers, setSelectedUsers 
               height={50}
               className="size-10 rounded-full"
             />
-            <div className="flex-1 overflow-hidden">
+            <div className="flex-1 text-start overflow-hidden">
               <p className="font-medium text-sm sm:text-base text-basic">{user.name}</p>
               <p className="text-xs sm:text-sm text-quaternary">{user.email}</p>
             </div>
