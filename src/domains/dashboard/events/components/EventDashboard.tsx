@@ -1,69 +1,68 @@
-import { useEffect, useState } from "react";
-import { isAxiosError } from "axios";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import toast from "react-hot-toast";
-import { LuCirclePlus } from "react-icons/lu";
-import { API_PATHS } from "@shared/utils/apiPaths";
-import axiosInstance from "@shared/utils/axiosInstance";
-import { TypeEventsDashboardData } from "@shared/utils/types";
-import Skeleton from "@shared/components/Skeleton";
-import InfoCard from "@shared/components/InfoCard";
-import CustomBarChart from "@dashboard/charts/components/CustomBarChart";
-import CustomPieChart from "@dashboard/charts/components/CustomPieChart";
-import HeaderListTable from "@dashboard/tables/components/LatestListTable";
-import EventListTable from "@dashboard/tables/components/EventListTable";
+// import { useEffect, useState } from "react";
+// import { isAxiosError } from "axios";
+// import { format } from "date-fns";
+// import { es } from "date-fns/locale";
+// import toast from "react-hot-toast";
+// import { LuCirclePlus } from "react-icons/lu";
+// import { API_PATHS } from "@shared/utils/apiPaths";
+// import axiosInstance from "@shared/utils/axiosInstance";
+// import Skeleton from "@shared/components/Skeleton";
+// import InfoCard from "@shared/components/InfoCard";
+// import CustomBarChart from "@dashboard/charts/components/CustomBarChart";
+// import CustomPieChart from "@dashboard/charts/components/CustomPieChart";
+// import HeaderListTable from "@dashboard/tables/components/LatestListTable";
+// import EventListTable from "@dashboard/tables/components/EventListTable";
 
-const getRandomColor = () => {
-  const hue = Math.floor(Math.random() * 360); // 0-360°
-  const saturation = 70 + Math.random() * 30; // Saturación alta (70-100%)
-  const lightness = 40 + Math.random() * 40; // Evita negro (<40%) y blanco (>80%)
+// const getRandomColor = () => {
+//   const hue = Math.floor(Math.random() * 360); // 0-360°
+//   const saturation = 70 + Math.random() * 30; // Saturación alta (70-100%)
+//   const lightness = 40 + Math.random() * 40; // Evita negro (<40%) y blanco (>80%)
 
-  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-};
+//   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+// };
 
-const COLORS = [
-  "#0085EB",
-  "#E5EA00",
-  "#EB5C00",
-  "#84EB00",
-  "#EB00BB",
-  "#1000EB",
-  "#EBCF00",
-  "#00EBA8",
-  "#6B00EB",
-  "#FF0066",
-  "#01E0EB",
-  "#BA01EB",
-];
+// const COLORS = [
+//   "#0085EB",
+//   "#E5EA00",
+//   "#EB5C00",
+//   "#84EB00",
+//   "#EB00BB",
+//   "#1000EB",
+//   "#EBCF00",
+//   "#00EBA8",
+//   "#6B00EB",
+//   "#FF0066",
+//   "#01E0EB",
+//   "#BA01EB",
+// ];
 
 export default function CalendarDashboard() {
-  const [dashboardData, setDashboardData] = useState<TypeEventsDashboardData|undefined>();
+  // const [dashboardData, setDashboardData] = useState<TypeEventsDashboardData|undefined>();
 
-  const getDashboardData = async () => {
-    try {
-      const res = await axiosInstance.get(API_PATHS.DASHBOARD.GET_EVENTS_DATA);
-      if(res.status === 200) {
-        setDashboardData(res.data);
-      };
-    } catch (error) {
-      if(!isAxiosError(error)) return console.error("Error fetching accounts dashboard:", error);
-      if(error.response && error.response.data.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("Something went wrong. Please try again.");
-      };
-    }
-  };
+  // const getDashboardData = async () => {
+  //   try {
+  //     const res = await axiosInstance.get(API_PATHS.DASHBOARD.GET_EVENTS_DATA);
+  //     if(res.status === 200) {
+  //       setDashboardData(res.data);
+  //     };
+  //   } catch (error) {
+  //     if(!isAxiosError(error)) return console.error("Error fetching accounts dashboard:", error);
+  //     if(error.response && error.response.data.message) {
+  //       toast.error(error.response.data.message);
+  //     } else {
+  //       toast.error("Something went wrong. Please try again.");
+  //     };
+  //   }
+  // };
 
-  useEffect(() => {
-    getDashboardData();
-    return () => {};
-  },[]);
+  // useEffect(() => {
+  //   getDashboardData();
+  //   return () => {};
+  // },[]);
 
   return(
     <div className="flex flex-col gap-10">
-      <article className="flex flex-col gap-4">
+      {/* <article className="flex flex-col gap-4">
         <section className="flex flex-wrap gap-2">
         {!dashboardData ?
           <span className="flex min-h-96 min-w-full">
@@ -135,7 +134,7 @@ export default function CalendarDashboard() {
           />
         }
         </section>
-      </article>
+      </article> */}
     </div>
   );
 };

@@ -1,7 +1,5 @@
 import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
-import { format, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@shared/context/AuthContext";
@@ -17,6 +15,7 @@ import Textarea from "@shared/inputs/components/Textarea";
 import InputDate from "@shared/inputs/components/Date";
 import NumberInput from "@shared/inputs/components/Number";
 import CategorySelect from "@shared/inputs/components/CategorySelect";
+import { parseISO } from "date-fns";
 
 export default function TransactionForm({ account, closeForm, type, values, refresh }:{ account:string, closeForm:()=>void, type:"income"|"expense", values?:TypeTransaction, refresh:()=>void }) {
   const { user } = useAuth();
@@ -131,7 +130,7 @@ export default function TransactionForm({ account, closeForm, type, values, refr
           <InputDate
             name="date"
             label="Fecha"
-            defaultValue={values?.date ? format(values.date, "yyyy-MM-dd", { locale:es }) : undefined}
+            defaultValue={values?.date ? values.date : undefined}
           />
           <NumberInput
             name="amount"

@@ -1,8 +1,7 @@
 import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { isAxiosError } from "axios";
-import { format, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
+import { parseISO } from "date-fns";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@shared/context/AuthContext";
 import { TypeCategory, TypeMovement } from "@shared/utils/types";
@@ -123,7 +122,7 @@ export default function MovementForm({ product, type, values, refresh }:{ produc
           <DateInput
             name="date"
             label="Fecha"
-            defaultValue={values?.date ? format(values.date, "yyyy-MM-dd", { locale:es }) : undefined}
+            defaultValue={values?.date ? values.date : undefined}
           />
           <NumberInput
             name="quantity"

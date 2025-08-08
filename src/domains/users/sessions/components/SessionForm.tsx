@@ -1,6 +1,5 @@
 import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
-import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@shared/context/AuthContext";
@@ -10,7 +9,6 @@ import { API_PATHS } from "@shared/utils/apiPaths";
 import Modal from "@shared/components/Modal";
 import DeleteAlert from "@shared/components/DeleteAlert";
 import TimeInput from "@shared/inputs/components/Time";
-import { es } from "date-fns/locale";
 
 export default function SessionForm({ session, update }:{ session:TypeSession, update:()=>void }) {
   const { user } = useAuth();
@@ -82,8 +80,8 @@ export default function SessionForm({ session, update }:{ session:TypeSession, u
   return(
     <form onSubmit={handleSubmit} className="flex-1 flex flex-col">
       <section className="flex-1 flex flex-col gap-4 pr-4 overflow-y-auto">
-        <TimeInput name="check-in" label="Entrada" defaultValue={format(session.checkIn, "HH:mm", { locale:es })}/>
-        <TimeInput name="check-out" label="Salida" defaultValue={session.checkOut ? format(session.checkOut, "HH:mm", { locale:es }) : undefined}/>
+        <TimeInput name="check-in" label="Entrada" defaultValue={session.checkIn}/>
+        <TimeInput name="check-out" label="Salida" defaultValue={session.checkOut ? session.checkOut : undefined}/>
       </section>
       <div className="flex flex-col sm:flex-row gap-2">
         <p className="flex-1 flex items-center min-h-2 font-medium text-xs text-red-light dark:text-red-dark overflow-hidden">{error}</p>

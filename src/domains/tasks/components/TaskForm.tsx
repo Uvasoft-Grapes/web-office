@@ -1,7 +1,6 @@
 import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
-import { format, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
+import { parseISO } from "date-fns";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@shared/context/AuthContext";
@@ -139,7 +138,7 @@ export default function TaskForm({ values, refresh }:{ values?:TypeTask, refresh
           <InputDate
             name="due-date"
             label="Fecha final"
-            defaultValue={values?.dueDate ? format(values.dueDate, "yyyy-MM-dd", { locale:es }) : undefined}
+            defaultValue={values?.dueDate ? values.dueDate : undefined}
           />
         </div>
         <TodoListInput

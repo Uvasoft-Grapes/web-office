@@ -5,8 +5,8 @@ import { es } from "date-fns/locale";
 import { connectDB } from "@config/db";
 import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
 import EventModel from "@events/models/Event";
-import { EVENTS_FREQUENCY_DATA } from "@shared/utils/data";
-import { TypeDesk, TypeEvent, TypeEventsDashboardData, TypeUser } from "@shared/utils/types";
+import { EVENTS_RECURRENCE_DATA } from "@shared/utils/data";
+import { TypeDesk, TypeEvent, TypeUser } from "@shared/utils/types";
 
 const addRecurrence = (allEvents:TypeEvent[], today:Date) => {
   const newEvents: TypeEvent[] = [];
@@ -14,35 +14,36 @@ const addRecurrence = (allEvents:TypeEvent[], today:Date) => {
   allEvents.forEach(event => {
     const cleanEvent = JSON.parse(JSON.stringify(event)); // 🔥 Elimina metadatos Mongoose
     const occurrences: TypeEvent[] = [];
-    let currentStart = event.startDate;
-    let currentEnd = event.endDate;
+    let currentStart = event.start;
+    let currentEnd = event.end;
     if (!event.recurrence) {
       occurrences.push({ ...cleanEvent, startDate:currentStart, endDate:currentEnd });
     } else {
-      switch (event.recurrence.frequency) {
+      if(!event.recurrenceEnd) return;
+      switch (event.recurrence) {
         case "daily":
-          while (isBefore(currentStart, event.recurrence.endFrequency)) {
+          while (isBefore(currentStart, event.recurrenceEnd)) {
             occurrences.push({ ...cleanEvent, startDate: currentStart, endDate: currentEnd });
             currentStart = addDays(currentStart, 1);
             currentEnd = addDays(currentEnd, 1);
           }
           break;
         case "weekly":
-          while (isBefore(currentStart, event.recurrence.endFrequency)) {
+          while (isBefore(currentStart, event.recurrenceEnd)) {
             occurrences.push({ ...cleanEvent, startDate: currentStart, endDate: currentEnd });
             currentStart = addWeeks(currentStart, 1);
             currentEnd = addWeeks(currentEnd, 1);
           }
           break;
         case "monthly":
-          while (isBefore(currentStart, event.recurrence.endFrequency)) {
+          while (isBefore(currentStart, event.recurrenceEnd)) {
             occurrences.push({ ...cleanEvent, startDate: currentStart, endDate: currentEnd });
             currentStart = addMonths(currentStart, 1);
             currentEnd = addMonths(currentEnd, 1);
           }
           break;
         case "yearly":
-          while (isBefore(currentStart, event.recurrence.endFrequency)) {
+          while (isBefore(currentStart, event.recurrenceEnd)) {
             occurrences.push({ ...cleanEvent, startDate: currentStart, endDate: currentEnd });
             currentStart = addYears(currentStart, 1);
             currentEnd = addYears(currentEnd, 1);
@@ -54,7 +55,7 @@ const addRecurrence = (allEvents:TypeEvent[], today:Date) => {
     }
     newEvents.push(...occurrences);
   });
-  return newEvents.filter(event => getDayOfYear(event.start) >= getDayOfYear(today) || getDayOfYear(event.endDate) >= getDayOfYear(today));
+  return newEvents.filter(event => getDayOfYear(event.start) >= getDayOfYear(today) || getDayOfYear(event.end) >= getDayOfYear(today));
 };
 
 export async function GET(req:Request) {
@@ -103,7 +104,7 @@ export async function GET(req:Request) {
       }
     });
     recurrenceStats.forEach(stat => {
-      stat.label = EVENTS_FREQUENCY_DATA.find(item => item.value === stat.label)?.label || stat.label;
+      stat.label = EVENTS_RECURRENCE_DATA.find(item => item.value === stat.label)?.label || stat.label;
     })
 
     //* 🗂 Eventos por carpeta
@@ -151,7 +152,7 @@ export async function GET(req:Request) {
       }
     });
 
-    const data:TypeEventsDashboardData = {
+    const data = {
       totalEvents:recurrenceEvents.length,
       eventsByHour,
       eventsByFolder,

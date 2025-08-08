@@ -1,7 +1,6 @@
 import { FormEvent, useState } from "react";
 import { isAxiosError } from "axios";
-import { format, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
+import { parseISO } from "date-fns";
 import toast from "react-hot-toast";
 import { LuCheck, LuTrash2 } from "react-icons/lu";
 import { useAuth } from "@shared/context/AuthContext";
@@ -127,7 +126,7 @@ export default function ReportForm({ values, onClose, refresh }:{ values?:TypeRe
           <DateInput
             name="date"
             label="Fecha"
-            defaultValue={values ? format(values.date, "yyyy-MM-dd", { locale:es }) : undefined}
+            defaultValue={values ? values.date : undefined}
           />
         </div>
       </div>
