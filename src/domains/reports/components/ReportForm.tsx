@@ -126,7 +126,7 @@ export default function ReportForm({ values, onClose, refresh }:{ values?:TypeRe
           <DateInput
             name="date"
             label="Fecha"
-            defaultValue={values ? values.date : undefined}
+            defaultValue={values ? values.date : new Date()}
           />
         </div>
       </div>

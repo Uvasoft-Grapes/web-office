@@ -130,7 +130,7 @@ export default function TransactionForm({ account, closeForm, type, values, refr
           <InputDate
             name="date"
             label="Fecha"
-            defaultValue={values?.date ? values.date : undefined}
+            defaultValue={values?.date ? values.date : new Date()}
           />
           <NumberInput
             name="amount"

@@ -35,7 +35,7 @@ export default function EventDateInputs({ day, start, end, handleDates }:{ day:b
     // If the new start date is after the end date, update the end date to match the new start date
     if (newDate > endDate) setEndDate(newDate);
     // If there is a change update the start date
-    if (newDate.getTime() !== startDate.getTime()) setStartDate(newDate);
+    if (newDate.getTime() !== new Date(startDate).getTime()) setStartDate(newDate);
   };
 
   const handleEnd = (value: string) => {
@@ -70,7 +70,7 @@ export default function EventDateInputs({ day, start, end, handleDates }:{ day:b
               name="start-time"
               label=""
               handle={(newDate:string)=>handleStart(newDate)}
-              defaultValue={startDate}
+              value={startDate}
               disabled={allDay}
             />
           </div>
@@ -88,7 +88,7 @@ export default function EventDateInputs({ day, start, end, handleDates }:{ day:b
               name="end-time"
               label=""
               handle={(newDate:string)=>handleEnd(newDate)}
-              defaultValue={endDate}
+              value={endDate}
               disabled={allDay}
             />
           </div>

@@ -221,17 +221,6 @@ export interface TypeMovement {
 //   updatedAt?:Date;
 // };
 
-// export interface TypeEventsDashboardData {
-//   totalEvents: number;
-//   eventsByHour:{ label:string; count:number; }[];
-//   eventsByFolder:{ label:string; count:number; }[];
-//   recurrence:{
-//     eventsToday:TypeEvent[];
-//     eventsByMonth:{ label:string; count:number; }[];
-//     recurrenceStats:{ label:string; count:number; }[];
-//   }
-// };
-
 export type TypeRecurrence = 'none' | 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export interface TypeEvent {
@@ -251,6 +240,17 @@ export interface TypeEvent {
   originalEventId?:string;
   createdAt?: Date;
   updatedAt?: Date;
+};
+
+export interface TypeEventsDashboardData {
+  totalEvents: number;
+  eventsByHour:{ label:string; count:number; }[];
+  eventsByFolder:{ label:string; count:number; }[];
+  recurrence:{
+    eventsToday:TypeEvent[];
+    eventsByMonth:{ label:string; count:number; }[];
+    recurrenceStats:{ label:string; count:number; }[];
+  }
 };
 
 //! Reports

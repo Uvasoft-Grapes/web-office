@@ -6,7 +6,7 @@ import { connectDB } from "@config/db";
 import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
 import EventModel from "@events/models/Event";
 import { EVENTS_RECURRENCE_DATA } from "@shared/utils/data";
-import { TypeDesk, TypeEvent, TypeUser } from "@shared/utils/types";
+import { TypeDesk, TypeEvent, TypeEventsDashboardData, TypeUser } from "@shared/utils/types";
 
 const addRecurrence = (allEvents:TypeEvent[], today:Date) => {
   const newEvents: TypeEvent[] = [];
@@ -75,13 +75,13 @@ export async function GET(req:Request) {
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
     const today = new Date();
-    const allEvents = await EventModel.find({ desk:desk._id }).populate("folder");
+    const allEvents:TypeEvent[] = await EventModel.find({ desk:desk._id }).populate("folder");
     const recurrenceEvents = addRecurrence(allEvents, today);
 
     //* ⏳ Eventos por hora del día
     const eventsByHour:{ label:string; count:number; }[] = [];
     allEvents.forEach(event => {
-      const hour = getHours(new Date(event.startDate));
+      const hour = getHours(new Date(event.start));
       const existingEntry = eventsByHour.find(e => e.label === hour.toString());
       if (existingEntry) {
         existingEntry.count += 1;
@@ -98,8 +98,8 @@ export async function GET(req:Request) {
       { label:"yearly", count:0 },
     ];
     allEvents.forEach(event => {
-      if (event.recurrence?.frequency) {
-        const stat = recurrenceStats.find(e => e.label === event.recurrence.frequency);
+      if (event.recurrence) {
+        const stat = recurrenceStats.find(e => e.label === event.recurrence);
         if (stat) stat.count += 1;
       }
     });
@@ -152,7 +152,7 @@ export async function GET(req:Request) {
       }
     });
 
-    const data = {
+    const data:TypeEventsDashboardData = {
       totalEvents:recurrenceEvents.length,
       eventsByHour,
       eventsByFolder,

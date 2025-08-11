@@ -36,7 +36,6 @@ export async function PUT(req:NextRequest) {
 
 //! Validations
     if(!movementId) return NextResponse.json({ message:"Missing movement" }, { status:400 });
-    if(!category) return NextResponse.json({ message:"Missing category" }, { status:400 });
     if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
     if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
     if(description.trim().length > 600) return NextResponse.json({ message:"La descripción puede tener un máximo de 600 caracteres." }, { status:400 });

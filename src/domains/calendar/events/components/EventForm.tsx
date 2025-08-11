@@ -198,7 +198,6 @@ export default function EventForm({ closeForm, defaultDate, values, refresh }:{ 
   const [openAlert, setOpenAlert] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const createEvent = async (data:{ title:string, description:string, recurrenceEnd?:Date|undefined }) => {
     setLoading(true);
     try {

@@ -4,17 +4,19 @@ import { HiOutlineTrash, HiMiniPlus } from "react-icons/hi2";
 import { TypeObjective } from "@shared/utils/types";
 
 export default function ObjectivesInput({ list, setList }:{ list:TypeObjective[], setList:(list:TypeObjective[])=>void }) {
-  const handleAddOption = () => {
+  const handleAddObjective = () => {
     const objectiveInput = document.getElementById("objective-input") as HTMLInputElement;
     const dateInput = document.getElementById("date-input") as HTMLInputElement;
     if(!objectiveInput || !dateInput) return;
     const dueDate = dateInput.value ? parseISO(dateInput.value) : undefined;
-    if(objectiveInput.value.trim() && dueDate) setList([ ...list, { text:objectiveInput.value.trim(), dueDate, completed:false } ]);
-    objectiveInput.value = "";
-    dateInput.value = "";
+    if(objectiveInput.value.trim() && dueDate) {
+      setList([ ...list, { text:objectiveInput.value.trim(), dueDate, completed:false } ]);
+      objectiveInput.value = "";
+      dateInput.value = "";
+    }
   };
 
-  const handleDeleteOption = (index:number) => {
+  const handleDeleteObjective = (index:number) => {
     const updatedList = list.filter((objective, i) => i !== index);
     setList(updatedList);
   };
@@ -32,7 +34,7 @@ export default function ObjectivesInput({ list, setList }:{ list:TypeObjective[]
               <p className="font-medium text-xs text-quaternary">{format(objective.dueDate, "dd/MM/yyyy", { locale:es })}</p>
             </div>
           </div>
-          <button type="button" onClick={() => handleDeleteOption(i)} className="h-fit cursor-pointer">
+          <button type="button" onClick={() => handleDeleteObjective(i)} className="h-fit cursor-pointer">
             <HiOutlineTrash className="text-lg text-primary-dark dark:text-primary-light hover:text-red-dark duration-300"/>
           </button>
         </li>
@@ -50,7 +52,7 @@ export default function ObjectivesInput({ list, setList }:{ list:TypeObjective[]
           type="date"
           className="w-full px-3 py-3 outline-none rounded-md font-medium text-sm text-basic focus-within:bg-primary-light dark:focus-within:bg-primary-dark border border-tertiary-light dark:border-tertiary-dark placeholder:text-quaternary/50 duration-300"
         />
-        <button type="button" onClick={handleAddOption} className="card-btn text-nowrap">
+        <button type="button" onClick={handleAddObjective} className="card-btn text-nowrap">
           <HiMiniPlus className="text-lg"/>
           <span className="hidden sm:inline">Agregar</span>
         </button>

@@ -138,7 +138,7 @@ export default function TaskForm({ values, refresh }:{ values?:TypeTask, refresh
           <InputDate
             name="due-date"
             label="Fecha final"
-            defaultValue={values?.dueDate ? values.dueDate : undefined}
+            defaultValue={values?.dueDate ? values.dueDate : new Date()}
           />
         </div>
         <TodoListInput

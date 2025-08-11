@@ -101,7 +101,7 @@ export default function MovementForm({ product, type, values, refresh }:{ produc
     if(!title?.trim()) return setError("Título obligatorio.");
     if(!date) return setError("Fecha obligatoria.");
     if(!quantity) return setError("Cantidad obligatoria.");
-    if(!category) return setError("Categoría obligatoria.");
+    // if(!category) return setError("Categoría obligatoria.");
 
     if(!values) createMovement({ title, description, quantity, date });
     if(values) updateMovement({ title, description, quantity, date });
@@ -122,7 +122,7 @@ export default function MovementForm({ product, type, values, refresh }:{ produc
           <DateInput
             name="date"
             label="Fecha"
-            defaultValue={values?.date ? values.date : undefined}
+            defaultValue={values?.date ? values.date : new Date()}
           />
           <NumberInput
             name="quantity"
