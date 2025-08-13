@@ -31,6 +31,11 @@ export default function Navbar({ activeMenu }:{ activeMenu:string }) {
         </Link>
       </div>
       <div className="flex items-center gap-4">
+        <button type="button" onClick={logout} className={`card-btn-red h-8 sm:h-10`}>
+          <LuLogOut className="text-xl"/>
+          <span className="hidden sm:inline text-nowrap font-medium text-sm">Terminar sesión</span>
+          {/* <span className="absolute top-full right-5 hidden group-hover:inline px-4 py-2 mt-1 rounded-md text-nowrap font-medium text-sm text-basic bg-tertiary-light dark:bg-tertiary-dark">Terminar turno</span> */}
+        </button>
         <Link href="/auth/profile" className="flex items-center gap-2 group">
           <Image src={user?.profileImageUrl || getAvatars()[0]} alt="Avatar" width={1000} height={1000} className="size-8 rounded-full"/>
           <span className="absolute top-full right-5 hidden group-hover:flex gap-2 px-4 py-2 mt-1 rounded-md bg-tertiary-light dark:bg-tertiary-dark">
@@ -41,10 +46,6 @@ export default function Navbar({ activeMenu }:{ activeMenu:string }) {
             </div>
           </span>
         </Link>
-        <button type="button" onClick={logout} className={`cursor-pointer text-primary-dark dark:text-primary-light hover:text-red-light dark:hover:text-red-dark duration-300 group`}>
-          <LuLogOut className="text-2xl"/>
-          <span className="absolute top-full right-5 hidden group-hover:inline px-4 py-2 mt-1 rounded-md text-nowrap font-medium text-sm text-basic bg-tertiary-light dark:bg-tertiary-dark">Cerrar sesión</span>
-        </button>
       </div>
     {openSideMenu &&
       <div className="fixed top-[56px] max-h-[calc(100vh-56px)] min-h-[calc(100vh-56px)] left-0 bg-primary-light">
