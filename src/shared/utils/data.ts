@@ -169,6 +169,12 @@ export const MONTHS_DATA = [
   { label:"Diciembre", value:"diciembre" },
 ];
 
+export const ACCOUNTS_TYPE = [
+  { label:"Débito", value:"debit" },
+  { label:"Crédito", value:"credit" },
+  { label:"Efectivo", value:"cash" },
+];
+
 export const TRANSACTIONS_STATUS_DATA = [
   { label:"Pendiente", value:"Pendiente" },
   { label:"Finalizado", value:"Finalizado" },

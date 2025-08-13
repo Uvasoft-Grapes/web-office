@@ -7,8 +7,10 @@ import Modal from "@shared/components/Modal";
 import AvatarGroup from "@users/components/AvatarGroup";
 import InventoryForm from "@inventories/components/InventoryForm";
 import Items from "@items/components/ItemList";
+import { useAuth } from "@/src/shared/context/AuthContext";
 
 export default function InventoryCard({ inventory, refresh }:{ inventory:TypeInventory, refresh:()=>void }) {
+  const { user } = useAuth();
   const { _id, folder, title, assignedTo, location, items, quantity } = inventory;
   const selectedUsersAvatars = assignedTo.map((assigned) => ({ name:assigned.name||"", img:assigned.profileImageUrl||getAvatars()[0].src }));
 
@@ -22,7 +24,7 @@ export default function InventoryCard({ inventory, refresh }:{ inventory:TypeInv
 
   return(
     <>
-      <li className="flex flex-col gap-2 bg-secondary-light dark:bg-secondary-dark hover:bg-transparent rounded-xl p-6 border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary dark:shadow-secondary-dark duration-300">
+      <li className="flex flex-col gap-2 bg-secondary-light dark:bg-secondary-dark hover:bg-transparent dark:hover:bg-transparent rounded-xl p-6 border border-tertiary-light dark:border-tertiary-dark shadow-md shadow-quaternary dark:shadow-secondary-dark duration-300">
         <section className="flex-1 flex gap-2">
           <div className="flex-1 flex flex-col gap-1">
             <p className="px-2 sm:px-4 py-0.5 w-fit rounded text-nowrap font-semibold text-xs text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20">{folder.title}</p>
@@ -32,9 +34,11 @@ export default function InventoryCard({ inventory, refresh }:{ inventory:TypeInv
               <p className="line-clamp-1 text-xs">{location}</p>
             </span>
           </div>
+        {user && ["owner", "admin"].includes(user.role) &&
           <button type="button" onClick={()=>setOpenForm(true)} className="flex items-center justify-center size-10 rounded-md hover:bg-secondary-light dark:hover:bg-secondary-dark cursor-pointer duration-300">
             <LuPencil/>
           </button>
+        }
         </section>
         <section className="">
           <AvatarGroup avatars={selectedUsersAvatars || []} maxVisible={3}/>

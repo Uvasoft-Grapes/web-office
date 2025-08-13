@@ -104,6 +104,8 @@ export interface TypeTransactionsStatusSummary {
   canceled:number;
 };
 
+export type TypeAccounts = 'debit' | 'credit' | 'cash';
+
 export interface TypeAccount {
   _id:string;
   desk:string;
@@ -111,6 +113,7 @@ export interface TypeAccount {
   assignedTo:TypeAssigned[];
   title:string;
   balance:number;
+  type:TypeAccounts,
   transactions?:TypeTransaction[];
   statusSummary?:TypeTransactionsStatusSummary
 };

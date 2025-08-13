@@ -88,6 +88,7 @@ export default function AccountsPage() {
             <AccountCard
               key={account._id}
               account={account}
+              refresh={fetchAccounts}
             />
           ))}
           </ul>

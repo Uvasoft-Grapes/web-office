@@ -12,6 +12,8 @@ import DeleteAlert from "@shared/components/DeleteAlert";
 import AssignedSelect from "@shared/inputs/components/Assigned";
 import TextInput from "@shared/inputs/components/Text";
 import FolderSelect from "@folders/components/FolderSelect";
+import DropdownSelect from "@/src/shared/inputs/components/Dropdown";
+import { ACCOUNTS_TYPE } from "@/src/shared/utils/data";
 
 export default function AccountForm({ values, refresh, }:{ values?:TypeAccount, refresh?:()=>void }) {
   const { user } = useAuth();
@@ -19,6 +21,7 @@ export default function AccountForm({ values, refresh, }:{ values?:TypeAccount, 
 
   const [assignedTo, setAssignedTo] = useState<TypeAssigned[]>(values ? values.assignedTo : []);
   const [folder, setFolder] = useState<TypeFolder|undefined>(values?.folder);
+  const [type, setType] = useState<string|undefined>(values?.type || "cash");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [openAlert, setOpenAlert] = useState(false);
@@ -26,7 +29,7 @@ export default function AccountForm({ values, refresh, }:{ values?:TypeAccount, 
   const createAccount = async (title:string) => {
     setLoading(true);
     try {
-      const res = await axiosInstance.post(API_PATHS.ACCOUNTS.CREATE_ACCOUNT, { title, folder:folder?._id, assignedTo });
+      const res = await axiosInstance.post(API_PATHS.ACCOUNTS.CREATE_ACCOUNT, { title, type, folder:folder?._id, assignedTo });
       if(res.status === 201) {
         toast.success(res.data.message);
         router.push(`/accounts/${res.data.account._id}`);
@@ -47,10 +50,10 @@ export default function AccountForm({ values, refresh, }:{ values?:TypeAccount, 
     if(!values || !refresh) return;
     setLoading(true);
     try {
-      const res = await axiosInstance.put(API_PATHS.ACCOUNTS.UPDATE_ACCOUNT(values?._id), { title, folder:folder?._id, assignedTo });
-      if(res.status === 201) {
-        toast.success(res.data.message);
+      const res = await axiosInstance.put(API_PATHS.ACCOUNTS.UPDATE_ACCOUNT(values?._id), { title, type, folder:folder?._id, assignedTo });
+      if(res.status === 200) {
         refresh();
+        toast.success(res.data.message);
       };
     } catch (error) {
       if(!isAxiosError(error)) return console.error("Error updating account:", error);
@@ -65,11 +68,12 @@ export default function AccountForm({ values, refresh, }:{ values?:TypeAccount, 
   };
 
   const deleteAccount = async () => {
-    if(!values) return;
+    if(!values || !refresh) return;
     setLoading(true);
     try {
       const res = await axiosInstance.delete(API_PATHS.ACCOUNTS.DELETE_ACCOUNT(values._id));
       if(res.status === 200) {
+        refresh();
         toast.success(res.data.message);
         router.push("/accounts");
       };
@@ -111,6 +115,12 @@ export default function AccountForm({ values, refresh, }:{ values?:TypeAccount, 
           defaultValue={values?.title || ""}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <DropdownSelect 
+            label="Tipo"
+            options={ACCOUNTS_TYPE}
+            defaultValue={type}
+            handleValue={(value)=>setType(value)}
+          />
           <FolderSelect
             label
             selectedFolder={folder}
