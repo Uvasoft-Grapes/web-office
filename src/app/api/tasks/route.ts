@@ -86,7 +86,8 @@ export async function GET(req:Request) {
     const pendingTasks = await TaskModel.countDocuments({ status:"Pendiente", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
     const inProgressTasks = await TaskModel.countDocuments({ status:"En curso", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
     const completedTasks = await TaskModel.countDocuments({ status:"Finalizada", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
-    const statusSummary:TypeTaskStatusSummary = { allTasks, pendingTasks, inProgressTasks, completedTasks };
+    const approveTasks = await TaskModel.countDocuments({ status:"Aprobada", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
+    const statusSummary:TypeTaskStatusSummary = { allTasks, pendingTasks, inProgressTasks, completedTasks, approveTasks };
 
     return NextResponse.json({ tasks, statusSummary }, { status:200 });
   } catch (error) {

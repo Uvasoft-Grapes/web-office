@@ -23,6 +23,8 @@ export default function TaskCard({ task, refresh }:{ task:TypeTask, refresh:()=>
         return "text-yellow-light dark:text-yellow-dark bg-yellow-light/20 dark:bg-yellow-dark/20 border-yellow-light dark:border-yellow-dark";
       case "Finalizada":
         return "text-green-light dark:text-green-dark bg-green-light/20 dark:bg-green-dark/20 border-green-light dark:border-green-dark";
+      case "Aprobada":
+        return "text-blue-light dark:text-blue-dark bg-blue-light/10 dark:bg-blue-dark/10";
       default:
         return "text-quaternary bg-quaternary/25 border-quaternary";
     }

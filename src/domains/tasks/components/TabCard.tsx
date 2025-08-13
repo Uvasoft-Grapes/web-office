@@ -9,6 +9,8 @@ export default function TabCard({ label, count, style }:{ label?:string, count:s
         return "text-yellow-light dark:text-yellow-dark bg-yellow-light/10 dark:bg-yellow-dark/10";
       case "Finalizadas":
         return "text-green-light dark:text-green-dark bg-green-light/10 dark:bg-green-dark/10";
+      case "Aprobadas":
+        return "text-blue-light dark:text-blue-dark bg-blue-light/10 dark:bg-blue-dark/10";
       default:
         return "text-quaternary bg-quaternary/10";
     }

@@ -67,6 +67,7 @@ export const API_PATHS = {
     CREATE_TASK:"/api/tasks", // Admin Token required
     UPDATE_TASK:(taskId:string) => `/api/tasks/${taskId}`, // Auth Token required
     UPDATE_TODO_CHECKLIST:(taskId:string) => `/api/tasks/${taskId}/todo`, // Auth Token required
+    APPROVE_TASK:(taskId:string) => `/api/tasks/${taskId}/approve`,
     DELETE_TASK:(taskId:string) => `/api/tasks/${taskId}`, // Admin Token required
   },
 

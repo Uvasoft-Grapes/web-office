@@ -142,6 +142,7 @@ export const STATUS_DATA = [
   { label:"Pendiente", value:"Pendiente" },
   { label:"En curso", value:"En curso" },
   { label:"Finalizada", value:"Finalizada" },
+  { label:"Aprobada", value:"Aprobada" },
 ];
 
 export const TASKS_SORT_DATA = [
@@ -203,8 +204,17 @@ export const REPORTS_SORT_DATA = [
   "Título",
 ];
 
-export const  PRODUCTS_SORT_DATA = [
+export const PRODUCTS_SORT_DATA = [
   "Título",
   "Precio",
   "Stock"
+];
+
+export const UPDATES_DATA = [
+  { id:1, title:"Se actualizo el calendario", date:"05/08/2025" },
+  { id:2, title:"Se actualizaron las tareas", date:"10/08/2025" },
+  { id:3, title:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore consequuntur alias laudantium possimus, voluptate non distinctio? Voluptatem laboriosam cum expedita, maiores quidem asperiores rerum magni accusamus consequuntur itaque neque. Libero?", date:"15/08/2025" },
+  { id:4, title:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore consequuntur alias laudantium possimus, voluptate non distinctio? Voluptatem laboriosam cum expedita, maiores quidem asperiores rerum magni accusamus consequuntur itaque neque. Libero?", date:"20/08/2025" },
+  { id:5, title:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore consequuntur alias laudantium possimus, voluptate non distinctio? Voluptatem laboriosam cum expedita, maiores quidem asperiores rerum magni accusamus consequuntur itaque neque. Libero?", date:"25/08/2025" },
+  { id:6, title:"Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore consequuntur alias laudantium possimus, voluptate non distinctio? Voluptatem laboriosam cum expedita, maiores quidem asperiores rerum magni accusamus consequuntur itaque neque. Libero?", date:"30/08/2025" }
 ];

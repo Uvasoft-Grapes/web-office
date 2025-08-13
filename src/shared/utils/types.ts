@@ -61,7 +61,7 @@ export interface TypeTask {
   title:string;
   description:string;
   priority:"Baja" | "Media" | "Alta";
-  status?:"Pendiente" | "En curso" | "Finalizada";
+  status?:"Pendiente" | "En curso" | "Finalizada" | "Aprobada";
   dueDate?:Date;
   assignedTo:TypeAssigned[];
   createdBy?:string;
@@ -93,6 +93,7 @@ export interface TypeTaskStatusSummary {
   pendingTasks:number;
   inProgressTasks:number;
   completedTasks:number;
+  approveTasks:number;
 }
 
 //! Accounts

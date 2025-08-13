@@ -42,14 +42,17 @@ export default function TasksPage() {
           sort:`${sortLabel} ${sortType ? "(asc)" : "(desc)"}`,
         },
       });
-      setTasks(res.data.tasks.length > 0 ? res.data.tasks : []);
-      console.log({ tasks:res.data.tasks })
+      const approvedTasks = res.data.tasks.filter((task:TypeTask) => task.status === "Aprobada") || [];
+      const remainingTasks = res.data.tasks.filter((task:TypeTask) => task.status !== "Aprobada") || [];
+      setTasks([ ...remainingTasks, ...approvedTasks ]);
+
       const statusSummary:TypeTaskStatusSummary = res.data.statusSummary || { allTasks:0, pendingTasks:0, inProgressTasks:0, completedTasks:0 };
       const statusArray = [
         // { label:"Todas", count:statusSummary.allTasks || 0 },
         { label:"Pendientes", count:statusSummary.pendingTasks || 0 },
         { label:"En curso", count:statusSummary.inProgressTasks || 0 },
-        { label:"Finalizadas", count:statusSummary.completedTasks || 0 }
+        { label:"Finalizadas", count:statusSummary.completedTasks || 0 },
+        { label:"Aprobadas", count:statusSummary.approveTasks || 0 }
       ];
       setTabs(statusArray);
     } catch (error) {

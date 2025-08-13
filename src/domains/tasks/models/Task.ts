@@ -14,7 +14,7 @@ const TaskSchema = new Schema({
   title:{ type:String, required:[true, 'DB: Title required.'], minLength:[1, 'DB: Title must be at least 1 characters.'], maxLength:[200, 'DB: Title must be at most 200 characters.'], trim:true },
   description:{ type:String, maxLength:[1500, 'DB: Description must be at most 1500 characters.'], trim:true },
   priority:{ type:String, enum:["Baja", "Media", "Alta"], default:"Media" },
-  status:{ type:String, enum:["Pendiente", "En curso", "Finalizada"], default:"Pendiente" },
+  status:{ type:String, enum:["Pendiente", "En curso", "Finalizada", "Aprobada"], default:"Pendiente" },
   dueDate:{ type:Date, required:[true, 'DB: Due date required.'] },
   assignedTo:[{ type:Schema.Types.ObjectId, ref:'User' }],
   createdBy:{ type:Schema.Types.ObjectId, ref:'User' },
@@ -22,8 +22,6 @@ const TaskSchema = new Schema({
   todoChecklist:{ type:[todoSchema], required:true },
   progress:{ type:Number, default:0 },
 }, { timestamps:true });
-
-// delete models.Task;
 
 const TaskModel = models.Task || model('Task', TaskSchema);
 export default TaskModel;

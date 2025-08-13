@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
-import { LuPencil } from "react-icons/lu";
+import { LuCheck, LuPencil } from "react-icons/lu";
 import { useAuth } from "@shared/context/AuthContext";
 import { API_PATHS } from "@shared/utils/apiPaths";
 import { getAvatars } from "@shared/utils/avatars";
@@ -52,6 +52,8 @@ export default function Task({ task, refresh }:{ task:TypeTask, refresh:()=>void
         return "text-yellow-light dark:text-yellow-dark bg-yellow-light/10 dark:bg-yellow-dark/10";
       case "Finalizada":
         return "text-green-light dark:text-green-dark bg-green-light/10 dark:bg-green-dark/10";
+      case "Aprobada":
+        return "text-blue-light dark:text-blue-dark bg-blue-light/10 dark:bg-blue-dark/10";
       default:
         return "text-quaternary bg-quaternary/10";
     };
@@ -70,6 +72,26 @@ export default function Task({ task, refresh }:{ task:TypeTask, refresh:()=>void
     };
   };
 
+  const approveTask = async () => {
+    setLoading(true);
+    try {
+      const res = await axiosInstance.patch(API_PATHS.TASKS.APPROVE_TASK(_id));
+      if(res.status === 200) {
+        refresh();
+        toast.success(res.data.message);
+      };
+    } catch (error) {
+      if(!isAxiosError(error)) return console.error(error);
+      if(error.response && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      };
+    } finally {
+      setLoading(false);
+    };
+  };
+
   const onRefresh = () => {
     refresh();
     setTaskForm(false);
@@ -83,8 +105,8 @@ export default function Task({ task, refresh }:{ task:TypeTask, refresh:()=>void
             <section className="flex flex-wrap items-center justify-between gap-2">
               <p className="flex-1 sm:flex-none px-2 sm:px-4 py-0.5 rounded text-center text-nowrap font-semibold text-xs text-blue-light dark:text-blue-dark bg-blue-light/20 dark:bg-blue-dark/20">{folder.title}</p>
               <div className="flex-1 sm:flex-none flex items-center justify-end gap-2">
-                <p className={`flex-1 sm:flex-none w-fit px-4 py-1 rounded text-center text-nowrap font-semibold text-xs ${getPriorityTagColor(priority)}`}>{priority}</p>
                 <p className={`flex-1 sm:flex-none w-fit px-4 py-1 rounded text-center text-nowrap font-semibold text-xs ${getStatusTagColor(status)}`}>{status}</p>
+                <p className={`flex-1 sm:flex-none w-fit px-4 py-1 rounded text-center text-nowrap font-semibold text-xs ${getPriorityTagColor(priority)}`}>{priority}</p>
               </div>
             </section>
             <section className="info-box">
@@ -135,6 +157,12 @@ export default function Task({ task, refresh }:{ task:TypeTask, refresh:()=>void
     {user && (user.role === "owner" || user.role === "admin") &&
       <div className="w-full flex justify-center">
         <div className="flex flex-wrap justify-end gap-2 w-full max-w-[1750px] px-3">
+        {user.role === "owner" && task.status === "Finalizada" &&
+          <button type="button" onClick={approveTask} className="flex-1 sm:flex-auto card-btn-fill w-fit sm:max-w-52">
+            <LuCheck className="text-base"/>
+            Aprobar
+          </button>
+        }
           <button type="button" onClick={()=>setTaskForm(true)} className="flex-1 sm:flex-auto card-btn-fill w-fit sm:max-w-52">
             <LuPencil className="text-base"/>
             Editar
