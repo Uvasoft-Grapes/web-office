@@ -1,6 +1,6 @@
-import CheckboxInput from "@/src/shared/inputs/components/Checkbox";
-import DateInput from "@/src/shared/inputs/components/Date";
-import TimeInput from "@/src/shared/inputs/components/Time";
+import CheckboxInput from "@shared/inputs/components/Checkbox";
+import DateInput from "@shared/inputs/components/Date";
+import TimeInput from "@shared/inputs/components/Time";
 import { format, isMatch, parse } from "date-fns";
 import { es } from "date-fns/locale";
 import { useEffect, useState } from "react";

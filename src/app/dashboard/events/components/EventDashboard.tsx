@@ -12,7 +12,7 @@ import CustomBarChart from "@dashboard/charts/components/CustomBarChart";
 import CustomPieChart from "@dashboard/charts/components/CustomPieChart";
 import HeaderListTable from "@dashboard/tables/components/LatestListTable";
 import EventListTable from "@dashboard/tables/components/EventListTable";
-import { TypeEventsDashboardData } from "@/src/shared/utils/types";
+import { TypeEventsDashboardData } from "@shared/utils/types";
 
 const getRandomColor = () => {
   const hue = Math.floor(Math.random() * 360); // 0-360°

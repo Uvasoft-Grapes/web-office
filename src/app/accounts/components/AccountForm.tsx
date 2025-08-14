@@ -12,8 +12,8 @@ import DeleteAlert from "@shared/components/DeleteAlert";
 import AssignedSelect from "@shared/inputs/components/Assigned";
 import TextInput from "@shared/inputs/components/Text";
 import FolderSelect from "@folders/components/FolderSelect";
-import DropdownSelect from "@/src/shared/inputs/components/Dropdown";
-import { ACCOUNTS_TYPE } from "@/src/shared/utils/data";
+import DropdownSelect from "@shared/inputs/components/Dropdown";
+import { ACCOUNTS_TYPE } from "@shared/utils/data";
 
 export default function AccountForm({ values, refresh, }:{ values?:TypeAccount, refresh?:()=>void }) {
   const { user } = useAuth();

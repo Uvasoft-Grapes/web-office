@@ -3,7 +3,7 @@
 // @route DELETE /api/sessions/week/:week
 // @access Owner
 
-import { connectDB } from "@/src/config/db";
+import { connectDB } from "@config/db";
 import { verifyDeskToken, verifyOwnerToken } from "@shared/middlewares/authMiddleware";
 import SessionModel from "@sessions/models/Session";
 import { TypeDesk, TypeSession, TypeUser } from "@shared/utils/types";

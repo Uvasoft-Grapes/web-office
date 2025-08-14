@@ -12,11 +12,11 @@ import ThemeToggle from "@shared/components/ThemeSwitcher";
 import AppLayout from "@shared/layouts/AppLayout";
 import Modal from "@shared/components/Modal";
 import ProtectedRoute from "@app/ProtectedRoute";
-import DeskForm from "@domains/desks/components/DeskForm";
-import FormProfile from "@domains/users/components/UserForm";
-import Folders from "@domains/desks/folders/components/FolderList";
-import AvatarGroup from "@domains/users/components/AvatarGroup";
-import Categories from "@domains/desks/categories/components/CategoryList";
+import DeskForm from "@desks/components/DeskForm";
+import FormProfile from "@users/components/UserForm";
+import Folders from "@desks/folders/components/FolderList";
+import AvatarGroup from "@users/components/AvatarGroup";
+import Categories from "@desks/categories/components/CategoryList";
 
 export default function Profile() {
   const { user, desk, changeDesk } = useAuth();

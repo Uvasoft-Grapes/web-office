@@ -5,11 +5,11 @@ import { addThousandsSeparator } from "@shared/utils/helper";
 import AvatarGroup from "@users/components/AvatarGroup";
 import TabCard from "@tasks/components/TabCard";
 import { LuPencil, LuWalletCards } from "react-icons/lu";
-import Modal from "@/src/shared/components/Modal";
+import Modal from "@shared/components/Modal";
 import AccountForm from "./AccountForm";
 import { useState } from "react";
-import { ACCOUNTS_TYPE } from "@/src/shared/utils/data";
-import { useAuth } from "@/src/shared/context/AuthContext";
+import { ACCOUNTS_TYPE } from "@shared/utils/data";
+import { useAuth } from "@shared/context/AuthContext";
 
 export default function AccountCard({ account, refresh }:{ account:TypeAccount, refresh:()=>void }) {
   const { user } = useAuth();

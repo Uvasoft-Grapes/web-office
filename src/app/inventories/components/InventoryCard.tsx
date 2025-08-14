@@ -7,7 +7,7 @@ import Modal from "@shared/components/Modal";
 import AvatarGroup from "@users/components/AvatarGroup";
 import InventoryForm from "@inventories/components/InventoryForm";
 import Items from "@items/components/ItemList";
-import { useAuth } from "@/src/shared/context/AuthContext";
+import { useAuth } from "@shared/context/AuthContext";
 
 export default function InventoryCard({ inventory, refresh }:{ inventory:TypeInventory, refresh:()=>void }) {
   const { user } = useAuth();

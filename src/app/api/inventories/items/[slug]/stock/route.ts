@@ -1,4 +1,4 @@
-import { connectDB } from "@/src/config/db";
+import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken } from "@shared/middlewares/authMiddleware";
 import ItemModel from "@items/models/Item";
 import { TypeDesk, TypeUser } from "@shared/utils/types";
