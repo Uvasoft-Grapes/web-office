@@ -1,18 +1,18 @@
 "use client"
 
-import AppLayout from "@components/layouts/AppLayout";
+import AppLayout from "@shared/layouts/AppLayout";
 import ProtectedRoute from "@app/ProtectedRoute";
 import { LuCreditCard, LuDollarSign, LuMinus, LuPlus, LuShoppingCart, LuStore, LuTrash2, LuUser } from "react-icons/lu";
-import TextInput from "@/src/components/inputs/Text";
-import CategorySelect from "@/src/components/inputs/CategorySelect";
+import TextInput from "@shared/inputs/components/Text";
+import CategorySelect from "@shared/inputs/components/CategorySelect";
 import { ChangeEvent, useEffect, useState } from "react";
-import { TypeCategory, TypeProduct } from "@/src/utils/types";
-import axiosInstance from "@/src/utils/axiosInstance";
-import { API_PATHS } from "@/src/utils/apiPaths";
+import { TypeCategory, TypeProduct } from "@shared/utils/types";
+import axiosInstance from "@shared/utils/axiosInstance";
+import { API_PATHS } from "@shared/utils/apiPaths";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
-import ProductCard from "@/src/components/store/ProductCard";
-import Receipt from "@/src/components/store/Receipt";
+import ProductCard from "@/src/app/store/components/ProductCard";
+import Receipt from "@/src/app/store/components/Receipt";
 
 export default function Store() {
   const [search, setSearch] = useState("");
