@@ -4,34 +4,30 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
-import { LuCircleMinus, LuCirclePlus, LuFilter, LuSquarePen, LuWallet } from "react-icons/lu";
+import { LuCircleMinus, LuCirclePlus, LuFilter, LuWallet } from "react-icons/lu";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
-import { TypeAccount, TypeAssigned, TypeCategory } from "@utils/types";
-import axiosInstance from "@utils/axiosInstance";
-import { API_PATHS } from "@utils/apiPaths";
-import { getAvatars } from "@utils/avatars";
-import { addThousandsSeparator } from "@utils/helper";
-import { TRANSACTIONS_SORT_DATA, TRANSACTIONS_STATUS_DATA } from "@utils/data";
+import { TypeAccount, TypeAssigned, TypeCategory } from "@shared/utils/types";
+import axiosInstance from "@shared/utils/axiosInstance";
+import { API_PATHS } from "@shared/utils/apiPaths";
+import { getAvatars } from "@shared/utils/avatars";
+import { addThousandsSeparator } from "@shared/utils/helper";
+import { TRANSACTIONS_SORT_DATA, TRANSACTIONS_STATUS_DATA } from "@shared/utils/data";
+import AppLayout from "@shared/layouts/AppLayout";
+import Skeleton from "@shared/components/Skeleton";
+import Modal from "@shared/components/Modal";
+import DropdownSelect from "@shared/inputs/components/Dropdown";
+import CategorySelect from "@shared/inputs/components/CategorySelect";
 import ProtectedRoute from "@app/ProtectedRoute";
-import AppLayout from "@components/layouts/AppLayout";
-import AvatarGroup from "@components/users/AvatarGroup";
-import Modal from "@components/Modal";
-import TransactionForm from "@components/accounts/TransactionForm";
-import TabCard from "@components/tasks/TabCard";
-import DropdownSelect from "@components/inputs/Dropdown";
-import CategorySelect from "@components/inputs/CategorySelect";
-import Skeleton from "@components/Skeleton";
-import Transactions from "@/src/components/accounts/Transactions";
-import { useAuth } from "@/src/context/AuthContext";
-import AccountForm from "@/src/components/accounts/Form";
+import AvatarGroup from "@users/components/AvatarGroup";
+import TransactionForm from "@transactions/components/TransactionForm";
+import TabCard from "@tasks/components/TabCard";
+import Transactions from "@transactions/components/TransactionList";
 
 export default function AccountPage() {
-  const { user } = useAuth();
   const accountId = usePathname().split("/")[2];
 
   const [account, setAccount] = useState<TypeAccount|undefined>();
   const [selectedUsersAvatars, setSelectedUsersAvatars] = useState([]);
-  const [openForm, setOpenForm] = useState(false);
   const [incomeForm, setIncomeForm] = useState(false);
   const [expenseForm, setExpenseForm] = useState(false);
   const [type, setType] = useState<string|undefined>();
@@ -75,11 +71,6 @@ export default function AccountPage() {
     setSortForm(false);
   };
 
-  const refresh = () => {
-    fetchAccount();
-    setOpenForm(false);
-  };
-
   return(
     <ProtectedRoute>
       <AppLayout activeMenu="Cuentas">
@@ -92,11 +83,7 @@ export default function AccountPage() {
           :
             <>
             <div className="flex items-center gap-2">
-            {user?.role === "admin" || user?.role === "owner" ?
-              <button type="button" onClick={()=>setOpenForm(true)} className="text-primary-dark dark:text-primary-light hover:text-quaternary cursor-pointer duration-300"><LuSquarePen className="text-2xl"/></button>
-            :
               <LuWallet className="text-2xl"/>
-            }
               <h2 className="font-semibold text-3xl text-basic">{account?.title}</h2>
             </div>
             <div className="flex flex-col-reverse sm:flex-row sm:flex-wrap-reverse gap-2">
@@ -161,9 +148,6 @@ export default function AccountPage() {
             </div>
           </div>
         </section>
-        <Modal title="Editar Cuenta" isOpen={openForm} onClose={()=>setOpenForm(false)}>
-          {openForm && <AccountForm values={account} refresh={refresh}/>}
-        </Modal>
         <Modal title="Crear Ingreso" isOpen={incomeForm} onClose={()=>setIncomeForm(false)}>
           {account && incomeForm && <TransactionForm account={account._id} type="income" closeForm={()=>setIncomeForm(false)} refresh={fetchAccount}/>}
         </Modal>

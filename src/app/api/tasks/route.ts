@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { compareAsc, compareDesc } from "date-fns";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
-import { TypeDesk, TypeTaskStatusSummary, TypeTodo, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import TaskModel from "@tasks/models/Task";
+import { TypeDesk, TypeTaskStatusSummary, TypeTodo, TypeUser } from "@shared/utils/types";
 
 const statusManagement: Record<string, number> = {
   "Pendiente":1,
@@ -86,7 +86,8 @@ export async function GET(req:Request) {
     const pendingTasks = await TaskModel.countDocuments({ status:"Pendiente", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
     const inProgressTasks = await TaskModel.countDocuments({ status:"En curso", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
     const completedTasks = await TaskModel.countDocuments({ status:"Finalizada", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
-    const statusSummary:TypeTaskStatusSummary = { allTasks, pendingTasks, inProgressTasks, completedTasks };
+    const approveTasks = await TaskModel.countDocuments({ status:"Aprobada", desk:desk._id, ...(userToken.role !== "owner" && userToken.role !== "admin" && { assignedTo: userToken._id }) });
+    const statusSummary:TypeTaskStatusSummary = { allTasks, pendingTasks, inProgressTasks, completedTasks, approveTasks };
 
     return NextResponse.json({ tasks, statusSummary }, { status:200 });
   } catch (error) {

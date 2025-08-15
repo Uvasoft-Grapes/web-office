@@ -30,7 +30,7 @@
 }
 
 .input-label {
-  @apply font-medium text-sm text-tertiary-dark dark:text-tertiary-light;
+  @apply font-medium text-start text-sm text-tertiary-dark dark:text-tertiary-light;
 }
 
 .input-container {

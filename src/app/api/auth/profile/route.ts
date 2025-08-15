@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { parse } from 'cookie';
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import UserModel from "@models/User";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import UserModel from "@users/models/User";
 
 // @desc Get user profile
 // @route GET /api/auth/profile

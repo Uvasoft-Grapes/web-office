@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { compareAsc, compareDesc } from "date-fns";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import GoalModel from "@models/Goal";
-import { TypeDesk, TypeGoalStatusSummary, TypeObjective, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import GoalModel from "@goals/models/Goal";
+import { TypeDesk, TypeGoalStatusSummary, TypeObjective, TypeUser } from "@shared/utils/types";
 
 const statusManagement: Record<string, number> = {
   "Pendiente":1,

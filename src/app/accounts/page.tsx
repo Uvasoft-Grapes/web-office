@@ -4,17 +4,17 @@ import { useEffect, useState } from "react";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { LuPlus } from "react-icons/lu";
-import { useAuth } from "@context/AuthContext";
-import axiosInstance from "@utils/axiosInstance";
-import { API_PATHS } from "@utils/apiPaths";
-import { TypeAccount, TypeFolder } from "@utils/types";
+import { useAuth } from "@shared/context/AuthContext";
+import axiosInstance from "@shared/utils/axiosInstance";
+import { API_PATHS } from "@shared/utils/apiPaths";
+import { TypeAccount, TypeFolder } from "@shared/utils/types";
+import AppLayout from "@shared/layouts/AppLayout";
+import Skeleton from "@shared/components/Skeleton";
+import Modal from "@shared/components/Modal";
 import ProtectedRoute from "@app/ProtectedRoute";
-import AppLayout from "@components/layouts/AppLayout";
-import FolderSelect from "@components/folders/Select";
-import Skeleton from "@components/Skeleton";
-import Modal from "@components/Modal";
-import AccountForm from "@components/accounts/Form";
-import AccountCard from "@components/accounts/Card";
+import FolderSelect from "@folders/components/FolderSelect";
+import AccountForm from "@accounts/components/AccountForm";
+import AccountCard from "@accounts/components/AccountCard";
 
 export default function AccountsPage() {
   const { user } = useAuth();
@@ -88,6 +88,7 @@ export default function AccountsPage() {
             <AccountCard
               key={account._id}
               account={account}
+              refresh={fetchAccounts}
             />
           ))}
           </ul>

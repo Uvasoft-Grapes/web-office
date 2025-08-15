@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import { TypeDesk, TypeUser } from "@utils/types";
-import ProductModel from "@models/Product";
-import MovementModel from "@/src/models/Movements";
+import { verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import ProductModel from "@products/models/Product";
+import MovementModel from "@movements/models/Movements";
 
 const STATUSES = [
   "Pendiente",
@@ -41,7 +41,6 @@ export async function POST(req:Request) {
 //! Validations
     if(!productId) return NextResponse.json({ message:"Missing product" }, { status:400 });
     if(!type || !TYPES.includes(type)) return NextResponse.json({ message:"Missing type" }, { status:400 });
-    if(!category) return NextResponse.json({ message:"Missing category" }, { status:400 });
     if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
     if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
     if(!quantity) return NextResponse.json({ message:"Missing quantity" }, { status:400 });

@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from '@context/AuthContext';
-import { fontPoppins } from "@hooks/fonts";
-import { BRAND_NAME } from "@utils/data";
-// import { ThemeContext } from "../context/ThemeContext";
+import { AuthProvider } from '@shared/context/AuthContext';
+import { ThemeProvider } from "@shared/context/ThemeContext";
+import { fontPoppins } from "@shared/hooks/fonts";
+import { BRAND_NAME } from "@shared/utils/data";
 import "@app/globals.css";
-import { ThemeProvider } from "../context/ThemeContext";
 
 export const metadata: Metadata = {
   title:BRAND_NAME,

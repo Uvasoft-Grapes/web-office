@@ -1,16 +1,65 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
-import { isBefore, isSameMonth } from "date-fns";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import EventModel from "@models/Event";
-import { TypeDesk, TypeEvent, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import EventModel from "@events/models/Event";
+import { TypeAssigned, TypeDesk, TypeEvent, TypeUser } from "@shared/utils/types";
+import { addDays, addMonths, addWeeks, addYears, endOfDay, endOfMonth, isWithinInterval, startOfDay, startOfMonth } from "date-fns";
+import { ObjectId } from "mongodb";
+
+// Función auxiliar para expandir eventos recurrentes
+function expandRecurringEvent(event:TypeEvent, rangeStart:Date, rangeEnd:Date) {
+  const recurrence = event.recurrence;
+  const occurrences = [];
+
+  if (!recurrence || recurrence === 'none') return [event];
+
+  const start = new Date(event.start);
+  const end = new Date(event.end);
+  const recurrenceEnd = event.recurrenceEnd ? new Date(event.recurrenceEnd) : rangeEnd;
+
+  let currentStart = start;
+  let currentEnd = end;
+
+  while (currentStart <= rangeEnd && currentStart <= recurrenceEnd) {
+    if (isWithinInterval(currentStart, { start: rangeStart, end: rangeEnd })) {
+      occurrences.push({
+        ...event, // copia del documento de Mongoose
+        _id: new ObjectId().toString(), // nuevo ID para la instancia recurrente
+        start: new Date(currentStart),
+        end: new Date(currentEnd),
+        originalEventId: event._id,
+        isRecurringInstance: true,
+      });
+    }
+
+    switch (recurrence) {
+      case 'daily':
+        currentStart = addDays(currentStart, 1);
+        currentEnd = addDays(currentEnd, 1);
+        break;
+      case 'weekly':
+        currentStart = addWeeks(currentStart, 1);
+        currentEnd = addWeeks(currentEnd, 1);
+        break;
+      case 'monthly':
+        currentStart = addMonths(currentStart, 1);
+        currentEnd = addMonths(currentEnd, 1);
+        break;
+      case 'yearly':
+        currentStart = addYears(currentStart, 1);
+        currentEnd = addYears(currentEnd, 1);
+        break;
+    };
+  };
+  return occurrences;
+};
 
 // @desc Get all events
 // @route GET /api/events
-// @access Owner|Admin:all, User|Client:only assigned tasks
+// @access Owner|Admin:all, User|Client:only assigned events
 
-export async function GET(req:Request) {
+export async function GET(req: Request) {
   try {
     await connectDB();
     const cookieHeader = req.headers.get("cookie");
@@ -18,36 +67,83 @@ export async function GET(req:Request) {
     const authToken = cookies.authToken;
     const deskToken = cookies.deskToken;
 
-    const queries = req.url.split("?")[1]?.split("&");
-    const queryDate = queries.find(item => item.includes("date="))?.split("=")[1];
-    const queryFolder = queries.find(item => item.includes("folder="))?.split("=")[1];
+    const { searchParams } = new URL(req.url);
+    const rawMonth = parseInt(searchParams.get("month") || "");
+    const rawYear = parseInt(searchParams.get("year") || "");
+
+    // Validaciones
+    const isValidMonth = !isNaN(rawMonth) && rawMonth >= 1 && rawMonth <= 12;
+    const isValidYear = !isNaN(rawYear) && rawYear >= 2000 && rawYear <= 2100;
+
+    const today = new Date();
+    const year = isValidYear ? rawYear : today.getFullYear();
+    const month = isValidMonth ? rawMonth - 1 : today.getMonth(); // JS usa 0-11
+
+    const startDate = startOfMonth(new Date(year, month));
+    const endDate = endOfMonth(addMonths(new Date(year, month), 1)); // mes actual + siguiente
+
     const filter = {
-      date:queryDate ? decodeURIComponent(queryDate).replace("+", " ") : undefined,
-      folder:queryFolder ? decodeURIComponent(queryFolder).replace("+", " ") : undefined,
+      folder: searchParams.get("folder") || undefined,
+      startOfMonth: startDate,
+      endOfMonth: endDate,
     };
 
-//! Validate user token
-    const userToken:TypeUser|NextResponse = await verifyUserToken(authToken);
-    if(userToken instanceof NextResponse) return userToken;
+    // Validaciones
+    const userToken = await verifyUserToken(authToken);
+    if (userToken instanceof NextResponse) return userToken;
+    const desk = await verifyDeskToken(deskToken, userToken._id);
+    if (!desk) return NextResponse.json({ message: "Acceso denegado" }, { status: 403 });
 
-//! Validate desk token
-    const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
-    if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
+    let events = await EventModel.find({
+      desk: desk._id,
+      $or: [
+        // Eventos recurrentes activos que empezaron antes del fin del rango
+        {
+          recurrence: { $ne: "none" },
+          start: { $lte: filter.endOfMonth },
+          $or: [
+            { recurrenceEnd: { $exists: false } },
+            { recurrenceEnd: { $gte: filter.startOfMonth } },
+          ]
+        },
+        // Eventos normales
+        { start: { $gte: filter.startOfMonth, $lte: filter.endOfMonth } },
+        { end: { $gte: filter.startOfMonth, $lte: filter.endOfMonth } },
+        { start: { $lte: filter.startOfMonth }, end: { $gte: filter.endOfMonth } },
+      ]
+    })
+    .lean()
+    .populate("createdBy", "name email profileImageUrl")
+    .populate("assignedTo", "name email profileImageUrl")
+    .populate("folder", "title")
+    .sort({ start: 1 }) as unknown as TypeEvent[];
 
-//! All events
-    let events:TypeEvent[] = [];
-    if(userToken.role === "owner" || userToken.role === "admin") events = await EventModel.find({ desk:desk._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title").sort({ startDate:-1 });
-    if(userToken.role === "user" || userToken.role === "client") events = await EventModel.find({ desk:desk._id, assignedTo:userToken._id }).populate("assignedTo", "name email profileImageUrl").populate("folder", "title").sort({ startDate:1 });;
+    // Filtros por usuario y folder
+    if (userToken.role === "user" || userToken.role === "client") {
+      events = events.filter(event =>
+        event.assignedTo.some((user:TypeAssigned) => user._id.toString() === userToken._id.toString())
+      );
+    }
+    if (filter.folder) {
+      events = events.filter(event =>
+        event.folder && event.folder._id.toString() === filter.folder
+      );
+    }
 
-//! Filter events
-    const date = filter.date ? new Date(filter.date) : new Date();
-    events = events.filter(event => isSameMonth(new Date(event.startDate), date) || isSameMonth(new Date(event.endDate), date) || event.recurrence && isBefore(date, event.recurrence.endFrequency));
-    if(filter.folder) events = events.filter(event => event.folder._id.toString() === filter.folder);
+    // Expansión de eventos recurrentes
+    const expandedEvents = [];
+    for (const event of events) {
+      const occurrences = expandRecurringEvent(event, filter.startOfMonth, filter.endOfMonth);
+      expandedEvents.push(...occurrences);
+    };
 
-    return NextResponse.json(events, { status:200 });
+    // Reordenar eventos por fecha de inicio
+    expandedEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+
+    return NextResponse.json(expandedEvents, { status: 200 });
   } catch (error) {
     console.error("Error fetching events:", error);
-    return NextResponse.json({ message:"Server error", error }, { status:500 });
+    return NextResponse.json({ message: "Server error", error }, { status: 500 });
   };
 };
 
@@ -58,7 +154,17 @@ export async function GET(req:Request) {
 export async function POST(req:Request) {
   try {
     await connectDB();
-    const { folder, assignedTo, title, description, startDate, endDate, frequency, endFrequency } = await req.json();
+    const {
+      folder,
+      title,
+      description = '',
+      start,
+      end,
+      allDay = false,
+      recurrence = 'none',
+      recurrenceEnd,
+      assignedTo = [],
+    } = await req.json();
     const cookieHeader = req.headers.get("cookie");
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const authToken = cookies.authToken;
@@ -75,8 +181,8 @@ export async function POST(req:Request) {
 //! Validations
     if(!folder) return NextResponse.json({ message:"Folder required" }, { status:400 });
     if(!title) return NextResponse.json({ message:"Title required" }, { status:400 });
-    if(!startDate) return NextResponse.json({ message:"Start date required" }, { status:400 });
-    if(!endDate) return NextResponse.json({ message:"End date required" }, { status:400 });
+    if(!start) return NextResponse.json({ message:"Start date required" }, { status:400 });
+    if(!end) return NextResponse.json({ message:"End date required" }, { status:400 });
     if(!Array.isArray(assignedTo)) return NextResponse.json({ message:"AssignedTo must be an array of users IDs" }, { status:400 });
 
     const newEvent = await EventModel.create({
@@ -84,18 +190,17 @@ export async function POST(req:Request) {
       folder,
       title,
       description,
-      startDate,
-      endDate,
-      assignedTo,
-      recurrence:frequency !== "none" ? { frequency, endFrequency } : undefined,
+      start:allDay ? startOfDay(start) : start,
+      end:allDay ? endOfDay(end) : end,
+      allDay,
+      recurrence,
+      recurrenceEnd,
       createdBy:userToken._id,
+      assignedTo,
     });
     if(!newEvent) return NextResponse.json({ message:"Create event error"}, { status:500 });
 
-    const event = await EventModel.findById(newEvent._id).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
-    if(!event) return NextResponse.json({ message:"Task not found"}, { status:404 });
-
-    return NextResponse.json({ message:"Evento creado", event }, { status:201 });
+    return NextResponse.json({ message:"Evento creado" }, { status:201 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

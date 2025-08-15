@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
 import { parse } from 'cookie';
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyAdminToken, verifyDeskToken } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
-import DeskModel from "@models/Desk";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { verifyAdminToken, verifyDeskToken } from "@shared/middlewares/authMiddleware";
+import TaskModel from "@tasks/models/Task";
+import DeskModel from "@desks/models/Desk";
 
 const roleManagement:Record<string, number> = {
   "owner":1,

@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { parse, serialize } from 'cookie';
 import { connectDB } from '@config/db';
-import { TypeUser } from '@utils/types';
-import { verifyUserToken } from '@middlewares/authMiddleware';
-import SessionModel from '@models/Session';
+import { TypeUser } from '@shared/utils/types';
+import { verifyUserToken } from '@shared/middlewares/authMiddleware';
+import SessionModel from '@sessions/models/Session';
 
 const { NODE_ENV } =  process.env;
 

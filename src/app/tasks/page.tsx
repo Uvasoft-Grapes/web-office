@@ -4,25 +4,25 @@ import { useEffect, useState } from "react";
 import { LuPlus } from "react-icons/lu";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
 import { FaFilter } from "react-icons/fa6";
-import { useAuth } from "@context/AuthContext";
-import { API_PATHS } from "@utils/apiPaths";
-import axiosInstance from "@utils/axiosInstance";
-import { PRIORITY_DATA, TASKS_SORT_DATA, STATUS_DATA } from "@utils/data";
-import { TypeFolder, TypeTaskStatusSummary, TypeTask } from "@utils/types";
+import { useAuth } from "@shared/context/AuthContext";
+import { API_PATHS } from "@shared/utils/apiPaths";
+import axiosInstance from "@shared/utils/axiosInstance";
+import { PRIORITY_DATA, TASKS_SORT_DATA, STATUS_DATA } from "@shared/utils/data";
+import { TypeFolder, TypeTaskStatusSummary, TypeTask } from "@shared/utils/types";
+import AppLayout from "@shared/layouts/AppLayout";
+import Modal from "@shared/components/Modal";
+import Skeleton from "@shared/components/Skeleton";
+import SelectDropdown from "@shared/inputs/components/Dropdown";
 import ProtectedRoute from "@app/ProtectedRoute";
-import AppLayout from "@components/layouts/AppLayout";
-import TaskCard from "@components/tasks/Card";
-import Modal from "@components/Modal";
-import FormTask from "@components/tasks/Form";
-import SelectDropdown from "@components/inputs/Dropdown";
-import TabCard from "@components/tasks/TabCard";
-import FolderSelect from "@components/folders/Select";
-import Skeleton from "@components/Skeleton";
+import FolderSelect from "@folders/components/FolderSelect";
+import TaskCard from "@tasks/components/TaskCard";
+import FormTask from "@tasks/components/TaskForm";
+import TabCard from "@tasks/components/TabCard";
 
 export default function TasksPage() {
   const { user } = useAuth();
 
-  const [allTasks, setAllTasks] = useState<TypeTask[]|undefined>();
+  const [tasks, setTasks] = useState<TypeTask[]|undefined>();
   const [tabs, setTabs] = useState<{ label:string, count:number }[]|undefined>();
   const [openForm, setOpenForm] = useState(false);
   const [filterStatus, setFilterStatus] = useState<string|undefined>();
@@ -42,13 +42,17 @@ export default function TasksPage() {
           sort:`${sortLabel} ${sortType ? "(asc)" : "(desc)"}`,
         },
       });
-      setAllTasks(res.data.tasks.length > 0 ? res.data.tasks : []);
+      const approvedTasks = res.data.tasks.filter((task:TypeTask) => task.status === "Aprobada") || [];
+      const remainingTasks = res.data.tasks.filter((task:TypeTask) => task.status !== "Aprobada") || [];
+      setTasks([ ...remainingTasks, ...approvedTasks ]);
+
       const statusSummary:TypeTaskStatusSummary = res.data.statusSummary || { allTasks:0, pendingTasks:0, inProgressTasks:0, completedTasks:0 };
       const statusArray = [
         // { label:"Todas", count:statusSummary.allTasks || 0 },
         { label:"Pendientes", count:statusSummary.pendingTasks || 0 },
         { label:"En curso", count:statusSummary.inProgressTasks || 0 },
-        { label:"Finalizadas", count:statusSummary.completedTasks || 0 }
+        { label:"Finalizadas", count:statusSummary.completedTasks || 0 },
+        { label:"Aprobadas", count:statusSummary.approveTasks || 0 }
       ];
       setTabs(statusArray);
     } catch (error) {
@@ -62,17 +66,17 @@ export default function TasksPage() {
   },[filterStatus, filterPriority, filterFolder, sortLabel, sortType]);
 
   const handleFilterStatus = (value:string|undefined) => {
-    setAllTasks(undefined);
+    setTasks(undefined);
     setFilterStatus(value);
   };
 
   const handleFilterPriority = (value:string|undefined) => {
-    setAllTasks(undefined);
+    setTasks(undefined);
     setFilterPriority(value);
   };
 
   const handleFilterFolder = (value:TypeFolder|undefined) => {
-    setAllTasks(undefined);
+    setTasks(undefined);
     setFilterFolder(value);
   };
 
@@ -106,17 +110,17 @@ export default function TasksPage() {
 {/* Filters */}
           <section className="flex flex-wrap justify-end gap-2 min-w-full md:min-w-fit">
             <div className="flex-1 min-w-48 ">
-              <SelectDropdown disabled={!allTasks ? true : false} options={[{ label:"Todos", value:"" }, ...STATUS_DATA]} defaultValue="" icon={<FaFilter className="text-lg"/>} placeholder="Estado" handleValue={handleFilterStatus}/>
+              <SelectDropdown disabled={!tasks ? true : false} options={[{ label:"Todos", value:"" }, ...STATUS_DATA]} defaultValue="" icon={<FaFilter className="text-lg"/>} placeholder="Estado" handleValue={handleFilterStatus}/>
             </div>
             <div className="flex-1 min-w-48 ">
-              <SelectDropdown disabled={!allTasks ? true : false} options={[{ label:"Todas", value:"" }, ...PRIORITY_DATA]} defaultValue="" icon={<FaFilter className="text-lg"/>} placeholder="Prioridad" handleValue={handleFilterPriority}/>
+              <SelectDropdown disabled={!tasks ? true : false} options={[{ label:"Todas", value:"" }, ...PRIORITY_DATA]} defaultValue="" icon={<FaFilter className="text-lg"/>} placeholder="Prioridad" handleValue={handleFilterPriority}/>
             </div>
             <div className="flex-1 min-w-48 ">
-              <FolderSelect disabled={!allTasks ? true : false} selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
+              <FolderSelect disabled={!tasks ? true : false} selectedFolder={filterFolder} setSelectedFolder={handleFilterFolder}/>
             </div>
           </section>
 {/* Loading */}
-        {allTasks === undefined &&
+        {tasks === undefined &&
           <section className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
           {[1,2].map((i) => (
             <div key={`card-${i}`} className="flex min-h-56 md:min-h-64 min-w-full">
@@ -126,9 +130,9 @@ export default function TasksPage() {
           </section>
         }
 {/* There are tasks */}
-        {allTasks && allTasks?.length > 0 &&
+        {tasks && tasks?.length > 0 &&
           <ul className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-4">
-          {allTasks.map((task) => (
+          {tasks.map((task) => (
             <TaskCard
               key={task._id}
               task={task}
@@ -138,7 +142,7 @@ export default function TasksPage() {
           </ul>
         }
 {/* There are no tasks */}
-        {allTasks && allTasks.length < 1 &&
+        {tasks && tasks.length < 1 &&
           <section className="flex-1 flex items-center justify-center">
             <p className="font-semibold text-2xl text-quaternary">No hay tareas</p>
           </section>

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@middlewares/authMiddleware";
-import { TypeDesk, TypeUser } from "@utils/types";
-import MovementModel from "@/src/models/Movements";
-import ProductModel from "@/src/models/Product";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken } from "@shared/middlewares/authMiddleware";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import MovementModel from "@movements/models/Movements";
+import ProductModel from "@products/models/Product";
 
 const STATUSES = [
   "Pendiente",
@@ -36,7 +36,6 @@ export async function PUT(req:NextRequest) {
 
 //! Validations
     if(!movementId) return NextResponse.json({ message:"Missing movement" }, { status:400 });
-    if(!category) return NextResponse.json({ message:"Missing category" }, { status:400 });
     if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
     if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
     if(description.trim().length > 600) return NextResponse.json({ message:"La descripción puede tener un máximo de 600 caracteres." }, { status:400 });

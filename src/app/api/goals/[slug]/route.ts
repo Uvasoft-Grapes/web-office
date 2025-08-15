@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import GoalModel from "@models/Goal";
-import { TypeDesk, TypeObjective, TypeUser } from "@utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import GoalModel from "@goals/models/Goal";
+import { TypeDesk, TypeObjective, TypeUser } from "@shared/utils/types";
 
 // @desc Get goal by ID
 // @route GET /api/goals/:id

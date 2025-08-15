@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import AccountModel from "@models/Account";
-import TransactionModel from "@models/Transaction";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import AccountModel from "@accounts/models/Account";
+import TransactionModel from "@transactions/models/Transaction";
 import { compareAsc, compareDesc } from "date-fns";
 
 const statusManagement: Record<string, number> = {
@@ -81,15 +81,11 @@ export async function PUT(req:NextRequest) {
   try {
     await connectDB();
     const accountId = req.url.split("/")[5].split("?")[0];
-    const { folder, title, assignedTo } = await req.json();
+    const { folder, title, type, assignedTo } = await req.json();
     const cookieHeader = req.headers.get("cookie");
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const authToken = cookies.authToken;
     const deskToken = cookies.deskToken;
-
-//! Validations
-    if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
-    if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
 
 //! Validate user token
     const userToken:TypeUser|NextResponse = await verifyAdminToken(authToken);
@@ -99,26 +95,29 @@ export async function PUT(req:NextRequest) {
     const desk:TypeDesk|undefined = await verifyDeskToken(deskToken, userToken._id);
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
-//! Update Task
+//! Validations
+    if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
+    if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
+    if(!type) return NextResponse.json({ message:"Selecciona un tipo de cuenta" }, { status:400 });
+    if(!folder) return NextResponse.json({ message:"Selecciona una carpeta" }, { status:400 });
+    if(!Array.isArray(assignedTo)) return NextResponse.json({ message:"AssignedTo must be an array of users IDs" }, { status:400 });
+
+//! Update Account
     const newAccount = await AccountModel.findById(accountId);
     if(!newAccount) return NextResponse.json({ message:"Account not found" }, { status:404 });
 
     newAccount.folder = folder || newAccount.folder;
     newAccount.title = title || newAccount.title;
-    if(assignedTo) {
-      if(!Array.isArray(assignedTo)) return NextResponse.json(
-        { message:"AssignedTo must be an array of user IDs" },
-        { status:400 });
-        newAccount.assignedTo = assignedTo;
-    };
-
+    newAccount.type = type || newAccount.type;
+    newAccount.assignedTo = assignedTo;
+console.log(newAccount)
     await newAccount.save();
 
 //! Populate task
     const account = await AccountModel.findById(accountId).populate("assignedTo", "name email profileImageUrl").populate("folder", "title");
     if(!account) return NextResponse.json({ message:"Account not found" }, { status:404 });
 
-    return NextResponse.json({ message:"Cuenta actualizada", account }, { status:201 });
+    return NextResponse.json({ message:"Cuenta actualizada" }, { status:200 });
   } catch (error) {
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };

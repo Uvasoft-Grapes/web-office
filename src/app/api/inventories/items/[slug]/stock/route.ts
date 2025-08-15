@@ -1,7 +1,7 @@
-import { connectDB } from "@/src/config/db";
-import { verifyAdminToken, verifyDeskToken } from "@/src/middlewares/authMiddleware";
-import ItemModel from "@/src/models/Item";
-import { TypeDesk, TypeUser } from "@/src/utils/types";
+import { connectDB } from "@config/db";
+import { verifyAdminToken, verifyDeskToken } from "@shared/middlewares/authMiddleware";
+import ItemModel from "@items/models/Item";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
 import { parse } from "cookie";
 import { NextRequest, NextResponse } from "next/server";
 

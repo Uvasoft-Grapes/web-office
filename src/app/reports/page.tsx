@@ -5,17 +5,17 @@ import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import { LuPlus } from "react-icons/lu";
 import { HiSortAscending, HiSortDescending } from "react-icons/hi";
-import { TypeFolder, TypeReport } from "@utils/types";
-import axiosInstance from "@utils/axiosInstance";
-import { API_PATHS } from "@utils/apiPaths";
-import { REPORTS_SORT_DATA } from "@utils/data";
+import { TypeFolder, TypeReport } from "@shared/utils/types";
+import axiosInstance from "@shared/utils/axiosInstance";
+import { API_PATHS } from "@shared/utils/apiPaths";
+import { REPORTS_SORT_DATA } from "@shared/utils/data";
+import AppLayout from "@shared/layouts/AppLayout";
+import Skeleton from "@shared/components/Skeleton";
+import Modal from "@shared/components/Modal";
 import ProtectedRoute from "@app/ProtectedRoute";
-import AppLayout from "@components/layouts/AppLayout";
-import Skeleton from "@components/Skeleton";
-import Modal from "@components/Modal";
-import ReportForm from "@components/reports/Form";
-import Report from "@components/reports/Report";
-import FolderSelect from "@components/folders/Select";
+import FolderSelect from "@folders/components/FolderSelect";
+import ReportForm from "@reports/components/ReportForm";
+import Report from "@reports/components/ReportCard";
 
 export default function ReportsPage() {
   const [reports, setReports] = useState<TypeReport[]|undefined>();

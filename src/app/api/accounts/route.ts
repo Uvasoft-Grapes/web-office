@@ -1,21 +1,10 @@
 import { NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@middlewares/authMiddleware";
-import AccountModel from "@models/Account";
-import TransactionModel from "@models/Transaction";
-import { TypeDesk, TypeUser } from "@utils/types";
-
-// const statusManagement: Record<string, number> = {
-//   "Pendiente": 1,
-//   "Finalizado": 2,
-//   "Cancelado":3
-// };
-
-// const typeManagement: Record<string, number> = {
-//   "income": 1,
-//   "expense": 2,
-// };
+import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import AccountModel from "@accounts/models/Account";
+import TransactionModel from "@transactions/models/Transaction";
+import { TypeDesk, TypeUser } from "@shared/utils/types";
 
 // @desc Get all accounts
 // @route GET /api/accounts
@@ -74,7 +63,7 @@ export async function GET(req:Request) {
 export async function POST(req:Request) {
   try {
     await connectDB();
-    const { folder, title, assignedTo } = await req.json();
+    const { folder, title, type, assignedTo } = await req.json();
     const cookieHeader = req.headers.get("cookie");
     const cookies = cookieHeader ? parse(cookieHeader) : {};
     const authToken = cookies.authToken;
@@ -89,12 +78,17 @@ export async function POST(req:Request) {
     if(!desk) return NextResponse.json({ message:"Acceso denegado" }, { status:403 });
 
 //! Validations
+    if(!title.trim()) return NextResponse.json({ message:"El título debe tener al menos 1 carácter." }, { status:400 });
+    if(title.trim().length > 200) return NextResponse.json({ message:"El título puede tener un máximo de 200 caracteres." }, { status:400 });
+    if(!type) return NextResponse.json({ message:"Selecciona un tipo de cuenta" }, { status:400 });
+    if(!folder) return NextResponse.json({ message:"Selecciona una carpeta" }, { status:400 });
     if(!Array.isArray(assignedTo)) return NextResponse.json({ message:"AssignedTo must be an array of users IDs" }, { status:400 });
 
     const newAccount = await AccountModel.create({
       desk:desk._id,
       folder,
-      title,
+      title:title.trim(),
+      type,
       assignedTo,
     });
     if(!newAccount) return NextResponse.json({ message:"Create account error"}, { status:500 });

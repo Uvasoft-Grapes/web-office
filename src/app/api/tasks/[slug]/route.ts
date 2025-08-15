@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { parse } from "cookie";
 import { connectDB } from "@config/db";
-import { TypeDesk, TypeUser } from "@utils/types";
-import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@middlewares/authMiddleware";
-import TaskModel from "@models/Task";
+import { TypeDesk, TypeTodo, TypeUser } from "@shared/utils/types";
+import { verifyAdminToken, verifyDeskToken, verifyOwnerToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
+import TaskModel from "@tasks/models/Task";
 
 // @desc Get task by ID
 // @route GET /api/tasks/:id
@@ -68,6 +68,19 @@ export async function PUT(req:NextRequest) {
     const task = await TaskModel.findById(taskId);
     if(!task) return NextResponse.json({ message:"Task not found" }, { status:404 });
 
+//! Update progress
+    const totalCount = todoChecklist.length;
+    const completedCount = todoChecklist.filter((item:TypeTodo) => item.completed).length;
+    const progress = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
+
+//! Update status
+    let status = task.status;
+    if(progress <= 0) status = "Pendiente";
+    if(progress > 0) status = "En curso";
+    if(progress === 100 && status !== "Aprobada") status = "Finalizada";
+
+    task.progress = progress || task.progress;
+    task.status = status || task.status;
     task.folder = folder || task.folder;
     task.title = title || task.title;
     task.description = description || task.description;

@@ -3,10 +3,10 @@
 // @route DELETE /api/sessions/week/:week
 // @access Owner
 
-import { connectDB } from "@/src/config/db";
-import { verifyDeskToken, verifyOwnerToken } from "@/src/middlewares/authMiddleware";
-import SessionModel from "@/src/models/Session";
-import { TypeDesk, TypeSession, TypeUser } from "@/src/utils/types";
+import { connectDB } from "@config/db";
+import { verifyDeskToken, verifyOwnerToken } from "@shared/middlewares/authMiddleware";
+import SessionModel from "@sessions/models/Session";
+import { TypeDesk, TypeSession, TypeUser } from "@shared/utils/types";
 import { parse } from "cookie";
 import { endOfWeek, format, startOfWeek } from "date-fns";
 import { es } from "date-fns/locale";
