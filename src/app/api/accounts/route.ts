@@ -19,7 +19,7 @@ export async function GET(req:Request) {
     const deskToken = cookies.deskToken;
 
     const queries = req.url.split("?")[1]?.split("&");
-    const queryFolder = queries.find(item => item.includes("folder="))?.split("=")[1];
+    const queryFolder = queries && queries.find(item => item.includes("folder="))?.split("=")[1];
     const filter = {
       folder:queryFolder ? decodeURIComponent(queryFolder).replace("+", " ") : undefined,
     };
@@ -52,6 +52,7 @@ export async function GET(req:Request) {
 
     return NextResponse.json(accounts, { status:200 });
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message:"Server error", error }, { status:500 });
   };
 };

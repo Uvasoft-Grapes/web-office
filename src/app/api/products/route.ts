@@ -3,7 +3,7 @@ import { parse } from "cookie";
 import { connectDB } from "@config/db";
 import { verifyAdminToken, verifyDeskToken, verifyUserToken } from "@shared/middlewares/authMiddleware";
 import ProductModel from "@products/models/Product";
-import { TypeDesk, TypeUser } from "@shared/utils/types";
+import { TypeDesk, TypeProduct, TypeUser } from "@shared/utils/types";
 import MovementModel from "@movements/models/Movements";
 import { PRODUCT_PICTURE } from "@shared/utils/data";
 import { uploadImageToCloudinary } from "@shared/lib/cloudinaryUpload";
@@ -41,18 +41,20 @@ export async function GET(req:Request) {
 
 //! All products
     let products = await ProductModel.find({ desk:desk._id }).populate("category");
-console.log(products);
+
 //! Filter products
-    if(filter.title) products = products.filter(product => product.title.toLowercase().includes(filter.title));
-    if(filter.category) products = products.filter(product => product.category._id.toString() === filter.category);
+    if(filter.title) products = products.filter(product => product.title.toLowerCase().includes(filter.title?.toLowerCase()));
+    console.log(filter.category)
+    if(filter.category === "null") products = products.filter(product => !product.category);
+    if(filter.category && filter.category !== "null") products = products.filter(product => product.category && product.category._id.toString() === filter.category);
 
 //! Sort Products
-    if(sort === "Título (asc)") products = products.sort((a, b) => a.title.localeCompare(b.title));
-    if(sort === "Título (desc)") products = products.sort((a, b) => b.title.localeCompare(a.title));
-    if(sort === "Precio (asc)") products = products.sort((a, b) => a.price - b.price);
-    if(sort === "Precio (desc)") products = products.sort((a, b) => b.price - a.price);
-    if(sort === "Stock (asc)") products = products.sort((a, b) => a.stock - b.stock);
-    if(sort === "Stock (desc)") products = products.sort((a, b) => b.stock - a.stock);
+    if(sort === "Título (asc)") products = products.sort((a:TypeProduct, b:TypeProduct) => a.title.localeCompare(b.title));
+    if(sort === "Título (desc)") products = products.sort((a:TypeProduct, b:TypeProduct) => b.title.localeCompare(a.title));
+    if(sort === "Precio (asc)") products = products.sort((a:TypeProduct, b:TypeProduct) => a.price - b.price);
+    if(sort === "Precio (desc)") products = products.sort((a:TypeProduct, b:TypeProduct) => b.price - a.price);
+    if(sort === "Stock (asc)") products = products.sort((a:TypeProduct, b:TypeProduct) => a.stock - b.stock);
+    if(sort === "Stock (desc)") products = products.sort((a:TypeProduct, b:TypeProduct) => b.stock - a.stock);
 
 //! Add movements
     products = await Promise.all(products.map(async (product) => {

@@ -23,6 +23,34 @@
   }
 }
 
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #receipt, #receipt * {
+    visibility: visible;
+  }
+
+  #receipt {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    background: white;
+    box-shadow: none;
+  }
+}
+
+
 /*! Inputs */
 
 .input-label-container {
@@ -66,10 +94,10 @@
   @apply flex justify-center items-center gap-1.5 w-full px-3 min-h-12 rounded-md font-medium text-primary-dark dark:text-primary-light bg-secondary-light dark:bg-secondary-dark focus-within:bg-primary-light dark:focus-within:bg-primary-dark border border-tertiary-light dark:border-tertiary-dark cursor-pointer disabled:cursor-not-allowed duration-300;
 }
 .card-btn-fill {
-  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent dark:hover:bg-transparent cursor-pointer duration-300;
+  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-primary-dark dark:hover:text-primary-light bg-primary-dark dark:bg-primary-light hover:bg-transparent dark:hover:bg-transparent cursor-pointer disabled:cursor-not-allowed duration-300;
 }
 .card-btn-red {
-  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-red-light hover:dark:text-red-dark bg-red-light dark:bg-red-dark hover:bg-transparent dark:hover:bg-transparent cursor-pointer duration-300;
+  @apply flex items-center justify-center gap-1.5 px-4 py-3.5 rounded-lg text-nowrap font-semibold text-xs sm:text-sm text-primary-light dark:text-primary-dark hover:text-red-light hover:dark:text-red-dark bg-red-light dark:bg-red-dark hover:bg-transparent dark:hover:bg-transparent cursor-pointer disabled:cursor-not-allowed duration-300;
 }
 
 .form-card {

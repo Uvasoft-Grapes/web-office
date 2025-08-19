@@ -303,3 +303,8 @@ export interface TypeGoalStatusSummary {
   inProgress:number;
   completed:number;
 }
+
+export interface TypeOption { 
+  label:string;
+  value:string; 
+}

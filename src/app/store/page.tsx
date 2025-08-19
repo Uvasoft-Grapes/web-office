@@ -2,21 +2,24 @@
 
 import AppLayout from "@shared/layouts/AppLayout";
 import ProtectedRoute from "@app/ProtectedRoute";
-import { LuCreditCard, LuDollarSign, LuMinus, LuPlus, LuShoppingCart, LuStore, LuTrash2, LuUser } from "react-icons/lu";
+import { LuMinus, LuPlus, LuReceiptText, LuShoppingCart, LuStore, LuTrash2, LuUser, LuWalletMinimal } from "react-icons/lu";
 import TextInput from "@shared/inputs/components/Text";
 import CategorySelect from "@shared/inputs/components/CategorySelect";
 import { ChangeEvent, useEffect, useState } from "react";
-import { TypeCategory, TypeProduct } from "@shared/utils/types";
+import { TypeAccount, TypeCategory, TypeProduct } from "@shared/utils/types";
 import axiosInstance from "@shared/utils/axiosInstance";
 import { API_PATHS } from "@shared/utils/apiPaths";
 import { isAxiosError } from "axios";
 import toast from "react-hot-toast";
 import ProductCard from "@/src/app/store/components/ProductCard";
 import Receipt from "@/src/app/store/components/Receipt";
+import DropdownSelect from "@/src/shared/inputs/components/Dropdown";
 
 export default function Store() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<TypeCategory|undefined>();
+  const [accounts, setAccounts] = useState<{ label:string, value:string }[]>();
+  const [accountId, setAccountId] = useState<string|undefined>();
   const [products, setProducts] = useState<TypeProduct[]|undefined>();
   const [name, setName] = useState("");
   const [cart, setCart] = useState<{ product:TypeProduct, quantity:number }[]>([]);
@@ -27,7 +30,7 @@ export default function Store() {
       const res = await axiosInstance.get(API_PATHS.PRODUCTS.GET_ALL_PRODUCTS, {
         params:{
           title:search,
-          category,
+          category:category?._id,
         }
       });
       if(res.status === 200) {
@@ -43,7 +46,22 @@ export default function Store() {
     };
   };
 
+  const fetchAccounts = async () => {
+    try {
+      const res = await axiosInstance.get(API_PATHS.ACCOUNTS.GET_ALL_ACCOUNTS);
+      if(res.status === 200) setAccounts(res.data.map((item:TypeAccount) => ({ label:item.title, value:item._id })));
+    } catch (error) {
+      if(!isAxiosError(error)) return console.error("Error fetching products:", error);
+      if(error.response && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      };
+    }
+  };
+
   useEffect(()=>{
+    fetchAccounts();
     fetchProducts();
   },[category, search]);
 
@@ -85,6 +103,18 @@ export default function Store() {
     return total;
   };
 
+  const handleConfirm = () => {
+    setSearch("");
+    setCategory(undefined);
+    fetchProducts();
+    clearCart();
+    const inputSearch = document.getElementById("search");
+    if(inputSearch instanceof HTMLInputElement) inputSearch.value = '';
+    const inputCustomer = document.getElementById("customer");
+    if(inputCustomer instanceof HTMLInputElement) inputCustomer.value = '';
+    setReceipt(false);
+  };
+
   return(
     <ProtectedRoute>
       <AppLayout activeMenu="Punto de venta">
@@ -109,6 +139,30 @@ export default function Store() {
             </div>
           </section>
           <section className="flex flex-col gap-4 lg:w-1/3">
+            <div className="card flex flex-col gap-4">
+              <h2 className="font-semibold text-2xl text-primary-dark dark:text-primary-light">Resumen</h2>
+              <p className="flex items-center justify-between text-sm text-quaternary pb-2 border-b border-secondary-light dark:border-secondary-dark">
+                <span>Productos:</span>
+                <span>{getProductsQuantity()}</span>
+              </p>
+              <p className="flex items-center justify-between font-semibold text-lg text-primary-dark dark:text-primary-light">
+                <span>Total:</span>
+                <span>${getTotal()}</span>
+              </p>
+              <div className="flex gap-2">
+                <button onClick={accountId ? ()=>setReceipt(true) : ()=>{}} disabled={!accountId} className="flex-1 card-btn-fill">
+                  <LuReceiptText className="text-lg"/>
+                  Recibo
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="flex-1 flex items-center gap-0.5 text-primary-dark dark:text-primary-light">
+                <LuWalletMinimal className="text-2xl"/>
+                <h2 className="font-semibold text-xl">Cuenta</h2>
+              </span>
+              <DropdownSelect placeholder="Seleccionar cuenta" options={accounts || []} handleValue={setAccountId}/>
+            </div>
             <div className="card flex flex-col gap-1">
               <span className="flex-1 flex items-center gap-0.5 text-primary-dark dark:text-primary-light">
                 <LuUser className="text-2xl"/>
@@ -122,28 +176,28 @@ export default function Store() {
                   <LuShoppingCart className="text-2xl"/>
                   <h2 className="font-semibold text-xl">Carrito</h2>
                 </span>
-                <button type="button" onClick={clearCart} className="card-btn-red">
-                  <LuTrash2 className="text-lg"/>
+                <button type="button" onClick={clearCart} className="mr-2 text-quaternary hover:text-red-light dark:hover:text-red-dark cursor-pointer duration-300">
+                  <LuTrash2 className="text-xl"/>
                 </button>
               </div>
-              <ul className="flex flex-col gap-2 h-80 overflow-y-auto">
+              <ul className="flex flex-col gap-2 min-h-24 max-h-72 overflow-y-auto">
                 {cart.length < 1 ?
                   <div className="flex-1 flex items-center justify-center font-semibold text-xl text-quaternary">
                     <p>No hay productos</p>
                   </div>
                 :
                 cart.map((cartProduct) => (
-                  <li key={cartProduct.product._id} className="flex flex-wrap gap-2 p-4 rounded-md border border-secondary-light dark:border-tertiary-dark">
+                  <li key={cartProduct.product._id} className="flex flex-wrap gap-2 p-4 rounded-md border border-secondary-light dark:border-tertiary-dark bg-secondary-light dark:bg-secondary-dark">
                     <div className="flex-1 flex flex-col gap-1 font-semibold text-primary-dark dark:text-primary-light">
-                      <p className="text-lg line-clamp-3">{cartProduct.product.title}</p>
-                      <span className="text-xs">${cartProduct.product.price * cartProduct.quantity}</span>
+                      <p className="text-sm line-clamp-3">{cartProduct.product.title}</p>
+                      <span className="text-xs text-quaternary">${cartProduct.product.price * cartProduct.quantity}</span>
                     </div>
                     <div className="flex-1 flex gap-2 max-w-60 font-semibold text-sm text-primary-dark dark:text-primary-light">
-                      <button type="button"  onClick={()=>updateQuantity(cartProduct.product._id, cartProduct.quantity - 1)} className="flex items-center justify-center size-10 lg:size-12 rounded-md border border-secondary-light dark:border-secondary-dark hover:bg-secondary-light dark:hover:bg-secondary-dark duration-300">
+                      <button type="button" onClick={()=>updateQuantity(cartProduct.product._id, cartProduct.quantity - 1)} className="flex items-center justify-center size-10 lg:size-12 rounded-md border border-secondary-light dark:border-secondary-dark hover:bg-tertiary-light dark:hover:bg-tertiary-dark duration-300">
                         <LuMinus className="text-base lg:text-lg"/>
                       </button>
                       <span className="flex-1 flex items-center justify-center size-10 lg:size-12 rounded-md border border-secondary-light dark:border-secondary-dark">{cartProduct.quantity}</span>
-                      <button type="button" onClick={()=>updateQuantity(cartProduct.product._id, cartProduct.quantity + 1)} className="flex items-center justify-center size-10 lg:size-12 rounded-md border border-secondary-light dark:border-secondary-dark hover:bg-secondary-light dark:hover:bg-secondary-dark duration-300">
+                      <button type="button" onClick={()=>updateQuantity(cartProduct.product._id, cartProduct.quantity + 1)} className="flex items-center justify-center size-10 lg:size-12 rounded-md border border-secondary-light dark:border-secondary-dark hover:bg-tertiary-light dark:hover:bg-tertiary-dark duration-300">
                         <LuPlus className="text-base lg:text-lg"/>
                       </button>
                       <button type="button" onClick={()=>removeFromCart(cartProduct.product._id)} className="card-btn-red size-10 lg:size-12">
@@ -154,29 +208,8 @@ export default function Store() {
                 ))}
               </ul>
             </div>
-            <div className="card flex flex-col gap-4">
-              <h2 className="font-semibold text-2xl text-primary-dark dark:text-primary-light">Pagar</h2>
-              <p className="flex items-center justify-between text-sm text-quaternary pb-2 border-b border-secondary-light dark:border-secondary-dark">
-                <span>Productos:</span>
-                <span>{getProductsQuantity()}</span>
-              </p>
-              <p className="flex items-center justify-between font-semibold text-lg text-primary-dark dark:text-primary-light">
-                <span>Total:</span>
-                <span>${getTotal()}</span>
-              </p>
-              <div className="flex gap-2">
-                <button onClick={()=>setReceipt(true)} className="flex-1 card-btn-fill">
-                  <LuDollarSign className="text-xl"/>
-                  Efectivo
-                </button>
-                <button onClick={()=>setReceipt(true)} className="flex-1 card-btn-fill">
-                  <LuCreditCard className="text-xl"/>
-                  Tarjeta
-                </button>
-              </div>
-            </div>
           </section>
-          {receipt && <Receipt name={name} cart={cart} total={getTotal()} close={()=>setReceipt(false)}/>}
+          {receipt && <Receipt accountId={accountId} name={name} cart={cart} total={getTotal()} close={()=>setReceipt(false)} confirm={handleConfirm}/>}
         </div>
       </AppLayout>
     </ProtectedRoute>

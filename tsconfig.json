@@ -41,6 +41,7 @@
       "@tasks/*": ["./src/app/tasks/*"],
       "@members/*": ["./src/app/members/*"],
         "@sessions/*": ["./src/app/members/sessions/*"],
+      "@store/*": ["./src/app/store/*"],
 //! Shared
       "@shared/*": ["./src/shared/*"],
       "@desks/*": ["./src/shared/desks/*"],

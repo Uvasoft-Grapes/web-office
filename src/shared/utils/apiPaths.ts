@@ -125,4 +125,8 @@ export const API_PATHS = {
     UPDATE_OBJECTIVES:(goalId:string) => `/api/goals/${goalId}/objectives`, // Auth Token required
     DELETE_GOAL:(goalId:string) => `/api/goals/${goalId}`, // Admin Token required
   },
+
+  STORE:{
+    CONFIRM_SALE:"/api/store"
+  },
 };

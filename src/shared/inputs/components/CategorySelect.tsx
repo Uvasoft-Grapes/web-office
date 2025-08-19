@@ -37,7 +37,7 @@ export default function CategorySelect({ disabled, label, type, currentCategory,
   useEffect(() => {
     fetchCategories();
     return () => {};
-  },[]);
+  },[currentCategory]);
 
   const handleCategory = (index:number|undefined) => {
     if(categories === undefined) return;
