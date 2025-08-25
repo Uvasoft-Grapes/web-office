@@ -42,20 +42,20 @@ export async function PUT(req:NextRequest) {
     if(!quantity) return NextResponse.json({ message:"Missing quantity" }, { status:400 });
     if(!status || !STATUSES.includes(status)) return NextResponse.json({ message:"Missing status" }, { status:400 });
 
-//! Update Transaction
+//! Update Movement
     const currentMovement = await MovementModel.findById(movementId).populate("createdBy", "name email profileImageUrl");
     if(!currentMovement) return NextResponse.json({ message:"Movement not found" }, { status:404 });
 
     if(currentMovement.status !== "Finalizado" && status === "Finalizado") {
-      const updatedProduct = await ProductModel.findByIdAndUpdate(currentMovement.product, { $inc:{ balance:currentMovement.type === "inflow" ? quantity : -quantity }, }, { new:true });
+      const updatedProduct = await ProductModel.findByIdAndUpdate(currentMovement.product, { $inc:{ stock:currentMovement.type === "inflow" ? quantity : -quantity }, }, { new:true });
       if(!updatedProduct) return NextResponse.json({ message:"Product not found"}, { status:404 });
     } else if(currentMovement.status === "Finalizado" && status !== "Finalizado") {
-      const updatedProduct = await ProductModel.findByIdAndUpdate(currentMovement.product, { $inc:{ balance:currentMovement.type === "inflow" ? -currentMovement.quantity : currentMovement.quantity }, }, { new:true });
+      const updatedProduct = await ProductModel.findByIdAndUpdate(currentMovement.product, { $inc:{ stock:currentMovement.type === "inflow" ? -currentMovement.quantity : currentMovement.quantity }, }, { new:true });
       if(!updatedProduct) return NextResponse.json({ message:"Product not found"}, { status:404 });
     } else if(currentMovement.status === "Finalizado" && status === "Finalizado") {
-      let updatedProduct = await ProductModel.findByIdAndUpdate(currentMovement.product, { $inc:{ balance:currentMovement.type === "inflow" ? -currentMovement.quantity : currentMovement.quantity }, }, { new:true });
+      let updatedProduct = await ProductModel.findByIdAndUpdate(currentMovement.product, { $inc:{ stock:currentMovement.type === "inflow" ? -currentMovement.quantity : currentMovement.quantity }, }, { new:true });
       if(!updatedProduct) return NextResponse.json({ message:"Product not found"}, { status:404 });
-      updatedProduct = await ProductModel.findByIdAndUpdate(currentMovement.product, { $inc:{ balance:currentMovement.type === "inflow" ? quantity : -quantity }, }, { new:true });
+      updatedProduct = await ProductModel.findByIdAndUpdate(currentMovement.product, { $inc:{ stock:currentMovement.type === "inflow" ? quantity : -quantity }, }, { new:true });
       if(!updatedProduct) return NextResponse.json({ message:"Product not found"}, { status:404 });
     };
 
