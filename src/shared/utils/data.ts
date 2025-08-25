@@ -180,6 +180,7 @@ export const ACCOUNTS_TYPE = [
   { label:"Débito", value:"debit" },
   { label:"Crédito", value:"credit" },
   { label:"Efectivo", value:"cash" },
+  { label:"Criptomoneda", value:"cryptocurrency" },
 ];
 
 export const TRANSACTIONS_STATUS_DATA = [

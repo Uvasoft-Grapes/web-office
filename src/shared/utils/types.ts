@@ -104,7 +104,7 @@ export interface TypeTransactionsStatusSummary {
   canceled:number;
 };
 
-export type TypeAccounts = 'debit' | 'credit' | 'cash';
+export type TypeAccounts = "debit" | "credit" | "cash" | "cryptocurrency";
 
 export interface TypeAccount {
   _id:string;
